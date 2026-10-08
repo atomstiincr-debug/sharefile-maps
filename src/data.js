@@ -6,7 +6,7 @@ const D = "https://docs.sharefile.com/en-us/sharefile/";
 const W = "https://www.sharefile.com/";
 
 const SITE = {
-  version: "1.2.0",
+  version: "1.2.1",
   updated: "2026-10-08",
   author: "Adrián Bonilla",
   pricingSource: W + "plans",
@@ -361,6 +361,7 @@ const DISCREPANCIES = [
 
 
 const CHANGELOG = [
+  { v: "1.2.1", date: "2026-10-08", d: { es: "Integraciones: se agregan los conectores de OneDrive, Box y Dropbox y la ruta de activación para el administrador.", en: "Integrations: adds OneDrive, Box and Dropbox connectors and the admin path to enable them.", pt: "Integrações: adiciona os conectores OneDrive, Box e Dropbox e o caminho de ativação para o administrador." } },
   { v: "1.2.0", date: "2026-10-08", d: { es: "Nueva página de Integraciones: Microsoft 365, Google Workspace, seguridad, CRM y contabilidad, e integraciones por industria. Nueva discrepancia sobre el plugin de Outlook.", en: "New Integrations page: Microsoft 365, Google Workspace, security, CRM and accounting, and industry-specific integrations. New discrepancy on the Outlook plug-in.", pt: "Nova página de Integrações: Microsoft 365, Google Workspace, segurança, CRM e contabilidade, e integrações por setor. Nova discrepância sobre o plugin do Outlook." } },
   { v: "1.1.0", date: "2026-10-08", d: { es: "Selector Mensual / Anual en todo el sitio, con precio mensual tachado y porcentaje de ahorro. Paleta de marca ShareFile.", en: "Monthly / Annual billing toggle across the site, with struck-through monthly price and savings percentage. ShareFile brand palette.", pt: "Seletor Mensal / Anual em todo o site, com preço mensal riscado e porcentagem de economia. Paleta da marca ShareFile." } },
   { v: "1.0.0", date: "2026-10-08", d: { es: "Primera versión: mapas de planes, VDR, recomendador, comparador, matriz, calculadora, conocimiento y glosario en ES, EN y PT.", en: "First release: plan maps, VDR, recommender, comparator, matrix, calculator, knowledge and glossary in ES, EN and PT.", pt: "Primeira versão: mapas de planos, VDR, recomendador, comparador, matriz, calculadora, conhecimento e glossário em ES, EN e PT." } }
@@ -371,6 +372,7 @@ const CHANGELOG = [
 const INT_GROUPS = [
   { id: "m365",   name: { es: "Microsoft 365", en: "Microsoft 365", pt: "Microsoft 365" } },
   { id: "google", name: { es: "Google Workspace", en: "Google Workspace", pt: "Google Workspace" } },
+  { id: "cloud",  name: { es: "Otros almacenamientos en la nube", en: "Other cloud storage", pt: "Outros armazenamentos em nuvem" } },
   { id: "secit",  name: { es: "Seguridad, identidad y TI", en: "Security, identity and IT", pt: "Segurança, identidade e TI" } },
   { id: "biz",    name: { es: "CRM, contabilidad y automatización", en: "CRM, accounting and automation", pt: "CRM, contabilidade e automação" } },
   { id: "ind",    name: { es: "Especializadas por industria", en: "Industry-specific", pt: "Especializadas por setor" } },
@@ -392,10 +394,13 @@ const INTEGRATIONS = [
     n: { es: "Requiere licencia comercial de Microsoft 365 (Business Standard o superior, E3, E5, entre otras). No disponible con los planes de archivado FINRA o Enterprise.", en: "Requires a commercial Microsoft 365 license (Business Standard or higher, E3, E5 and others). Not available with FINRA or Enterprise Archiving plans.", pt: "Requer licença comercial do Microsoft 365 (Business Standard ou superior, E3, E5, entre outras). Indisponível com os planos de arquivamento FINRA ou Enterprise." } },
   { id: "sharepoint", g: "m365", name: "SharePoint Online connector", url: D + "account_settings/connectors/enable_sharepoint_online", plan: "APEV",
     d: { es: "Conecta una biblioteca de SharePoint Online para ver, descargar y compartir sus archivos desde ShareFile.", en: "Connects a SharePoint Online library to preview, download and share its files from ShareFile.", pt: "Conecta uma biblioteca do SharePoint Online para visualizar, baixar e compartilhar seus arquivos pelo ShareFile." },
-    n: { es: "El administrador da su consentimiento una sola vez para todos los usuarios.", en: "An admin grants consent once for all users.", pt: "O administrador dá consentimento uma única vez para todos os usuários." } },
+    n: { es: "Se agrega en Configuración de la cuenta → Conectores. El administrador da su consentimiento una sola vez para todos los usuarios.", en: "Added in Account settings → Connectors. An admin grants consent once for all users.", pt: "É adicionado em Configurações da conta → Conectores. O administrador dá consentimento uma única vez para todos os usuários." } },
   { id: "onedrive", g: "m365", name: "OneDrive for Business connector", url: D + "account_settings/connectors/one_drive_for_business_recommendations", plan: "APEV",
     d: { es: "Accede a OneDrive for Business desde la app ShareFile para Windows y comparte esos archivos de forma segura.", en: "Access OneDrive for Business from the ShareFile for Windows app and share those files securely.", pt: "Acesse o OneDrive for Business pelo app ShareFile para Windows e compartilhe esses arquivos com segurança." },
-    n: { es: "La carpeta personal del usuario debe estar en almacenamiento administrado por ShareFile.", en: "The user's personal folder must be on ShareFile-managed storage.", pt: "A pasta pessoal do usuário deve estar em armazenamento gerenciado pelo ShareFile." } },
+    n: { es: "Se agrega en Configuración de la cuenta → Conectores. La carpeta personal del usuario debe estar en almacenamiento administrado por ShareFile.", en: "Added in Account settings → Connectors. The user's personal folder must be on ShareFile-managed storage.", pt: "É adicionado em Configurações da conta → Conectores. A pasta pessoal do usuário deve estar em armazenamento gerenciado pelo ShareFile." } },
+  { id: "onedrive_personal", g: "m365", name: "OneDrive connector", url: D + "account_settings/connectors/connectors_overview", plan: "APEV",
+    d: { es: "Permite que cada usuario conecte su propia cuenta de OneDrive y acceda a esos archivos desde ShareFile.", en: "Lets each user connect their own OneDrive account and access those files from ShareFile.", pt: "Permite que cada usuário conecte sua própria conta do OneDrive e acesse esses arquivos pelo ShareFile." },
+    n: { es: "El administrador lo activa en Configuración de la cuenta → Conectores.", en: "The admin enables it in Account settings → Connectors.", pt: "O administrador ativa em Configurações da conta → Conectores." } },
   { id: "word_addin", g: "m365", name: "Microsoft Word add-in", url: D + "templates/microsoft_word_add_in", plan: "PE",
     d: { es: "Diseña plantillas de documentos en Word, con campos de firma y variables, listas para enviar a firma electrónica.", en: "Design document templates in Word, with signature fields and variables, ready to send for e-signature.", pt: "Crie modelos de documentos no Word, com campos de assinatura e variáveis, prontos para assinatura eletrônica." } },
   { id: "entra_sso", g: "m365", name: "Microsoft Entra ID · SSO", url: D + "account_settings/security/single_sign_on", plan: "APEV",
@@ -410,7 +415,16 @@ const INTEGRATIONS = [
     also: [{ label: "Google Workspace Marketplace", url: "https://workspace.google.com/marketplace/app/sharefile/578628970478" }],
     d: { es: "Envía enlaces seguros a carpetas y documentos de ShareFile, y solicita archivos, desde Gmail.", en: "Send secure links to ShareFile folders and documents, and request files, from Gmail.", pt: "Envie links seguros para pastas e documentos do ShareFile, e solicite arquivos, pelo Gmail." } },
   { id: "gdrive", g: "google", name: "Google Drive connector", url: D + "account_settings/connectors/connectors_overview", plan: "APEV",
-    d: { es: "Conecta Google Drive para acceder y compartir sus archivos desde ShareFile.", en: "Connect Google Drive to access and share its files from ShareFile.", pt: "Conecte o Google Drive para acessar e compartilhar seus arquivos pelo ShareFile." } },
+    d: { es: "Permite que cada usuario conecte su cuenta de Google Drive y acceda a esos archivos desde ShareFile.", en: "Lets each user connect their Google Drive account and access those files from ShareFile.", pt: "Permite que cada usuário conecte sua conta do Google Drive e acesse esses arquivos pelo ShareFile." },
+    n: { es: "El administrador lo activa en Configuración de la cuenta → Conectores.", en: "The admin enables it in Account settings → Connectors.", pt: "O administrador ativa em Configurações da conta → Conectores." } },
+
+  // Other cloud storage
+  { id: "box", g: "cloud", name: "Box connector", url: D + "account_settings/connectors/connectors_overview", plan: "APEV",
+    d: { es: "Permite que cada usuario conecte su cuenta de Box y acceda a esos archivos desde ShareFile.", en: "Lets each user connect their Box account and access those files from ShareFile.", pt: "Permite que cada usuário conecte sua conta do Box e acesse esses arquivos pelo ShareFile." },
+    n: { es: "El administrador lo activa en Configuración de la cuenta → Conectores.", en: "The admin enables it in Account settings → Connectors.", pt: "O administrador ativa em Configurações da conta → Conectores." } },
+  { id: "dropbox", g: "cloud", name: "Dropbox connector", url: D + "account_settings/connectors/connectors_overview", plan: "APEV",
+    d: { es: "Permite que cada usuario conecte su cuenta de Dropbox y acceda a esos archivos desde ShareFile.", en: "Lets each user connect their Dropbox account and access those files from ShareFile.", pt: "Permite que cada usuário conecte sua conta do Dropbox e acesse esses arquivos pelo ShareFile." },
+    n: { es: "El administrador lo activa en Configuración de la cuenta → Conectores.", en: "The admin enables it in Account settings → Connectors.", pt: "O administrador ativa em Configurações da conta → Conectores." } },
 
   // Security, identity and IT
   { id: "splunk", g: "secit", name: "Splunk", url: D + "account_settings/security/splunk-integration", plan: "E", badges: ["third"],
