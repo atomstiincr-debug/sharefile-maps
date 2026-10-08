@@ -196,6 +196,7 @@
         <div class="map-foot">
           ${GROUPS.map(g => `<span class="k"><i class="g-${g.id}"></i>${esc(L(g.name))}</span>`).join("")}
           <span class="k">${esc(m.legend)}</span>
+          <span class="k">▶ ${ext(TUTORIALS, esc(t().video.tutorials))}</span>
         </div>
       </div>`;
     $("#hl").addEventListener("change", e => { state.hl = e.target.value; store.set("hl", state.hl); renderMap(view); });
