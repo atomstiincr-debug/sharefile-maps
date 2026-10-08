@@ -541,33 +541,30 @@
 
   function renderIntegrations() {
     const u = t(), I = u.int;
-    state.intg = state.intg || { g: "", i: "" };
-    const adds = ["enhanced_portal", "request_list", "esign", "projects", "watermark", "view_only"];
+    state.intg = state.intg || { g: "", i: "", q: "" };
     $("#view").innerHTML = `
       ${head(I.title, I.lead)}
-      <section class="box m365">
-        <h2>${esc(I.m365Title)}</h2>
-        <p>${esc(I.m365Msg)}</p>
-        <h3>${esc(I.m365Adds)}</h3>
-        <ul class="flist">${adds.map(id => { const f = F[id]; return `<li><span><i class="dot g-${f.g}"></i>${ext(f.url, esc(f.name))}</span><span>${esc(u.rec.from)} ${esc(P[tierOf(f)].name)}</span></li>`; }).join("")}</ul>
-      </section>
-      <div class="toolbar" style="margin-top:20px">
-        <label>${esc(I.group)} <select id="ig"><option value="">${esc(I.all)}</option>${INT_GROUPS.map(g => `<option value="${g.id}" ${state.intg.g === g.id ? "selected" : ""}>${esc(L(g.name))}</option>`).join("")}</select></label>
+      <nav class="chips" aria-label="${esc(I.group)}">${INT_GROUPS.map(g => `<button type="button" class="chipbtn" data-ig="${g.id}" aria-pressed="${state.intg.g === g.id}">${esc(L(g.name))} <span class="num">${INTEGRATIONS.filter(x => x.g === g.id).length}</span></button>`).join("")}</nav>
+      <div class="toolbar" style="margin-top:14px">
+        <input id="iq" type="search" placeholder="${esc(I.search)}" value="${esc(state.intg.q)}" aria-label="${esc(I.search)}">
         <label>${esc(I.industry)} ${industrySelect("ii", state.intg.i)}</label>
         <span class="mx-count" id="icount"></span>
       </div>
       <div id="ilist"></div>
       <p class="hint" style="margin-top:16px">${esc(I.third)} ${esc(I.source)}</p>`;
     const draw = () => {
-      const s = state.intg;
-      const rows = INTEGRATIONS.filter(x => (!s.g || x.g === s.g) && (!s.i || (x.ind || []).includes(s.i) || x.g !== "ind"));
+      const s = state.intg, q = s.q.toLowerCase();
+      const rows = INTEGRATIONS.filter(x => (!s.g || x.g === s.g) && (!s.i || (x.ind || []).includes(s.i) || x.g !== "ind")
+        && (!q || x.name.toLowerCase().includes(q) || L(x.d).toLowerCase().includes(q)));
       $("#ilist").innerHTML = INT_GROUPS.map(g => {
         const xs = rows.filter(x => x.g === g.id);
-        return xs.length ? `<section class="igroup"><h2>${esc(L(g.name))}</h2><div class="igrid">${xs.map(intCard).join("")}</div></section>` : "";
+        return xs.length ? `<section class="igroup"><h2>${esc(L(g.name))}</h2>${g.note ? `<p class="hint">${esc(L(g.note))}</p>` : ""}<div class="igrid">${xs.map(intCard).join("")}</div></section>` : "";
       }).join("");
       $("#icount").textContent = rows.length + " " + I.count;
+      document.querySelectorAll("[data-ig]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.ig === s.g)));
     };
-    $("#ig").addEventListener("change", e => { state.intg.g = e.target.value; draw(); });
+    document.querySelectorAll("[data-ig]").forEach(b => b.addEventListener("click", () => { state.intg.g = state.intg.g === b.dataset.ig ? "" : b.dataset.ig; draw(); }));
+    $("#iq").addEventListener("input", e => { state.intg.q = e.target.value; draw(); });
     $("#ii").addEventListener("change", e => { state.intg.i = e.target.value; draw(); });
     draw();
   }
