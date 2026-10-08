@@ -576,7 +576,7 @@
   function renderKnowledge() {
     const u = t();
     $("#view").innerHTML = `${head(u.kn.title, u.kn.lead)}
-      <div class="cols">${KNOWLEDGE.map(k => `<section class="box"><h3>${esc(L(k.g))}</h3><ul class="links">${k.links.map(l => `<li>${l.v ? "▶ " : ""}${ext(l.u, esc(l.t))}</li>`).join("")}</ul></section>`).join("")}</div>`;
+      <div class="cols">${KNOWLEDGE.map(k => `<section class="box"><h3>${esc(L(k.g))}</h3><ul class="links">${k.links.map(l => `<li>${l.v ? "▶ " : ""}${ext(l.u, esc(l.t))}${l.long ? ` <span class="hint">· ${esc(t().video.long)}</span>` : ""}</li>`).join("")}</ul></section>`).join("")}</div>`;
   }
 
   function renderGlossary() {

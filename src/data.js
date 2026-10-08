@@ -12,7 +12,8 @@ const VIDEOS = [
   { id: "8jr9qGIyBNo", t: "ShareFile Security Center and Threat Detection – From Diagnosis to Response", f: ["security_center", "ueba", "threat_alerts"] },
   { id: "2PV6NdKlig0", t: "Secure Access: Multi-Factor Authentication", f: ["mfa"] },
   { id: "KAg5wUxhFeo", t: "ShareFile Client Workflows: Tasks, Projects & Client Portal", f: ["task_mgmt", "tasks_workspace", "projects", "enhanced_portal"] },
-  { id: "p7S04kvfAbc", t: "Simplify Document Collection Workflows with AI", f: ["request_list", "ai_rl_gen", "ai_validation"] }
+  { id: "p7S04kvfAbc", t: "Simplify Document Collection Workflows with AI", f: ["request_list", "ai_rl_gen", "ai_validation"] },
+  { id: "284fXaU7OtY", t: "Mastering ShareFile Admin Settings", long: 1 }
 ];
 
 const OVERVIEW_VIDEO = { id: "yQkpfDLkCk0", t: "Progress ShareFile - Built For The Way You Work Now—And Where You're Headed Next!" };
@@ -328,6 +329,7 @@ const KNOWLEDGE = [
     { t: "ShareFile documentation", u: D + "welcome" },
     { t: "Resource library", u: D + "learn-more/resource-library" },
     { t: "Admin guide", u: D + "get-started/sharefile-admin-guide" },
+    { t: "Mastering ShareFile Admin Settings", u: "https://www.youtube.com/watch?v=284fXaU7OtY", v: 1, long: 1 },
     { t: "Client user guide", u: D + "client-resources/client-help-guide" },
     { t: "Previewing higher-tier features", u: D + "learn-more/faq-previewing-higher-tiered-features" }
   ]},
