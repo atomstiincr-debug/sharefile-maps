@@ -26,7 +26,8 @@ jobs:
         run: node scripts/validate.js
       - name: Check links
         id: check
-        run: python3 scripts/check_links.py | tee links.txt
+        shell: bash
+        run: set -o pipefail; python3 scripts/check_links.py | tee links.txt
       - name: Open issue on failure
         if: failure()
         uses: actions/github-script@v7

@@ -31,6 +31,12 @@ def norm(path):
     return re.sub(r"\.html?$", "", p)
 
 HOMES = {"", "/en-us", "/en-us/sharefile", "/en-us/sharefile/welcome"}
+# Official links whose sites refuse automated checks (verified by hand; re-verify if they ever change):
+#  - appsource.microsoft.com blocks bots with 403; listing WA200007922 is linked from docs.sharefile.com (Outlook Online).
+#  - partnercommunity.sharefile.com is the "Partner Login" link on www.sharefile.com/partners.
+#  - sharefile.ideas.aha.io redirects to ShareFile sign-in (auth2.sharefile.io) via Progress identity: official, login required.
+MANUAL = {"appsource.microsoft.com", "partnercommunity.sharefile.com", "sharefile.ideas.aha.io"}
+manual = []
 bad, warn, ok = [], [], 0
 for u in sorted(urls | oembed):
     req = urllib.request.Request(u, headers={"User-Agent": "Mozilla/5.0 (sharefile-maps link check)"})
@@ -46,7 +52,9 @@ for u in sorted(urls | oembed):
     except Exception as e:
         status = type(e).__name__
     o, f = urllib.parse.urlparse(u), urllib.parse.urlparse(final)
-    if not isinstance(status, int) or status >= 400:
+    if o.netloc in MANUAL:
+        manual.append(f"{status} {u}")
+    elif not isinstance(status, int) or status >= 400:
         bad.append(f"{status} {u}")
     elif re.search(r"\b(404|not found|page not found)\b", title, re.I):
         bad.append(f"soft-404 (title: {title[:60]}) {u}")
@@ -59,9 +67,9 @@ for u in sorted(urls | oembed):
         ok += 1
     print(("BAD " if bad and bad[-1].endswith(u) else "WARN" if warn and warn[-1].endswith(u) else "OK  "), status, u)
 
-summary = f"{len(urls)} pages + {len(oembed)} videos checked: {ok} ok, {len(warn)} redirects to review, {len(bad)} broken"
+summary = f"{len(urls)} pages + {len(oembed)} videos checked: {ok} ok, {len(warn)} redirects to review, {len(bad)} broken, {len(manual)} verified by hand (sites block bots)"
 print("\n" + summary)
-report = [summary] + ["BROKEN " + b for b in bad] + ["REDIRECT " + w for w in warn]
+report = [summary] + ["BROKEN " + b for b in bad] + ["REDIRECT " + w for w in warn] + ["MANUAL " + m for m in manual]
 # One annotation with the full report (readable through the GitHub API)
 print("::notice title=Link report::" + "%0A".join(x.replace("%", "%25") for x in report))
 sys.exit(1 if bad else 0)

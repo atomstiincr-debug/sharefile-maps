@@ -107,6 +107,7 @@
     $("#nav").innerHTML = navKeys.map(k => `<a href="#${k}" ${k === active ? 'aria-current="page"' : ""}>${u.nav[k]}</a>`).join("");
     $("#brand-tag").textContent = u.siteTag;
     $("#unofficial").textContent = u.unofficial;
+    $("#skip").textContent = u.skip;
     $("#lang").value = lang;
     $("#lang").setAttribute("aria-label", u.lang);
     const th = store.get("theme", "system");
@@ -740,6 +741,8 @@
     const d = e.target.closest("[data-detail]");
     if (d) { e.preventDefault(); openDetail(d.dataset.detail); }
   });
+  // Skip link: move focus to the content without changing the route
+  $("#skip").addEventListener("click", e => { e.preventDefault(); $("#view").focus(); });
   $("#lang").addEventListener("change", e => { lang = e.target.value; store.set("lang", lang); document.documentElement.lang = lang; route(); });
   $("#theme").addEventListener("click", () => {
     const order = ["system", "light", "dark"], cur = store.get("theme", "system");

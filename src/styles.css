@@ -161,7 +161,7 @@ main { padding-block: 28px 56px; min-height: 60vh; }
 
 /* ── Panels / forms */
 .grid2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 20px; align-items: start; }
-@media (max-width: 900px) { .grid2 { grid-template-columns: 1fr; } }
+@media (max-width: 900px) { .grid2 { grid-template-columns: minmax(0, 1fr); } }
 .box { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 18px; display: grid; gap: 14px; min-width: 0; }
 fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: 8px; min-width: 0; }
 legend { font: 650 .95rem var(--f-display); margin-bottom: 6px; padding: 0; }
@@ -285,3 +285,13 @@ ol.path ul.sigs { margin: 6px 0 0; padding-left: 18px; font-size: .9rem; }
 .cmp-col p.up { color: var(--accent); margin: 8px 0 0; }
 .cmp-col h4.plus { margin: 16px 0 2px; font-size: 1rem; }
 .fgrp .flist li > span:first-child { font-size: .88rem; color: inherit; white-space: normal; }
+/* Mobile: never let long names or the billing toggle push the page sideways */
+@media (max-width: 600px) {
+  .flist li { flex-wrap: wrap; }
+  .flist li span:last-child, .flist li .up { white-space: normal; }
+  .result-plan .seg { margin-left: 0; }
+  .presets { display: flex; margin-top: 6px; }
+}
+/* Skip link: hidden until focused */
+.skip { position: absolute; left: -9999px; top: 8px; z-index: 50; background: var(--surface); color: var(--ink); padding: 8px 12px; border: 2px solid var(--accent); border-radius: var(--r); }
+.skip:focus { left: 8px; }

@@ -173,7 +173,7 @@ main { padding-block: 28px 56px; min-height: 60vh; }
 
 /* ── Panels / forms */
 .grid2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 20px; align-items: start; }
-@media (max-width: 900px) { .grid2 { grid-template-columns: 1fr; } }
+@media (max-width: 900px) { .grid2 { grid-template-columns: minmax(0, 1fr); } }
 .box { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 18px; display: grid; gap: 14px; min-width: 0; }
 fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: 8px; min-width: 0; }
 legend { font: 650 .95rem var(--f-display); margin-bottom: 6px; padding: 0; }
@@ -297,11 +297,21 @@ ol.path ul.sigs { margin: 6px 0 0; padding-left: 18px; font-size: .9rem; }
 .cmp-col p.up { color: var(--accent); margin: 8px 0 0; }
 .cmp-col h4.plus { margin: 16px 0 2px; font-size: 1rem; }
 .fgrp .flist li > span:first-child { font-size: .88rem; color: inherit; white-space: normal; }
+/* Mobile: never let long names or the billing toggle push the page sideways */
+@media (max-width: 600px) {
+  .flist li { flex-wrap: wrap; }
+  .flist li span:last-child, .flist li .up { white-space: normal; }
+  .result-plan .seg { margin-left: 0; }
+  .presets { display: flex; margin-top: 6px; }
+}
+/* Skip link: hidden until focused */
+.skip { position: absolute; left: -9999px; top: 8px; z-index: 50; background: var(--surface); color: var(--ink); padding: 8px 12px; border: 2px solid var(--accent); border-radius: var(--r); }
+.skip:focus { left: 8px; }
 
 </style>
 </head>
 <body>
-<a href="#view" style="position:absolute;left:-9999px">Skip</a>
+<a href="#view" class="skip" id="skip">Skip</a>
 <header class="top">
   <div class="wrap">
     <div class="top-row">
@@ -348,7 +358,7 @@ const OVERVIEW_VIDEO = { id: "yQkpfDLkCk0", t: "Progress ShareFile - Built For T
 const TUTORIALS = "https://www.youtube.com/playlist?list=PLSKW9Jc-tCY9W-cB3G2OTYx00GXZrrzZB";
 
 const SITE = {
-  version: "1.5.7",
+  version: "1.5.8",
   updated: "2026-10-08",
   author: "Adrián Bonilla",
   pricingSource: W + "plans",
@@ -484,7 +494,7 @@ const FEATURES = [
     d: { es: "Estandariza nombres de archivo en lote con IA.", en: "Standardizes file names in bulk with AI.", pt: "Padroniza nomes de arquivos em lote com IA." } },
   { id: "ai_validation", g: "ai", plans: "PEV", name: "Document Validation", url: D + "ai/ai-document-validation", badges: ["usage"],
     d: { es: "Verifica que los archivos subidos cumplan lo requerido antes de enviarlos.", en: "Checks uploaded files meet requirements before submission.", pt: "Verifica se os arquivos enviados atendem aos requisitos antes da submissão." } },
-  { id: "ai_assistant", g: "ai", plans: "PEV", name: "AI Document Assistant", url: D + "sharefile-app/sharefile-web/ai-powered-doc-summarization", badges: ["usage"],
+  { id: "ai_assistant", g: "ai", plans: "PEV", name: "AI Document Assistant", url: D + "ai/ai-doc-qa", badges: ["usage"],
     also: [{ label: "Document Q&A", url: D + "ai/ai-doc-qa" }],
     d: { es: "Resume, extrae datos clave y responde preguntas sobre documentos.", en: "Summarizes, extracts key details and answers questions about documents.", pt: "Resume, extrai dados-chave e responde perguntas sobre documentos." } },
   { id: "ai_rl_gen", g: "ai", plans: "PEV", name: "Request List Generation", url: D + "ai/ai-request-list-generation", badges: ["usage"],
@@ -543,7 +553,7 @@ const FEATURES = [
   { id: "enhanced_portal", g: "client", plans: "PEV", name: "Enhanced Client Portal", url: W + "product-feature/client-portal",
     also: [{ label: "Client Portal FAQ", url: D + "client_portal/client_portal_faq" }],
     d: { es: "Suma mensajería, tareas, notificaciones automáticas y acciones rápidas.", en: "Adds messaging, tasks, automated notifications and quick actions.", pt: "Adiciona mensagens, tarefas, notificações automáticas e ações rápidas." } },
-  { id: "client_hub", g: "client", plans: "PEV", name: "Client Hub", url: D + "client_hub/client_hub_overview",
+  { id: "client_hub", g: "client", plans: "PEV", name: "Client Hub", url: D + "account_settings/client_hub_management/client_hub_overview",
     d: { es: "Gestiona clientes, vincúlalos a carpetas y proyectos y coordina equipos.", en: "Manage clients, link them to folders and projects, coordinate teams.", pt: "Gerencie clientes, vincule-os a pastas e projetos e coordene equipes." } },
 
   // ── Integrations
@@ -667,7 +677,7 @@ const KNOWLEDGE = [
     { t: "Security FAQ", u: D + "legal/sharefile-security-faq" },
     { t: "Service availability by country", u: D + "sf-geo" },
     { t: "ShareFile-managed storage zones", u: D + "account_settings/storage/sharefile-managed-storage-zones" },
-    { t: "Storage Zones Controller 6.0", u: D + "storage-zones-controller/6-0" },
+    { t: "Storage Zones Controller 6.0", u: D + "storage-zones-controller/6-0/about" },
     { t: "AI-Assisted products (legal)", u: D + "legal/sharefile-ai/sf-ai" },
     { t: "AI Principles", u: W + "ai-principles" }
   ]},
@@ -677,15 +687,15 @@ const KNOWLEDGE = [
     { t: "E-signature security", u: D + "electronic-signature/security" }
   ]},
   { g: { es: "Soporte y estado", en: "Support and status", pt: "Suporte e status" }, links: [
-    { t: "Help Center", u: "https://support.sharefile.com/" },
+    { t: "Help Center", u: "https://support.sharefile.com/s/" },
     { t: "Support offerings and coverage", u: "https://support.sharefile.com/s/article/ShareFile-Support-Offerings-and-Coverage" },
     { t: "How to chat with Support", u: "https://www.youtube.com/watch?v=_Wj9R9hDpwU", v: 1 },
     { t: "How to contact your Success Engineer", u: "https://www.youtube.com/watch?v=iDRSdUWDYRY", v: 1 },
     { t: "ShareFile status", u: "https://status.sharefile.com/" },
-    { t: "Feature requests (Ideas portal)", u: "https://sharefile.ideas.aha.io/" }
+    { t: "Feature requests (Ideas portal, ShareFile sign-in)", u: "https://sharefile.ideas.aha.io/" }
   ]},
   { g: { es: "Aprender y partners", en: "Learn and partners", pt: "Aprender e parceiros" }, links: [
-    { t: "ShareFile Training", u: W + "training" },
+    { t: "ShareFile Training (Product Hubs)", u: "https://support.sharefile.com/s/sharefile-product-hubs" },
     { t: "Progress ShareFile: Tutorials (34 videos)", u: "https://www.youtube.com/playlist?list=PLSKW9Jc-tCY9W-cB3G2OTYx00GXZrrzZB", v: 1 },
     { t: "Progress ShareFile: Demos (38 videos)", u: "https://www.youtube.com/playlist?list=PLSKW9Jc-tCY8wmEjjJxq5I-0SIPjlI3oi", v: 1 },
     { t: "ShareFile YouTube", u: "https://www.youtube.com/@progresssharefile" },
@@ -708,6 +718,7 @@ const DISCREPANCIES = [
 
 
 const CHANGELOG = [
+  { v: "1.5.8", date: "2026-10-08", d: { es: "Auditoría completa: corrige el desborde horizontal del Recomendador en celulares y el enlace «Saltar al contenido» (ahora traducido y sin cambiar de página). Enlaces actualizados a su dirección final (AI Document Assistant, Client Hub, Storage Zones, Help Center, Training). El chequeo semanal de enlaces ahora sí alerta cuando algo falla y detecta páginas redirigidas al inicio.", en: "Full audit: fixes the Recommender's horizontal overflow on phones and the “Skip to content” link (now translated and no longer changes page). Links updated to their final address (AI Document Assistant, Client Hub, Storage Zones, Help Center, Training). The weekly link check now actually alerts on failures and detects pages redirected to a home page.", pt: "Auditoria completa: corrige o transbordamento horizontal do Recomendador em celulares e o link «Pular para o conteúdo» (agora traduzido e sem trocar de página). Links atualizados para o endereço final (AI Document Assistant, Client Hub, Storage Zones, Help Center, Training). A verificação semanal de links agora alerta de fato quando algo falha e detecta páginas redirecionadas para a página inicial." } },
   { v: "1.5.7", date: "2026-10-08", d: { es: "Comparador en columnas completas: cuando un plan contiene al otro, el menor muestra todas sus funciones y el mayor muestra «Todo lo de…» más lo que agrega.", en: "Comparator in full columns: when one plan contains the other, the smaller one lists all its features and the larger shows “Everything in…” plus what it adds.", pt: "Comparador em colunas completas: quando um plano contém o outro, o menor lista todos os seus recursos e o maior mostra «Tudo do…» mais o que adiciona." } },
   { v: "1.5.6", date: "2026-10-08", d: { es: "Comparador: resumen en una frase, bloque con la base común de funciones por categoría (desplegable), diferencias agrupadas por categoría con su nombre y el Basic Client Portal marcado como mejora a Enhanced Client Portal.", en: "Comparator: one-line summary, shared-base block with feature counts by category (expandable), differences grouped under named categories, and Basic Client Portal marked as upgrading to Enhanced Client Portal.", pt: "Comparador: resumo em uma frase, bloco com a base comum de recursos por categoria (expansível), diferenças agrupadas por categoria com nome e o Basic Client Portal indicado como evolução para o Enhanced Client Portal." } },
   { v: "1.5.5", date: "2026-10-08", d: { es: "El comparador abre por defecto con Advanced vs Premium.", en: "The comparator opens with Advanced vs Premium by default.", pt: "O comparador abre por padrão com Advanced vs Premium." } },
@@ -847,7 +858,7 @@ const UI = {
     video: { title: "Video oficial", lang: "en inglés; activa los subtítulos en español", tutorials: "Tutoriales oficiales en YouTube", overview: "Ver qué es ShareFile (en inglés)", long: "video largo" },
     int: { title: "Integraciones", lead: "Integraciones oficiales de ShareFile con herramientas de correo, almacenamiento, identidad, seguridad, CRM y contabilidad, más integraciones por industria. Cada una enlaza a su documentación oficial.", search: "Buscar integración (ej. Salesforce)", plans: "Planes", planCheck: "Tabla de precios: desde Advanced. Documentación del plugin: Premium o superior.", group: "Categoría", industry: "Industria", all: "Todas", third: "Las integraciones de terceros requieren las licencias del proveedor correspondiente; algunas pueden estar limitadas o no disponibles.", source: "Fuentes: sharefile.com/apps-integrations y docs.sharefile.com.", forIndustry: "Integraciones para esta industria", specific: "Específicas de {i}", noSpecific: "ShareFile no publica integraciones específicas para {i}. Las de abajo sirven igual.", featured: "Destacadas en la página oficial de {i}", noFeatured: "La página oficial de {i} no destaca integraciones concretas.", general: "Resto de integraciones, por función (sirven para cualquier industria)", hidden: "Se ocultan {n} integraciones específicas de otras industrias.", count: "integraciones" },
     billing: { label: "Facturación", monthly: "Mensual", annual: "Anual", perUserMonth: "por usuario / mes", annualNote: "facturación anual", monthlyNote: "facturación mensual", save: "Ahorra {n}%", explain: "Precios MSRP en USD de sharefile.com/plans. Con facturación anual, el precio mensual por usuario baja." },
-    lang: "Español", siteTag: "Mapa de planes ShareFile", unofficial: "Sitio no oficial",
+    lang: "Español", siteTag: "Mapa de planes ShareFile", unofficial: "Sitio no oficial", skip: "Saltar al contenido",
     nav: { home: "Inicio", map: "Mapa de planes", vdr: "Data Room", recommend: "Recomendador", compare: "Comparador", matrix: "Matriz", calc: "Calculadora", knowledge: "Conocimiento", glossary: "Glosario", changelog: "Cambios", discrepancies: "Discrepancias", integrations: "Integraciones" },
     by: "Por", updated: "Actualizado",
     home: {
@@ -920,7 +931,7 @@ const UI = {
     video: { title: "Official video", lang: "English", tutorials: "Official tutorials on YouTube", overview: "See what ShareFile is", long: "long video" },
     int: { title: "Integrations", lead: "Official ShareFile integrations with email, storage, identity, security, CRM and accounting tools, plus industry-specific integrations. Each links to its official documentation.", search: "Search integrations (e.g. Salesforce)", plans: "Plans", planCheck: "Pricing table: from Advanced. Plug-in documentation: Premium or higher.", group: "Category", industry: "Industry", all: "All", third: "Third-party integrations require the vendor's licenses; some may be limited or unavailable.", source: "Sources: sharefile.com/apps-integrations and docs.sharefile.com.", forIndustry: "Integrations for this industry", specific: "Specific to {i}", noSpecific: "ShareFile publishes no integrations specific to {i}. The ones below still apply.", featured: "Featured on the official {i} page", noFeatured: "The official {i} page does not feature specific integrations.", general: "Other integrations, by function (useful for any industry)", hidden: "{n} integrations specific to other industries are hidden.", count: "integrations" },
     billing: { label: "Billing", monthly: "Monthly", annual: "Annual", perUserMonth: "per user / month", annualNote: "billed annually", monthlyNote: "billed monthly", save: "Save {n}%", explain: "MSRP in USD from sharefile.com/plans. Annual billing lowers the monthly price per user." },
-    lang: "English", siteTag: "ShareFile plans map", unofficial: "Unofficial site",
+    lang: "English", siteTag: "ShareFile plans map", unofficial: "Unofficial site", skip: "Skip to content",
     nav: { home: "Home", map: "Plans map", vdr: "Data Room", recommend: "Recommender", compare: "Comparator", matrix: "Matrix", calc: "Calculator", knowledge: "Knowledge", glossary: "Glossary", changelog: "Changes", discrepancies: "Discrepancies", integrations: "Integrations" },
     by: "By", updated: "Updated",
     home: {
@@ -993,7 +1004,7 @@ const UI = {
     video: { title: "Vídeo oficial", lang: "em inglês; ative as legendas em português", tutorials: "Tutoriais oficiais no YouTube", overview: "Ver o que é o ShareFile (em inglês)", long: "vídeo longo" },
     int: { title: "Integrações", lead: "Integrações oficiais do ShareFile com ferramentas de e-mail, armazenamento, identidade, segurança, CRM e contabilidade, além de integrações por setor. Cada uma leva à documentação oficial.", search: "Buscar integração (ex. Salesforce)", plans: "Planos", planCheck: "Tabela de preços: desde o Advanced. Documentação do plugin: Premium ou superior.", group: "Categoria", industry: "Setor", all: "Todas", third: "Integrações de terceiros exigem as licenças do fornecedor; algumas podem estar limitadas ou indisponíveis.", source: "Fontes: sharefile.com/apps-integrations e docs.sharefile.com.", forIndustry: "Integrações para este setor", specific: "Específicas de {i}", noSpecific: "O ShareFile não publica integrações específicas para {i}. As abaixo também se aplicam.", featured: "Destacadas na página oficial de {i}", noFeatured: "A página oficial de {i} não destaca integrações específicas.", general: "Demais integrações, por função (servem para qualquer setor)", hidden: "{n} integrações específicas de outros setores estão ocultas.", count: "integrações" },
     billing: { label: "Cobrança", monthly: "Mensal", annual: "Anual", perUserMonth: "por usuário / mês", annualNote: "cobrança anual", monthlyNote: "cobrança mensal", save: "Economize {n}%", explain: "Preços MSRP em USD de sharefile.com/plans. Com cobrança anual, o preço mensal por usuário diminui." },
-    lang: "Português", siteTag: "Mapa de planos ShareFile", unofficial: "Site não oficial",
+    lang: "Português", siteTag: "Mapa de planos ShareFile", unofficial: "Site não oficial", skip: "Pular para o conteúdo",
     nav: { home: "Início", map: "Mapa de planos", vdr: "Data Room", recommend: "Recomendador", compare: "Comparador", matrix: "Matriz", calc: "Calculadora", knowledge: "Conhecimento", glossary: "Glossário", changelog: "Mudanças", discrepancies: "Discrepâncias", integrations: "Integrações" },
     by: "Por", updated: "Atualizado",
     home: {
@@ -1172,6 +1183,7 @@ const UI = {
     $("#nav").innerHTML = navKeys.map(k => `<a href="#${k}" ${k === active ? 'aria-current="page"' : ""}>${u.nav[k]}</a>`).join("");
     $("#brand-tag").textContent = u.siteTag;
     $("#unofficial").textContent = u.unofficial;
+    $("#skip").textContent = u.skip;
     $("#lang").value = lang;
     $("#lang").setAttribute("aria-label", u.lang);
     const th = store.get("theme", "system");
@@ -1805,6 +1817,8 @@ const UI = {
     const d = e.target.closest("[data-detail]");
     if (d) { e.preventDefault(); openDetail(d.dataset.detail); }
   });
+  // Skip link: move focus to the content without changing the route
+  $("#skip").addEventListener("click", e => { e.preventDefault(); $("#view").focus(); });
   $("#lang").addEventListener("change", e => { lang = e.target.value; store.set("lang", lang); document.documentElement.lang = lang; route(); });
   $("#theme").addEventListener("click", () => {
     const order = ["system", "light", "dark"], cur = store.get("theme", "system");

@@ -20,7 +20,7 @@ const OVERVIEW_VIDEO = { id: "yQkpfDLkCk0", t: "Progress ShareFile - Built For T
 const TUTORIALS = "https://www.youtube.com/playlist?list=PLSKW9Jc-tCY9W-cB3G2OTYx00GXZrrzZB";
 
 const SITE = {
-  version: "1.5.7",
+  version: "1.5.8",
   updated: "2026-10-08",
   author: "Adrián Bonilla",
   pricingSource: W + "plans",
@@ -156,7 +156,7 @@ const FEATURES = [
     d: { es: "Estandariza nombres de archivo en lote con IA.", en: "Standardizes file names in bulk with AI.", pt: "Padroniza nomes de arquivos em lote com IA." } },
   { id: "ai_validation", g: "ai", plans: "PEV", name: "Document Validation", url: D + "ai/ai-document-validation", badges: ["usage"],
     d: { es: "Verifica que los archivos subidos cumplan lo requerido antes de enviarlos.", en: "Checks uploaded files meet requirements before submission.", pt: "Verifica se os arquivos enviados atendem aos requisitos antes da submissão." } },
-  { id: "ai_assistant", g: "ai", plans: "PEV", name: "AI Document Assistant", url: D + "sharefile-app/sharefile-web/ai-powered-doc-summarization", badges: ["usage"],
+  { id: "ai_assistant", g: "ai", plans: "PEV", name: "AI Document Assistant", url: D + "ai/ai-doc-qa", badges: ["usage"],
     also: [{ label: "Document Q&A", url: D + "ai/ai-doc-qa" }],
     d: { es: "Resume, extrae datos clave y responde preguntas sobre documentos.", en: "Summarizes, extracts key details and answers questions about documents.", pt: "Resume, extrai dados-chave e responde perguntas sobre documentos." } },
   { id: "ai_rl_gen", g: "ai", plans: "PEV", name: "Request List Generation", url: D + "ai/ai-request-list-generation", badges: ["usage"],
@@ -215,7 +215,7 @@ const FEATURES = [
   { id: "enhanced_portal", g: "client", plans: "PEV", name: "Enhanced Client Portal", url: W + "product-feature/client-portal",
     also: [{ label: "Client Portal FAQ", url: D + "client_portal/client_portal_faq" }],
     d: { es: "Suma mensajería, tareas, notificaciones automáticas y acciones rápidas.", en: "Adds messaging, tasks, automated notifications and quick actions.", pt: "Adiciona mensagens, tarefas, notificações automáticas e ações rápidas." } },
-  { id: "client_hub", g: "client", plans: "PEV", name: "Client Hub", url: D + "client_hub/client_hub_overview",
+  { id: "client_hub", g: "client", plans: "PEV", name: "Client Hub", url: D + "account_settings/client_hub_management/client_hub_overview",
     d: { es: "Gestiona clientes, vincúlalos a carpetas y proyectos y coordina equipos.", en: "Manage clients, link them to folders and projects, coordinate teams.", pt: "Gerencie clientes, vincule-os a pastas e projetos e coordene equipes." } },
 
   // ── Integrations
@@ -339,7 +339,7 @@ const KNOWLEDGE = [
     { t: "Security FAQ", u: D + "legal/sharefile-security-faq" },
     { t: "Service availability by country", u: D + "sf-geo" },
     { t: "ShareFile-managed storage zones", u: D + "account_settings/storage/sharefile-managed-storage-zones" },
-    { t: "Storage Zones Controller 6.0", u: D + "storage-zones-controller/6-0" },
+    { t: "Storage Zones Controller 6.0", u: D + "storage-zones-controller/6-0/about" },
     { t: "AI-Assisted products (legal)", u: D + "legal/sharefile-ai/sf-ai" },
     { t: "AI Principles", u: W + "ai-principles" }
   ]},
@@ -349,15 +349,15 @@ const KNOWLEDGE = [
     { t: "E-signature security", u: D + "electronic-signature/security" }
   ]},
   { g: { es: "Soporte y estado", en: "Support and status", pt: "Suporte e status" }, links: [
-    { t: "Help Center", u: "https://support.sharefile.com/" },
+    { t: "Help Center", u: "https://support.sharefile.com/s/" },
     { t: "Support offerings and coverage", u: "https://support.sharefile.com/s/article/ShareFile-Support-Offerings-and-Coverage" },
     { t: "How to chat with Support", u: "https://www.youtube.com/watch?v=_Wj9R9hDpwU", v: 1 },
     { t: "How to contact your Success Engineer", u: "https://www.youtube.com/watch?v=iDRSdUWDYRY", v: 1 },
     { t: "ShareFile status", u: "https://status.sharefile.com/" },
-    { t: "Feature requests (Ideas portal)", u: "https://sharefile.ideas.aha.io/" }
+    { t: "Feature requests (Ideas portal, ShareFile sign-in)", u: "https://sharefile.ideas.aha.io/" }
   ]},
   { g: { es: "Aprender y partners", en: "Learn and partners", pt: "Aprender e parceiros" }, links: [
-    { t: "ShareFile Training", u: W + "training" },
+    { t: "ShareFile Training (Product Hubs)", u: "https://support.sharefile.com/s/sharefile-product-hubs" },
     { t: "Progress ShareFile: Tutorials (34 videos)", u: "https://www.youtube.com/playlist?list=PLSKW9Jc-tCY9W-cB3G2OTYx00GXZrrzZB", v: 1 },
     { t: "Progress ShareFile: Demos (38 videos)", u: "https://www.youtube.com/playlist?list=PLSKW9Jc-tCY8wmEjjJxq5I-0SIPjlI3oi", v: 1 },
     { t: "ShareFile YouTube", u: "https://www.youtube.com/@progresssharefile" },
@@ -380,6 +380,7 @@ const DISCREPANCIES = [
 
 
 const CHANGELOG = [
+  { v: "1.5.8", date: "2026-10-08", d: { es: "Auditoría completa: corrige el desborde horizontal del Recomendador en celulares y el enlace «Saltar al contenido» (ahora traducido y sin cambiar de página). Enlaces actualizados a su dirección final (AI Document Assistant, Client Hub, Storage Zones, Help Center, Training). El chequeo semanal de enlaces ahora sí alerta cuando algo falla y detecta páginas redirigidas al inicio.", en: "Full audit: fixes the Recommender's horizontal overflow on phones and the “Skip to content” link (now translated and no longer changes page). Links updated to their final address (AI Document Assistant, Client Hub, Storage Zones, Help Center, Training). The weekly link check now actually alerts on failures and detects pages redirected to a home page.", pt: "Auditoria completa: corrige o transbordamento horizontal do Recomendador em celulares e o link «Pular para o conteúdo» (agora traduzido e sem trocar de página). Links atualizados para o endereço final (AI Document Assistant, Client Hub, Storage Zones, Help Center, Training). A verificação semanal de links agora alerta de fato quando algo falha e detecta páginas redirecionadas para a página inicial." } },
   { v: "1.5.7", date: "2026-10-08", d: { es: "Comparador en columnas completas: cuando un plan contiene al otro, el menor muestra todas sus funciones y el mayor muestra «Todo lo de…» más lo que agrega.", en: "Comparator in full columns: when one plan contains the other, the smaller one lists all its features and the larger shows “Everything in…” plus what it adds.", pt: "Comparador em colunas completas: quando um plano contém o outro, o menor lista todos os seus recursos e o maior mostra «Tudo do…» mais o que adiciona." } },
   { v: "1.5.6", date: "2026-10-08", d: { es: "Comparador: resumen en una frase, bloque con la base común de funciones por categoría (desplegable), diferencias agrupadas por categoría con su nombre y el Basic Client Portal marcado como mejora a Enhanced Client Portal.", en: "Comparator: one-line summary, shared-base block with feature counts by category (expandable), differences grouped under named categories, and Basic Client Portal marked as upgrading to Enhanced Client Portal.", pt: "Comparador: resumo em uma frase, bloco com a base comum de recursos por categoria (expansível), diferenças agrupadas por categoria com nome e o Basic Client Portal indicado como evolução para o Enhanced Client Portal." } },
   { v: "1.5.5", date: "2026-10-08", d: { es: "El comparador abre por defecto con Advanced vs Premium.", en: "The comparator opens with Advanced vs Premium by default.", pt: "O comparador abre por padrão com Advanced vs Premium." } },

@@ -1,0 +1,36 @@
+name: Site QA
+
+# Runs the two test suites on every push and every Monday:
+#  - scripts/qa.js       logic checks in a simulated browser (jsdom)
+#  - scripts/ui-audit.js full audit in real Chromium: every page x language x theme x phone/desktop,
+#                        every toggle, panel, plan pair, calculator case and link
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "29 13 * * 1"   # Mondays 07:29 Costa Rica
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Validate data
+        run: node scripts/validate.js
+      - name: Built page is up to date
+        run: python3 build.py && git diff --exit-code index.html
+      - name: Install test tools
+        run: |
+          npm install --no-save --no-package-lock jsdom@24.1.3 playwright@1.48.2
+          npx playwright install --with-deps chromium
+      - name: Logic checks (jsdom)
+        run: node scripts/qa.js
+      - name: Full browser audit (Chromium)
+        run: CHROME="$(node -e "console.log(require('playwright').chromium.executablePath())")" node scripts/ui-audit.js
