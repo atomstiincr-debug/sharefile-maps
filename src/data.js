@@ -20,7 +20,7 @@ const OVERVIEW_VIDEO = { id: "yQkpfDLkCk0", t: "Progress ShareFile - Built For T
 const TUTORIALS = "https://www.youtube.com/playlist?list=PLSKW9Jc-tCY9W-cB3G2OTYx00GXZrrzZB";
 
 const SITE = {
-  version: "1.5.0",
+  version: "1.5.1",
   updated: "2026-10-08",
   author: "Adrián Bonilla",
   pricingSource: W + "plans",
@@ -379,6 +379,7 @@ const DISCREPANCIES = [
 
 
 const CHANGELOG = [
+  { v: "1.5.1", date: "2026-10-08", d: { es: "Calculadora y comparador muestran las licencias facturadas por plan y el mínimo de cada uno (VDR 5, resto 3); el campo de usuarios se ajusta al mínimo del plan. El recomendador muestra el camino de decisión: industria → plan base, necesidades → Enterprise.", en: "Calculator and comparator show billed licenses per plan and each plan's minimum (VDR 5, others 3); the users field adjusts to the plan minimum. The recommender shows its decision path: industry → base plan, needs → Enterprise.", pt: "Calculadora e comparador mostram as licenças faturadas por plano e o mínimo de cada um (VDR 5, demais 3); o campo de usuários se ajusta ao mínimo do plano. O recomendador mostra o caminho de decisão: setor → plano base, necessidades → Enterprise." } },
   { v: "1.5.0", date: "2026-10-08", d: { es: "Integraciones organizadas por función y no por proveedor, con buscador. Se elimina el bloque que daba a entender que solo Premium permite trabajar con externos.", en: "Integrations organized by function instead of vendor, with search. Removes the block that implied only Premium supports working with external people.", pt: "Integrações organizadas por função e não por fornecedor, com busca. Remove o bloco que dava a entender que só o Premium permite trabalhar com externos." } },
   { v: "1.4.0", date: "2026-10-08", d: { es: "Videos oficiales por función: ícono ▶ en el mapa, en el panel de detalle y en Integraciones. Videos: SIEM, Security Center y detección de amenazas.", en: "Official videos per feature: ▶ icon on the map, in the detail panel and in Integrations. Videos: SIEM, Security Center and threat detection.", pt: "Vídeos oficiais por recurso: ícone ▶ no mapa, no painel de detalhes e em Integrações. Vídeos: SIEM, Security Center e detecção de ameaças." } },
   { v: "1.3.2", date: "2026-10-08", d: { es: "Video oficial de presentación de ShareFile en el Inicio y lista oficial de demos en Conocimiento.", en: "Official ShareFile overview video on Home and official demos playlist in Knowledge.", pt: "Vídeo oficial de apresentação do ShareFile no Início e playlist oficial de demos em Conhecimento." } },

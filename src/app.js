@@ -327,14 +327,21 @@
     const warns = [];
     if (res.ind && res.ind.warn) warns.push(L(res.ind.warn));
     if (sigFeatures.includes("scim") || sigFeatures.includes("siem")) warns.push(L(F.scim.badges && BADGES.third) + ": SCIM / SIEM.");
+    const basePlan = P[res.ind ? minPlan(res.needs) : "A"];
+    const who = (res.ind ? L(res.ind.name) + (res.sub ? " · " + L(res.sub.name) : "") : R.other) + (size ? " · " + L(size.name) : "");
+    const entOnly = id => F[id].plans === "E";
     $("#recout").innerHTML = `
-      <p class="eyebrow">${esc(R.result)}</p>
+      <p class="eyebrow">${esc(fmt(R.resultFor, { who }))}</p>
       <div class="result-plan"><strong>${esc(p.name)}</strong><span class="num">${priceHTML(p)}</span><span class="muted">${esc(u.billing.perUserMonth)} · ${esc(billLabel())}</span>${billToggle()}</div>
-      <div><h3>${esc(R.why)}</h3><ul>${reasons.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>
-      ${res.ind ? `<div><h3>${esc(R.needs)}</h3>${fl(res.needs)}</div>` : ""}
-      ${sigFeatures.length ? `<div><h3>${esc(R.sigAdds)}</h3>${fl(sigFeatures)}</div>` : ""}
+      <ol class="path">
+        <li><span class="step">${esc(R.stepInd)}</span><b>${esc(basePlan.name)}</b><span class="why">${esc(reasons[0])}</span></li>
+        ${res.entSigs.length ? `<li><span class="step">${esc(R.stepSig)}</span><b>Enterprise</b><span class="why">${esc(R.entReason)}</span>
+          <ul class="sigs">${res.entSigs.map(sg => `<li>${esc(L(sg.t))} → ${sg.f.filter(entOnly).map(id => ext(F[id].url, esc(F[id].name))).join(", ")} <span class="muted">(${esc(R.entOnly)})</span></li>`).join("")}</ul></li>` : ""}
+      </ol>
+      ${res.ind && !res.entSigs.length ? `<p class="hint">${esc(R.samePlan)}</p>` : ""}
+      ${res.ind ? `<div><h3>${esc(fmt(R.needsFor, { ind: L(res.ind.name) }))}</h3>${fl(res.needs)}</div>` : ""}
       ${res.vdr ? `<div class="note"><b>${esc(R.vdrToo)}.</b> ${esc(R.vdrWhy)} <span class="num">${money(priceOf(P.V))}</span> · <a href="#vdr">${esc(u.nav.vdr)}</a></div>` : ""}
-      ${res.ind && INTEGRATIONS.some(x => (x.ind || []).includes(res.ind.id)) ? `<div><h3>${esc(u.int.forIndustry)}</h3><ul class="flist">${INTEGRATIONS.filter(x => (x.ind || []).includes(res.ind.id)).map(x => `<li><span>${ext(x.url, esc(x.name))}</span><span>${esc(L(x.d)).slice(0, 60)}…</span></li>`).join("")}</ul></div>` : ""}
+      ${res.ind && INTEGRATIONS.some(x => (x.ind || []).includes(res.ind.id)) ? `<div><h3>${esc(u.int.forIndustry)}</h3><ul class="flist">${INTEGRATIONS.filter(x => (x.ind || []).includes(res.ind.id)).map(x => `<li><span>${ext(x.url, esc(x.name))}</span><span>${esc(L(x.d).slice(0, 60))}…</span></li>`).join("")}</ul></div>` : ""}
       ${warns.length ? `<div><h3>${esc(R.warnings)}</h3><ul>${warns.map(w => `<li>${esc(w)}</li>`).join("")}</ul></div>` : ""}
       ${(res.ind && res.ind.video) || (size && size.video) ? `<div><h3>${esc(u.video.title)}</h3><ul class="flist">${[res.ind && res.ind.video, size && size.video].filter(Boolean).map(v => `<li><span>▶ ${ext("https://www.youtube.com/watch?v=" + v.id, esc(v.t))}</span><span>YouTube · ${esc(u.video.lang)}</span></li>`).join("")}</ul></div>` : ""}
       <p class="hint">${esc(R.sizeNote)}</p>
@@ -344,6 +351,7 @@
         <button class="btn primary" type="button" id="toCalc">${esc(R.openCalc)}</button>
         ${res.plan !== "A" ? `<button class="btn" type="button" id="toCmp">${esc(R.openCompare)}</button>` : ""}
       </div>`;
+    const box = $("#recout"); box.classList.remove("updated"); void box.offsetWidth; box.classList.add("updated");
     $("#toCalc").addEventListener("click", () => { state.calc.plan = res.plan; store.set("calc", state.calc); location.hash = "calc"; });
     const tc = $("#toCmp");
     if (tc) tc.addEventListener("click", () => { Object.assign(state.cmp, { a: prev, b: res.plan, hl: res.ind ? res.ind.id : "" }); store.set("cmp", state.cmp); location.hash = "compare"; });
@@ -392,10 +400,12 @@
     $("#cmpout").innerHTML = `
       <div class="kpis" style="margin-top:16px">
         <div class="kpi"><span>${esc(C.diff)} · ${esc(C.perUser)}</span><b class="delta ${dU > 0 ? "up" : "down"}">${sign(dU)}</b></div>
-        <div class="kpi"><span>${esc(C.diff)} · ${esc(C.perMonth)} (${int(c.users)} ${esc(u.home.users)})</span><b class="delta ${dM > 0 ? "up" : "down"}">${sign(dM)}</b></div>
+        <div class="kpi"><span>${esc(C.diff)} · ${esc(C.perMonth)}</span><b class="delta ${dM > 0 ? "up" : "down"}">${sign(dM)}</b></div>
         <div class="kpi"><span>${esc(C.diff)} · ${esc(C.perYear)}</span><b class="delta ${dM > 0 ? "up" : "down"}">${sign(dM * 12)}</b></div>
         <div class="kpi"><span>${esc(C.both)}</span><b class="num">${both.length}</b></div>
       </div>
+      <p class="hint" style="margin-top:10px">${esc(fmt(C.seats, { u: int(c.users), list: [A, B].map(p => p.name + " " + int(seats(p)) + (seats(p) > c.users ? "*" : "")).join(" · ") }))}</p>
+      ${[A, B].some(p => seats(p) > c.users) ? `<p class="note">${[A, B].filter(p => seats(p) > c.users).map(p => esc(fmt(C.seatsMin, { p: p.name, n: p.min }))).join("<br>")}</p>` : ""}
       ${rel ? `<p class="hint" style="margin-top:10px">● ${esc(C.relevant)}: ${esc(L(IND[c.hl].name))}</p>` : ""}
       <div class="cmp-cols">
         <div><h3>${esc(fmt(C.onlyA, { p: A.name }))} <span class="muted num">(${onlyA.length})</span></h3>${list(onlyA)}</div>
@@ -476,6 +486,7 @@
   }
 
   // ── Calculator
+  let calcAdj = null; // { p, from, n } when the users field was raised to a plan minimum
   function renderCalc() {
     const u = t(), K = u.calc, c = state.calc;
     $("#view").innerHTML = `
@@ -483,22 +494,29 @@
       <div class="grid2">
         <form class="box" id="calcf" onsubmit="return false">
           <fieldset><legend>${esc(K.plan)}</legend><div class="choices">
-            ${PLANS.map(p => `<label class="choice"><input type="radio" name="plan" value="${p.id}" ${c.plan === p.id ? "checked" : ""}><span>${esc(p.name)}</span></label>`).join("")}
+            ${PLANS.map(p => `<label class="choice"><input type="radio" name="plan" value="${p.id}" ${c.plan === p.id ? "checked" : ""}><span>${esc(p.name)} <small class="num" style="opacity:.75;color:inherit">${esc(u.home.min)} ${p.min}*</small></span></label>`).join("")}
           </div></fieldset>
-          <label class="hint">${esc(K.users)}<br><input id="kusers" type="number" min="1" max="100000" value="${c.users}"></label>
+          <label class="hint">${esc(K.users)}<br><input id="kusers" type="number" min="${P[c.plan].min}" max="100000" value="${c.users}"></label>
           <fieldset><legend>${esc(K.billing)}</legend>${billToggle()}</fieldset>
           <p class="hint">${esc(K.storageNote)}</p>
           <p class="hint">${esc(K.priceNote)}</p>
         </form>
         <section class="box" id="calcout" aria-live="polite"></section>
       </div>`;
-    const upd = () => {
+    // Raise the users field to the plan minimum (on plan change or when the field is committed).
+    const enforceMin = () => {
+      const p = P[c.plan], el = $("#kusers");
+      el.min = p.min;
+      if (c.users < p.min) { calcAdj = { p: p.name, from: c.users, n: p.min }; c.users = p.min; el.value = p.min; }
+    };
+    const read = () => {
       c.plan = ($('input[name="plan"]:checked') || {}).value || "P";
       c.users = Math.max(1, Math.min(100000, parseInt($("#kusers").value, 10) || 1));
-      store.set("calc", c); renderCalcOut();
     };
-    $("#calcf").addEventListener("change", upd);
-    $("#kusers").addEventListener("input", upd);
+    // While typing: recompute without rewriting the field. On commit (change) or plan change: enforce minimum.
+    $("#kusers").addEventListener("input", () => { read(); calcAdj = null; store.set("calc", c); renderCalcOut(); });
+    $("#calcf").addEventListener("change", () => { read(); calcAdj = null; enforceMin(); store.set("calc", c); renderCalcOut(); });
+    calcAdj = null; enforceMin(); store.set("calc", c);
     renderCalcOut();
   }
 
@@ -506,22 +524,27 @@
 
   function renderCalcOut() {
     const u = t(), K = u.calc, c = state.calc, p = P[c.plan];
-    const seats = Math.max(c.users, p.min);
+    const seatsOf = q => Math.max(c.users, q.min);
+    const seats = seatsOf(p);
     const per = priceOf(p);
+    const star = q => seatsOf(q) > c.users ? "*" : "";
     $("#calcout").innerHTML = `
       <p class="eyebrow">${esc(p.name)} · ${esc(billLabel())}</p>
+      ${calcAdj ? `<p class="note">${esc(fmt(K.adjusted, calcAdj))}</p>` : ""}
       <div class="kpis">
+        <div class="kpi"><span>${esc(K.licenses)}</span><b class="num">${int(seats)}${star(p)}</b></div>
         <div class="kpi"><span>${esc(K.perUser)}</span><b>${money(per)}</b></div>
         <div class="kpi"><span>${esc(K.monthTotal)}</span><b>${money(per * seats)}</b></div>
         <div class="kpi"><span>${esc(K.yearTotal)}</span><b>${money(per * seats * 12, 0)}</b></div>
         <div class="kpi"><span>${esc(K.storage)}</span><b>${storageFor(p, seats)}</b></div>
       </div>
       ${seats > c.users ? `<p class="note">${esc(fmt(K.minApplied, { n: p.min }))}</p>` : ""}
-      <h3>${esc(K.allPlans)}</h3>
-      <div class="tbl-wrap"><table><thead><tr><th></th><th class="c">${esc(K.perUser)}</th><th class="c">${esc(K.monthTotal)}</th><th class="c">${esc(K.yearTotal)}</th><th class="c">${esc(K.storage)}</th></tr></thead><tbody>
-        ${PLANS.map(q => { const s = Math.max(c.users, q.min), pr = priceOf(q);
-          return `<tr ${q.id === p.id ? 'style="background:var(--accent-soft)"' : ""}><td><b>${esc(q.name)}</b></td><td class="c num">${money(pr)}</td><td class="c num">${money(pr * s)}</td><td class="c num">${money(pr * s * 12, 0)}</td><td class="c num">${storageFor(q, s)}</td></tr>`; }).join("")}
-      </tbody></table></div>`;
+      <h3>${esc(K.allPlans)} <span class="muted num">(${int(c.users)} ${esc(u.home.users)})</span></h3>
+      <div class="tbl-wrap"><table id="calctbl"><thead><tr><th></th><th class="c">${esc(K.licCol)}</th><th class="c">${esc(K.perUser)}</th><th class="c">${esc(K.monthTotal)}</th><th class="c">${esc(K.yearTotal)}</th><th class="c">${esc(K.storage)}</th></tr></thead><tbody>
+        ${PLANS.map(q => { const s = seatsOf(q), pr = priceOf(q);
+          return `<tr data-plan="${q.id}" ${q.id === p.id ? 'style="background:var(--accent-soft)"' : ""}><td><b>${esc(q.name)}</b></td><td class="c num">${int(s)}${star(q)}</td><td class="c num">${money(pr)}</td><td class="c num">${money(pr * s)}</td><td class="c num">${money(pr * s * 12, 0)}</td><td class="c num">${storageFor(q, s)}</td></tr>`; }).join("")}
+      </tbody></table></div>
+      <p class="hint">${esc(fmt(K.minFoot, { list: PLANS.map(q => q.name + " " + q.min).join(" · ") }))}</p>`;
   }
 
   // ── Integrations

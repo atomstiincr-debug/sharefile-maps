@@ -26,6 +26,7 @@ const UI = {
     },
     detail: { docs: "Ver documentación oficial", plans: "Incluido en", source: "Fuente de inclusión", also: "También", close: "Cerrar", note: "Nota" },
     rec: {
+      resultFor: "Plan recomendado · {who}", stepInd: "Según la industria", stepSig: "Según tus señales", entOnly: "solo en Enterprise", needsFor: "Funciones que destaca la página oficial de {ind}", samePlan: "Según sharefile.com, las 9 industrias se cubren desde Premium. Lo que cambia entre industrias son las funciones clave de abajo. Lo que lleva a Enterprise son las señales de seguridad del paso 3.",
       title: "Recomendador", lead: "Responde tres preguntas. El resultado sale de lo que publica sharefile.com para cada industria y del FAQ oficial del plan Enterprise.",
       q1: "1. Industria", q1b: "Segmento", q2: "2. Tamaño de la empresa", q3: "3. Señales de Enterprise", q3hint: "Marca las que apliquen.",
       other: "Otra / general", otherHint: "Solo compartir y guardar archivos de forma segura",
@@ -41,7 +42,8 @@ const UI = {
       title: "Comparador", lead: "Elige dos planes y mira qué cambia. Los precios son MSRP en USD.",
       planA: "Plan A", planB: "Plan B", users: "Usuarios", billing: "Facturación", annual: "Anual", monthly: "Mensual",
       onlyA: "Solo en {p}", onlyB: "Solo en {p}", both: "En ambos", diff: "Diferencia", perUser: "por usuario / mes",
-      perMonth: "por mes", perYear: "por año", same: "Elige dos planes distintos.", highlight: "Resaltar por industria", relevant: "relevante para la industria"
+      perMonth: "por mes", perYear: "por año", same: "Elige dos planes distintos.", highlight: "Resaltar por industria", relevant: "relevante para la industria",
+      seats: "Licencias facturadas con {u} usuarios: {list}", seatsMin: "* {p}: se factura el mínimo de {n} licencias del plan."
     },
     mx: {
       title: "Matriz de funciones", lead: "Todas las funciones de la tabla oficial, en una sola vista. El enlace de la página guarda tus filtros.",
@@ -52,7 +54,9 @@ const UI = {
       title: "Calculadora", lead: "Costo de lista y almacenamiento incluido según usuarios y plan.",
       plan: "Plan", users: "Usuarios con licencia", billing: "Facturación", annual: "Anual", monthly: "Mensual",
       perUser: "Precio por usuario / mes", monthTotal: "Total mensual", yearTotal: "Total anual", storage: "Almacenamiento incluido",
-      minApplied: "Se aplica el mínimo de {n} licencias del plan.", allPlans: "Mismo número de usuarios en cada plan",
+      minApplied: "Se aplica el mínimo de {n} licencias del plan.", allPlans: "Todos los planes con tus usuarios",
+      licenses: "Licencias facturadas", licCol: "Licencias", adjusted: "{p} requiere mínimo {n} licencias: se ajustó de {from} a {n}.",
+      minFoot: "* Mínimo de licencias requeridas por plan: {list}. Si tienes menos usuarios, se factura el mínimo.",
       storageNote: "Advanced, Premium y Enterprise: 1 TB por licencia agregado, mínimo 3 TB. VDR: 1 GB por licencia. Se pueden sumar paquetes de 3 TB.",
       priceNote: "Precios MSRP de sharefile.com/plans. El precio final puede variar por canal, volumen o plazo."
     },
@@ -95,6 +99,7 @@ const UI = {
     },
     detail: { docs: "Open official documentation", plans: "Included in", source: "Inclusion source", also: "Also", close: "Close", note: "Note" },
     rec: {
+      resultFor: "Recommended plan · {who}", stepInd: "By industry", stepSig: "By your signals", entOnly: "Enterprise only", needsFor: "Features the official {ind} page highlights", samePlan: "Per sharefile.com, all 9 industries are covered from Premium. What changes between industries are the key features below. What leads to Enterprise are the security signals in step 3.",
       title: "Recommender", lead: "Answer three questions. The result comes from what sharefile.com publishes for each industry and from the official Enterprise plan FAQ.",
       q1: "1. Industry", q1b: "Segment", q2: "2. Company size", q3: "3. Enterprise signals", q3hint: "Check all that apply.",
       other: "Other / general", otherHint: "Only secure file sharing and storage",
@@ -110,7 +115,8 @@ const UI = {
       title: "Comparator", lead: "Pick two plans and see what changes. Prices are MSRP in USD.",
       planA: "Plan A", planB: "Plan B", users: "Users", billing: "Billing", annual: "Annual", monthly: "Monthly",
       onlyA: "Only in {p}", onlyB: "Only in {p}", both: "In both", diff: "Difference", perUser: "per user / month",
-      perMonth: "per month", perYear: "per year", same: "Pick two different plans.", highlight: "Highlight by industry", relevant: "relevant to the industry"
+      perMonth: "per month", perYear: "per year", same: "Pick two different plans.", highlight: "Highlight by industry", relevant: "relevant to the industry",
+      seats: "Billed licenses for {u} users: {list}", seatsMin: "* {p}: the plan's {n}-license minimum is billed."
     },
     mx: {
       title: "Feature matrix", lead: "Every feature in the official table, in one view. The page link keeps your filters.",
@@ -121,7 +127,9 @@ const UI = {
       title: "Calculator", lead: "List cost and included storage by users and plan.",
       plan: "Plan", users: "Licensed users", billing: "Billing", annual: "Annual", monthly: "Monthly",
       perUser: "Price per user / month", monthTotal: "Monthly total", yearTotal: "Annual total", storage: "Included storage",
-      minApplied: "The plan's {n}-license minimum applies.", allPlans: "Same number of users on every plan",
+      minApplied: "The plan's {n}-license minimum applies.", allPlans: "Every plan with your users",
+      licenses: "Billed licenses", licCol: "Licenses", adjusted: "{p} requires at least {n} licenses: adjusted from {from} to {n}.",
+      minFoot: "* Minimum licenses required per plan: {list}. With fewer users, the minimum is billed.",
       storageNote: "Advanced, Premium and Enterprise: 1 TB per license pooled, 3 TB minimum. VDR: 1 GB per license. 3 TB packs can be added.",
       priceNote: "MSRP from sharefile.com/plans. Final price may vary by channel, volume or term."
     },
@@ -164,6 +172,7 @@ const UI = {
     },
     detail: { docs: "Abrir documentação oficial", plans: "Incluído em", source: "Fonte da inclusão", also: "Também", close: "Fechar", note: "Nota" },
     rec: {
+      resultFor: "Plano recomendado · {who}", stepInd: "Pelo setor", stepSig: "Pelos seus sinais", entOnly: "só no Enterprise", needsFor: "Recursos que a página oficial de {ind} destaca", samePlan: "Segundo o sharefile.com, os 9 setores são atendidos a partir do Premium. O que muda entre setores são os recursos-chave abaixo. O que leva ao Enterprise são os sinais de segurança da etapa 3.",
       title: "Recomendador", lead: "Responda três perguntas. O resultado vem do que o sharefile.com publica para cada setor e do FAQ oficial do plano Enterprise.",
       q1: "1. Setor", q1b: "Segmento", q2: "2. Porte da empresa", q3: "3. Sinais de Enterprise", q3hint: "Marque os que se aplicam.",
       other: "Outro / geral", otherHint: "Só compartilhar e guardar arquivos com segurança",
@@ -179,7 +188,8 @@ const UI = {
       title: "Comparador", lead: "Escolha dois planos e veja o que muda. Os preços são MSRP em USD.",
       planA: "Plano A", planB: "Plano B", users: "Usuários", billing: "Cobrança", annual: "Anual", monthly: "Mensal",
       onlyA: "Só no {p}", onlyB: "Só no {p}", both: "Em ambos", diff: "Diferença", perUser: "por usuário / mês",
-      perMonth: "por mês", perYear: "por ano", same: "Escolha dois planos diferentes.", highlight: "Destacar por setor", relevant: "relevante para o setor"
+      perMonth: "por mês", perYear: "por ano", same: "Escolha dois planos diferentes.", highlight: "Destacar por setor", relevant: "relevante para o setor",
+      seats: "Licenças faturadas com {u} usuários: {list}", seatsMin: "* {p}: fatura-se o mínimo de {n} licenças do plano."
     },
     mx: {
       title: "Matriz de recursos", lead: "Todos os recursos da tabela oficial, em uma só visão. O link da página guarda seus filtros.",
@@ -190,7 +200,9 @@ const UI = {
       title: "Calculadora", lead: "Custo de lista e armazenamento incluído por usuários e plano.",
       plan: "Plano", users: "Usuários licenciados", billing: "Cobrança", annual: "Anual", monthly: "Mensal",
       perUser: "Preço por usuário / mês", monthTotal: "Total mensal", yearTotal: "Total anual", storage: "Armazenamento incluído",
-      minApplied: "Aplica-se o mínimo de {n} licenças do plano.", allPlans: "Mesmo número de usuários em cada plano",
+      minApplied: "Aplica-se o mínimo de {n} licenças do plano.", allPlans: "Todos os planos com seus usuários",
+      licenses: "Licenças faturadas", licCol: "Licenças", adjusted: "{p} exige no mínimo {n} licenças: ajustado de {from} para {n}.",
+      minFoot: "* Mínimo de licenças exigidas por plano: {list}. Com menos usuários, fatura-se o mínimo.",
       storageNote: "Advanced, Premium e Enterprise: 1 TB por licença agregado, mínimo de 3 TB. VDR: 1 GB por licença. É possível adicionar pacotes de 3 TB.",
       priceNote: "Preços MSRP de sharefile.com/plans. O preço final pode variar por canal, volume ou prazo."
     },
