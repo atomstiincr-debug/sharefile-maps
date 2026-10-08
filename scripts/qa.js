@@ -141,6 +141,9 @@ for (const lang of ["es", "en", "pt"]) {
   ok(u.value === "3", `calc fresh default = Premium minimum 3 (got ${u.value})`);
   pick("V"); ok(u.value === "5", `calc untouched field follows VDR minimum 5 (got ${u.value})`);
   pick("A"); ok(u.value === "3", `calc untouched field back to 3 on Advanced (got ${u.value})`);
+  env.d.querySelector('[data-preset="3"]').click(); pick("V");
+  ok(u.value === "5" && /se ajustó de 3 a 5/.test(text(env.d.querySelector("#calcout"))), "calc preset 3 on VDR raises to 5 with notice");
+  pick("A");
   env.d.querySelector('[data-preset="25"]').click();
   ok(u.value === "25" && text(env.d.querySelector("#calcout .kpi b")) === "25", "calc preset 25 sets 25 licenses");
   pick("V"); ok(u.value === "25", "calc typed/preset value kept on plan change");

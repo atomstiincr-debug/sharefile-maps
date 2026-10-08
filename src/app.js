@@ -358,7 +358,7 @@
   }
 
   // ── Users field helpers (calculator and comparator)
-  const PRESETS = [5, 10, 25, 50, 100, 250];
+  const PRESETS = [3, 5, 10, 25, 50, 100, 250];
   const presetsHTML = () => `<span class="presets">${PRESETS.map(n => `<button type="button" class="chipbtn" data-preset="${n}">${n}</button>`).join("")}</span>`;
   const readUsers = el => { const v = parseInt(el.value, 10); return el.value.trim() === "" || !(v > 0) ? null : Math.min(100000, v); };
 
@@ -508,6 +508,7 @@
           <label class="hint">${esc(K.users)}<br><input id="kusers" type="number" min="${P[c.plan].min}" max="100000" value="${c.users}"></label>
           <p class="hint" style="margin:6px 0 0">${esc(K.usersHint)} ${presetsHTML()}</p>
           <fieldset><legend>${esc(K.billing)}</legend>${billToggle()}</fieldset>
+          <p class="hint">${esc(K.maxNote)} ${ext("https://docs.sharefile.com/en-us/sharefile/people_settings/employee_users/add-user-licenses", "docs.sharefile.com")}</p>
           <p class="hint">${esc(K.storageNote)}</p>
           <p class="hint">${esc(K.priceNote)}</p>
         </form>

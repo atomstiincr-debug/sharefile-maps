@@ -20,7 +20,7 @@ const OVERVIEW_VIDEO = { id: "yQkpfDLkCk0", t: "Progress ShareFile - Built For T
 const TUTORIALS = "https://www.youtube.com/playlist?list=PLSKW9Jc-tCY9W-cB3G2OTYx00GXZrrzZB";
 
 const SITE = {
-  version: "1.5.3",
+  version: "1.5.4",
   updated: "2026-10-08",
   author: "Adrián Bonilla",
   pricingSource: W + "plans",
@@ -380,6 +380,7 @@ const DISCREPANCIES = [
 
 
 const CHANGELOG = [
+  { v: "1.5.4", date: "2026-10-08", d: { es: "Calculadora: botón rápido de 3 licencias y nota oficial: no hay máximo publicado de licencias por plan y los usuarios cliente son ilimitados.", en: "Calculator: 3-license quick pick and official note: no published maximum licenses per plan, and client users are unlimited.", pt: "Calculadora: botão rápido de 3 licenças e nota oficial: não há máximo publicado de licenças por plano e os usuários clientes são ilimitados." } },
   { v: "1.5.3", date: "2026-10-08", d: { es: "Calculadora y comparador: el campo de usuarios empieza en el mínimo oficial del plan y lo sigue al cambiar de plan hasta que escribes tu cantidad; botones rápidos (5 a 250); nunca muestra 0.", en: "Calculator and comparator: the users field starts at the plan's official minimum and follows it when you switch plans until you type your number; quick picks (5 to 250); never shows 0.", pt: "Calculadora e comparador: o campo de usuários começa no mínimo oficial do plano e o acompanha ao trocar de plano até você digitar sua quantidade; botões rápidos (5 a 250); nunca mostra 0." } },
   { v: "1.5.2", date: "2026-10-08", d: { es: "Integraciones: el filtro por industria ahora reorganiza toda la página: arriba las específicas de la industria y las que destaca su página oficial en sharefile.com; abajo el resto por función; se ocultan las específicas de otras industrias.", en: "Integrations: the industry filter now reorganizes the whole page: the industry's specific integrations and those featured on its official sharefile.com page on top; the rest by function below; other industries' specific integrations are hidden.", pt: "Integrações: o filtro por setor agora reorganiza a página inteira: no topo as específicas do setor e as destacadas na sua página oficial em sharefile.com; abaixo as demais por função; as específicas de outros setores ficam ocultas." } },
   { v: "1.5.1", date: "2026-10-08", d: { es: "Calculadora y comparador muestran las licencias facturadas por plan y el mínimo de cada uno (VDR 5, resto 3); el campo de usuarios se ajusta al mínimo del plan. El recomendador muestra el camino de decisión: industria → plan base, necesidades → Enterprise.", en: "Calculator and comparator show billed licenses per plan and each plan's minimum (VDR 5, others 3); the users field adjusts to the plan minimum. The recommender shows its decision path: industry → base plan, needs → Enterprise.", pt: "Calculadora e comparador mostram as licenças faturadas por plano e o mínimo de cada um (VDR 5, demais 3); o campo de usuários se ajusta ao mínimo do plano. O recomendador mostra o caminho de decisão: setor → plano base, necessidades → Enterprise." } },
