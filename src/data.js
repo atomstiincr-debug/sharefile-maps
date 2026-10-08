@@ -8,7 +8,7 @@ const W = "https://www.sharefile.com/";
 /* Official videos, verified with YouTube oEmbed (title + channel "Progress ShareFile").
    f: feature ids, i: integration ids. dur: "m:ss" when known. */
 const VIDEOS = [
-  { id: "MR-Me_hNW30", t: "Stream ShareFile Security Events to Your SIEM in Real Time", f: ["siem"], i: ["sentinel", "splunk"] },
+  { id: "MR-Me_hNW30", t: "Stream ShareFile Security Events to Your SIEM in Real Time", f: ["siem"], i: ["sentinel", "splunk"], pl: "demos" },
   { id: "8jr9qGIyBNo", t: "ShareFile Security Center and Threat Detection – From Diagnosis to Response", f: ["security_center", "ueba", "threat_alerts"] },
   { id: "2PV6NdKlig0", t: "Secure Access: Multi-Factor Authentication", f: ["mfa"] },
   { id: "KAg5wUxhFeo", t: "ShareFile Client Workflows: Tasks, Projects & Client Portal", f: ["task_mgmt", "tasks_workspace", "projects", "enhanced_portal"] },
