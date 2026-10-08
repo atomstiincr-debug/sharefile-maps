@@ -1,0 +1,1425 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ShareFile Maps</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="Unofficial map of ShareFile plans: features, industries, comparator, matrix and price calculator, linked to official documentation.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: licensing blueprint — a dense index on top, maps as banded grids (feature group × plan tier), tools as quiet panels. */
+:root {
+  --bg: #F2F4F7;
+  --surface: #FFFFFF;
+  --sunk: #E8ECF1;
+  --ink: #142030;
+  --muted: #586678;
+  --line: #D3DAE3;
+  --accent: #0A5BB0;
+  --accent-soft: #E3EEFA;
+  --good: #1E7A4C;
+  --warn: #9A5B00;
+  --warn-soft: #FFF3DD;
+  --tile-ink: #FFFFFF;
+  --g-core: #3B5876;
+  --g-sec: #9A2C3B;
+  --g-ai: #5D3F98;
+  --g-flow: #1E6A5B;
+  --g-sign: #A84D18;
+  --g-client: #1C5EA2;
+  --g-integ: #685822;
+  --vdr: #B8860B;
+  --shadow: 0 1px 2px rgba(20, 32, 48, .06), 0 4px 16px rgba(20, 32, 48, .06);
+  --f-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body: "IBM Plex Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --r: 6px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0D131A; --surface: #151E28; --sunk: #1B2632; --ink: #E4EBF3; --muted: #94A4B6; --line: #283646;
+    --accent: #72B4FF; --accent-soft: #16304D; --good: #5BC98E; --warn: #F0B45A; --warn-soft: #3A2A10;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.25); color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0D131A; --surface: #151E28; --sunk: #1B2632; --ink: #E4EBF3; --muted: #94A4B6; --line: #283646;
+  --accent: #72B4FF; --accent-soft: #16304D; --good: #5BC98E; --warn: #F0B45A; --warn-soft: #3A2A10;
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.25); color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.55 var(--f-body); }
+a { color: var(--accent); text-underline-offset: 2px; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+h1, h2, h3 { font-family: var(--f-display); line-height: 1.15; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(1.7rem, 3.2vw, 2.4rem); font-weight: 700; letter-spacing: -.01em; }
+h2 { font-size: 1.3rem; font-weight: 650; }
+h3 { font-size: 1.02rem; font-weight: 650; }
+p { margin: 0; }
+.num { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+.muted { color: var(--muted); }
+.lead { color: var(--muted); max-width: 68ch; }
+.eyebrow { font: 600 .72rem/1 var(--f-body); letter-spacing: .09em; text-transform: uppercase; color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+
+/* ── Shell */
+.wrap { max-width: 1240px; margin: 0 auto; padding-inline: 16px; }
+header.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--surface); border-bottom: 1px solid var(--line); }
+.top-row { display: flex; align-items: center; gap: 14px; padding-block: 10px; flex-wrap: wrap; }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); }
+.brand svg { flex: none; }
+.brand b { font: 700 1.12rem/1 var(--f-display); letter-spacing: -.01em; }
+.brand small { display: block; font-size: .72rem; color: var(--muted); margin-top: 2px; }
+.chip { display: inline-flex; align-items: center; gap: 4px; font-size: .7rem; font-weight: 600; padding: 3px 7px; border-radius: 99px; border: 1px solid var(--line); color: var(--muted); white-space: nowrap; }
+.top-tools { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+select, input[type="number"], input[type="search"], input[type="text"] {
+  font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 6px 9px; min-height: 36px; max-width: 100%;
+}
+button { font: inherit; cursor: pointer; }
+.btn { border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: var(--r); padding: 6px 12px; min-height: 36px; font-weight: 550; }
+.btn:hover { border-color: var(--accent); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+nav.main { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: thin; padding-bottom: 6px; }
+nav.main a { white-space: nowrap; text-decoration: none; color: var(--muted); font-weight: 550; font-size: .88rem; padding: 6px 10px; border-radius: var(--r); }
+nav.main a:hover { color: var(--ink); background: var(--sunk); }
+nav.main a[aria-current="page"] { color: var(--accent); background: var(--accent-soft); }
+main { padding-block: 28px 56px; min-height: 60vh; }
+.page-head { display: grid; gap: 8px; margin-bottom: 22px; }
+.page-head .meta { font-size: .82rem; color: var(--muted); }
+
+/* ── Home index (m365maps-style) */
+.index { border-top: 1px solid var(--line); margin-top: 20px; }
+.index-row { display: grid; grid-template-columns: minmax(150px, 220px) 1fr; gap: 8px 16px; padding-block: 10px; border-bottom: 1px solid var(--line); align-items: baseline; }
+.index-row > b { font-weight: 650; }
+.index-links { display: flex; flex-wrap: wrap; gap: 6px 22px; min-width: 0; }
+.index-links a { text-decoration: none; font-weight: 500; }
+.index-links a:hover { text-decoration: underline; }
+@media (max-width: 640px) { .index-row { grid-template-columns: 1fr; } }
+.price-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 28px; }
+.price { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 14px 16px; display: grid; gap: 6px; }
+.price .amt { font: 600 1.6rem/1 var(--f-mono); }
+.price .amt small { font: 500 .78rem var(--f-body); color: var(--muted); }
+.price .tier-bar { height: 4px; border-radius: 2px; background: var(--line); overflow: hidden; }
+.price .tier-bar i { display: block; height: 100%; background: var(--accent); }
+
+/* ── Map */
+.toolbar { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; margin-bottom: 14px; }
+.toolbar label { display: flex; align-items: center; gap: 8px; font-size: .86rem; color: var(--muted); }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; flex-wrap: wrap; }
+.seg a, .seg button { text-decoration: none; border: 0; background: var(--surface); color: var(--muted); padding: 6px 11px; font-size: .84rem; font-weight: 550; border-right: 1px solid var(--line); }
+.seg > :last-child { border-right: 0; }
+.seg [aria-current="true"], .seg [aria-pressed="true"] { background: var(--accent); color: var(--surface); }
+.map-frame { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow); overflow-x: auto; }
+.map-title { text-align: center; padding: 18px 12px 6px; }
+.map-title h2 { color: var(--accent); font-size: 1.5rem; }
+.map-title p { color: var(--muted); font-size: .82rem; }
+.map { display: grid; gap: 10px; padding: 14px; min-width: 0; }
+.map-head, .band { display: grid; grid-template-columns: 140px repeat(var(--cols), minmax(0, 1fr)); gap: 10px; }
+.map-head .th { border-radius: var(--r); padding: 8px 10px; text-align: center; font: 650 .86rem/1.2 var(--f-display); color: var(--surface); background: var(--ink); }
+.map-head .th small { display: block; font: 500 .7rem var(--f-body); opacity: .8; margin-top: 2px; }
+.map-head .th.t-P { background: #2B4C6E; } .map-head .th.t-E { background: #4A2E6E; }
+.band-label { display: flex; align-items: center; font: 650 .8rem/1.2 var(--f-display); color: var(--surface); border-radius: var(--r); padding: 8px 10px; }
+.cell { border: 1.5px dashed var(--line); border-radius: var(--r); padding: 8px; display: flex; flex-wrap: wrap; gap: 6px; align-content: flex-start; min-height: 56px; min-width: 0; background: var(--sunk); }
+.cell .cell-tier { display: none; }
+.cell:empty::after { content: "—"; color: var(--muted); font-size: .8rem; margin: auto; }
+.tile { position: relative; width: 112px; min-height: 58px; border-radius: 5px; color: var(--tile-ink); display: flex; transition: transform .12s, opacity .15s, filter .15s; }
+.tile a { flex: 1; display: flex; align-items: center; justify-content: center; text-align: center; padding: 8px 14px 8px 6px; color: var(--tile-ink); text-decoration: none; font: 600 .7rem/1.18 var(--f-body); border-radius: 5px; }
+.tile a:hover { text-decoration: underline; }
+.tile:hover { transform: translateY(-1px); }
+.tile .i { position: absolute; top: 3px; right: 3px; width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgba(255,255,255,.55); background: transparent; color: var(--tile-ink); font: 700 .62rem/1 var(--f-mono); padding: 0; display: grid; place-items: center; }
+.tile .i:hover { background: rgba(255,255,255,.2); }
+.tile .flags { position: absolute; left: 4px; bottom: 3px; display: flex; gap: 3px; }
+.tile .flags span { font: 700 .52rem/1 var(--f-body); letter-spacing: .03em; padding: 2px 3px; border-radius: 3px; background: rgba(255,255,255,.92); color: #142030; }
+.tile.vdr-only { box-shadow: 0 0 0 2px var(--vdr); }
+.tile.dim { opacity: .22; filter: grayscale(.7); }
+.tile.hit { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent); }
+.g-core { background: var(--g-core); } .g-sec { background: var(--g-sec); } .g-ai { background: var(--g-ai); }
+.g-flow { background: var(--g-flow); } .g-sign { background: var(--g-sign); } .g-client { background: var(--g-client); } .g-integ { background: var(--g-integ); }
+.map-foot { display: flex; flex-wrap: wrap; gap: 8px 18px; padding: 10px 14px 14px; font-size: .78rem; color: var(--muted); border-top: 1px solid var(--line); }
+.map-foot .k { display: inline-flex; align-items: center; gap: 6px; }
+.map-foot .k i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+@media (max-width: 760px) {
+  .map-head { display: none; }
+  .band { grid-template-columns: 1fr; }
+  .cell .cell-tier { display: block; width: 100%; font: 600 .7rem/1 var(--f-body); color: var(--muted); letter-spacing: .05em; text-transform: uppercase; margin-bottom: 2px; }
+  .tile { width: calc(50% - 3px); }
+}
+.vdr-out { margin-top: 18px; }
+.vdr-out .cell { background: var(--surface); }
+
+/* ── Detail panel */
+.scrim { position: fixed; inset: 0; background: rgba(10, 16, 24, .45); z-index: 40; display: flex; justify-content: flex-end; }
+.panel { width: min(440px, 100%); height: 100%; background: var(--surface); padding: 22px 20px calc(22px + env(safe-area-inset-bottom, 0px)); overflow-y: auto; display: grid; align-content: start; gap: 14px; border-left: 1px solid var(--line); }
+.panel .swatch { height: 6px; border-radius: 3px; }
+.panel dl { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; margin: 0; font-size: .88rem; }
+.panel dt { color: var(--muted); }
+.panel dd { margin: 0; min-width: 0; }
+.pills { display: flex; flex-wrap: wrap; gap: 6px; }
+.pill { font-size: .74rem; font-weight: 600; padding: 3px 8px; border-radius: 99px; background: var(--sunk); color: var(--ink); border: 1px solid var(--line); }
+.pill.warn { background: var(--warn-soft); color: var(--warn); border-color: transparent; }
+.pill.ok { background: var(--accent-soft); color: var(--accent); border-color: transparent; }
+.note { background: var(--warn-soft); color: var(--ink); border-radius: var(--r); padding: 10px 12px; font-size: .86rem; }
+
+/* ── Panels / forms */
+.grid2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 20px; align-items: start; }
+@media (max-width: 900px) { .grid2 { grid-template-columns: 1fr; } }
+.box { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 18px; display: grid; gap: 14px; min-width: 0; }
+fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: 8px; min-width: 0; }
+legend { font: 650 .95rem var(--f-display); margin-bottom: 6px; padding: 0; }
+.choices { display: flex; flex-wrap: wrap; gap: 6px; }
+.choice { position: relative; }
+.choice input { position: absolute; opacity: 0; pointer-events: none; }
+.choice span { display: block; padding: 7px 11px; border: 1px solid var(--line); border-radius: var(--r); font-size: .86rem; font-weight: 550; cursor: pointer; background: var(--surface); }
+.choice input:checked + span { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+.choice input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+.check { display: flex; gap: 10px; align-items: flex-start; font-size: .9rem; padding: 6px 0; cursor: pointer; }
+.check input { margin-top: 4px; width: 16px; height: 16px; accent-color: var(--accent); flex: none; }
+.hint { font-size: .78rem; color: var(--muted); }
+.result-plan { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.result-plan strong { font: 700 2rem/1 var(--f-display); color: var(--accent); }
+.flist { display: grid; gap: 4px; margin: 0; padding: 0; list-style: none; font-size: .88rem; }
+.flist li { display: flex; gap: 8px; align-items: baseline; justify-content: space-between; border-bottom: 1px dotted var(--line); padding-block: 4px; }
+.flist li span:last-child { color: var(--muted); font-size: .8rem; white-space: nowrap; }
+.dot { width: 9px; height: 9px; border-radius: 2px; display: inline-block; flex: none; transform: translateY(1px); margin-right: 6px; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* ── Compare */
+.cmp-head { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+.cmp-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 16px; }
+@media (max-width: 720px) { .cmp-cols { grid-template-columns: 1fr; } }
+.delta { font: 600 1.5rem/1 var(--f-mono); }
+.delta.up { color: var(--warn); } .delta.down { color: var(--good); }
+.flist li.rel { font-weight: 650; }
+.flist li.rel::after { content: "●"; color: var(--accent); font-size: .6rem; margin-left: 4px; }
+
+/* ── Matrix */
+.tbl-wrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+table { border-collapse: collapse; width: 100%; font-size: .86rem; }
+th, td { padding: 7px 10px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+thead th { position: sticky; top: 0; background: var(--surface); font: 650 .8rem var(--f-display); z-index: 1; }
+td.c, th.c { text-align: center; width: 92px; }
+tr.grp td { background: var(--sunk); font: 650 .78rem var(--f-display); letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+.yes { color: var(--good); font-weight: 700; }
+.no { color: var(--line); }
+td .feat a { font-weight: 550; text-decoration: none; }
+td .feat a:hover { text-decoration: underline; }
+td .sub { display: block; color: var(--muted); font-size: .78rem; }
+.mx-count { font-size: .8rem; color: var(--muted); }
+
+/* ── Calculator */
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+.kpi { background: var(--sunk); border-radius: var(--r); padding: 12px 14px; display: grid; gap: 4px; }
+.kpi b { font: 600 1.35rem/1.1 var(--f-mono); }
+.kpi span { font-size: .78rem; color: var(--muted); }
+
+/* ── Knowledge / glossary / logs */
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.links { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: .9rem; }
+.gl { display: grid; gap: 0; }
+.gl div { display: grid; grid-template-columns: minmax(140px, 220px) 1fr; gap: 6px 18px; padding-block: 10px; border-bottom: 1px solid var(--line); }
+.gl dt { font-weight: 650; font-family: var(--f-display); }
+.gl dd { margin: 0; color: var(--ink); min-width: 0; }
+@media (max-width: 600px) { .gl div { grid-template-columns: 1fr; } }
+
+footer { border-top: 1px solid var(--line); background: var(--surface); }
+footer .wrap { padding-block: 22px calc(22px + env(safe-area-inset-bottom, 0px)); display: grid; gap: 8px; font-size: .8rem; color: var(--muted); max-width: 1240px; }
+.cookie { position: fixed; left: 16px; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); z-index: 50; max-width: 640px; margin: 0 auto; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow); border-radius: 8px; padding: 14px 16px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; font-size: .88rem; }
+.cookie p { flex: 1 1 260px; }
+.toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 8px 14px; border-radius: var(--r); font-size: .86rem; z-index: 60; }
+
+</style>
+</head>
+<body>
+<a href="#view" style="position:absolute;left:-9999px">Skip</a>
+<header class="top">
+  <div class="wrap">
+    <div class="top-row">
+      <a class="brand" href="#home" aria-label="ShareFile Maps">
+        <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true">
+          <rect x="1" y="1" width="13" height="13" rx="2.5" fill="#3B5876"/>
+          <rect x="16" y="1" width="13" height="13" rx="2.5" fill="#1C5EA2"/>
+          <rect x="1" y="16" width="13" height="13" rx="2.5" fill="#1E6A5B"/>
+          <rect x="16" y="16" width="13" height="13" rx="2.5" fill="#9A2C3B"/>
+        </svg>
+        <span><b>ShareFile Maps</b><small id="brand-tag"></small></span>
+      </a>
+      <span class="chip" id="unofficial"></span>
+      <div class="top-tools">
+        <select id="lang"><option value="es">ES</option><option value="en">EN</option><option value="pt">PT</option></select>
+        <button class="btn" type="button" id="theme"></button>
+      </div>
+    </div>
+    <nav class="main" id="nav" aria-label="Main"></nav>
+  </div>
+</header>
+<main class="wrap" id="view" tabindex="-1"></main>
+<footer><div class="wrap" id="foot"></div></footer>
+<script>
+/* ShareFile Maps — single source of truth.
+   Every product fact comes from sharefile.com or docs.sharefile.com.
+   Verified: 2026-10-08. Edit here; everything else is generated from this file. */
+
+const D = "https://docs.sharefile.com/en-us/sharefile/";
+const W = "https://www.sharefile.com/";
+
+const SITE = {
+  version: "1.0.0",
+  updated: "2026-10-08",
+  author: "Adrián Bonilla",
+  pricingSource: W + "plans",
+  analyticsId: "" // GA4 measurement ID (G-XXXXXXX). Empty = no analytics, no cookie banner.
+};
+
+/* Plans: MSRP in USD per user per month, from sharefile.com/plans (2026-10-08). */
+const PLANS = [
+  { id: "A", key: "advanced",   name: "Advanced",          annual: 16.50, monthly: 18.15, min: 3, page: W + "plans",
+    tag: { es: "Archivos seguros para equipos", en: "Secure file sharing for teams", pt: "Compartilhamento seguro para equipes" } },
+  { id: "P", key: "premium",    name: "Premium",           annual: 26.00, monthly: 28.59, min: 3, page: W + "plans/sharefile-premium",
+    tag: { es: "Flujos documentales con clientes", en: "End-to-end document workflows", pt: "Fluxos documentais com clientes" } },
+  { id: "E", key: "enterprise", name: "Enterprise",        annual: 35.00, monthly: 42.00, min: 3, page: W + "plans/sharefile-enterprise",
+    tag: { es: "Control que escala con la colaboración", en: "Control that scales with collaboration", pt: "Controle que escala com a colaboração" } },
+  { id: "V", key: "vdr",        name: "Virtual Data Room", annual: 69.30, monthly: 77.00, min: 5, page: W + "plans/sharefile-virtual-data-room",
+    tag: { es: "Data room para operaciones confidenciales", en: "Confidential deal rooms", pt: "Data room para operações confidenciais" } }
+];
+
+/* Feature groups follow the section order of the official comparison table. */
+const GROUPS = [
+  { id: "core",   name: { es: "Siempre incluido", en: "Always included", pt: "Sempre incluído" } },
+  { id: "sec",    name: { es: "Confianza y seguridad", en: "Trust and security", pt: "Confiança e segurança" } },
+  { id: "ai",     name: { es: "Flujos con IA", en: "AI workflows", pt: "Fluxos com IA" },
+    note: { es: "Sujeto a límites de uso y precios aplicables.", en: "Subject to usage limitations and applicable pricing.", pt: "Sujeito a limites de uso e preços aplicáveis." } },
+  { id: "flow",   name: { es: "Flujos de trabajo", en: "Workflows", pt: "Fluxos de trabalho" } },
+  { id: "sign",   name: { es: "Firma electrónica integrada", en: "Integrated e-signature", pt: "Assinatura eletrônica integrada" } },
+  { id: "client", name: { es: "Experiencia del cliente", en: "Client experience", pt: "Experiência do cliente" } },
+  { id: "integ",  name: { es: "Integraciones", en: "Integrations", pt: "Integrações" } }
+];
+
+/* Badges shown on tiles. */
+const BADGES = {
+  new:      { es: "Nuevo", en: "New", pt: "Novo" },
+  us:       { es: "Solo EE.UU.", en: "U.S. only", pt: "Só EUA" },
+  usreg:    { es: "Regulación EE.UU.", en: "U.S. regulation", pt: "Regulação EUA" },
+  eu:       { es: "Solo UE", en: "EU only", pt: "Só UE" },
+  third:    { es: "Requiere licencia de terceros", en: "Third-party license required", pt: "Requer licença de terceiros" },
+  request:  { es: "A solicitud", en: "On request", pt: "Sob solicitação" },
+  usage:    { es: "Límites de uso", en: "Usage limits", pt: "Limites de uso" },
+  check:    { es: "Revisar fuente", en: "Check source", pt: "Verificar fonte" }
+};
+
+/* plans: string of plan ids that include the feature (A P E V).
+   badges: keys from BADGES. note: optional caveat. src: where inclusion was verified. */
+const FEATURES = [
+  // ── Always included
+  { id: "anytime_access", g: "core", plans: "APEV", name: "Anytime, Anywhere Access", url: D + "sharefile-app/sharefile-web",
+    d: { es: "Acceso seguro a archivos y carpetas desde cualquier dispositivo y lugar.", en: "Secure access to files and folders from any device and location.", pt: "Acesso seguro a arquivos e pastas de qualquer dispositivo e local." } },
+  { id: "file_encryption", g: "core", plans: "APEV", name: "File Encryption", url: D + "legal/sharefile-security-faq",
+    d: { es: "TLS en tránsito y cifrado de hasta AES de 256 bits.", en: "TLS in transit and up to AES 256-bit encryption.", pt: "TLS em trânsito e criptografia de até AES 256 bits." } },
+  { id: "sync_versioning", g: "core", plans: "APEV", name: "File Sync and Versioning", url: D + "sharefile-app/sharefile-web/file-versioning",
+    d: { es: "Sincroniza archivos en toda la empresa y conserva versiones anteriores.", en: "Syncs files company-wide and keeps previous versions.", pt: "Sincroniza arquivos em toda a empresa e mantém versões anteriores." } },
+  { id: "secure_sharing", g: "core", plans: "APEV", name: "Secure File Sharing", url: D + "sharefile-app/sharefile-web/share",
+    d: { es: "Comparte archivos con personas dentro y fuera de la organización.", en: "Share files with people inside and outside the organization.", pt: "Compartilhe arquivos com pessoas dentro e fora da organização." } },
+  { id: "hyperlink_sharing", g: "core", plans: "APEV", name: "File Sharing via Hyperlink", url: D + "account_settings/file_settings/share_setting",
+    d: { es: "Enlaces únicos para que empleados y clientes vean archivos o carpetas.", en: "Unique links for employees and clients to view files or folders.", pt: "Links exclusivos para funcionários e clientes verem arquivos ou pastas." } },
+  { id: "unlimited_clients", g: "core", plans: "APEV", name: "Unlimited Client Users", url: D + "people_settings/client_contacts_users/client_contacts_overview",
+    d: { es: "Usuarios cliente externos ilimitados, sin licencias adicionales.", en: "Unlimited external client users at no extra license cost.", pt: "Usuários clientes externos ilimitados, sem licenças adicionais." } },
+  { id: "branding", g: "core", plans: "APEV", name: "Custom Branding", url: D + "account_settings/company_branding/edit_company_branding",
+    d: { es: "Aplica tu logo y colores a la cuenta.", en: "Apply your logo and colors to the account.", pt: "Aplique seu logotipo e cores à conta." } },
+  { id: "apps", g: "core", plans: "APEV", name: "Desktop and Mobile Applications", url: D + "sharefile-downloads",
+    d: { es: "Apps para Windows, Mac, iOS y Android.", en: "Apps for Windows, Mac, iOS and Android.", pt: "Apps para Windows, Mac, iOS e Android." } },
+  { id: "link_expiration", g: "core", plans: "APEV", name: "File Link Expiration", url: D + "account_settings/file_settings/share_setting",
+    d: { es: "Fecha de vencimiento para que un enlace deje de funcionar.", en: "Set a date after which a link stops working.", pt: "Data de expiração para que um link deixe de funcionar." } },
+  { id: "device_security", g: "core", plans: "APEV", name: "Device Security", url: D + "account_settings/security/configure-device-security",
+    d: { es: "Bloquea y borra a distancia los datos de ShareFile de un equipo perdido o robado.", en: "Remotely lock and wipe ShareFile data on a lost or stolen device.", pt: "Bloqueie e apague remotamente os dados do ShareFile de um dispositivo perdido ou roubado." } },
+  { id: "mfa", g: "core", plans: "APEV", name: "Multi-Factor Authentication", url: D + "account_settings/security/multi_factor_authentication",
+    d: { es: "Dos pasos o dos factores: SMS, voz, tokens y códigos de respaldo.", en: "Two-step or two-factor: SMS, voice, tokens and backup codes.", pt: "Duas etapas ou dois fatores: SMS, voz, tokens e códigos de backup." } },
+  { id: "sso", g: "core", plans: "APEV", name: "Active Directory and Single Sign-on (SSO)", url: D + "account_settings/security/single_sign_on",
+    d: { es: "Integración con Active Directory para entrar con credenciales corporativas.", en: "Active Directory integration to sign in with corporate credentials.", pt: "Integração com Active Directory para entrar com credenciais corporativas." } },
+  { id: "support", g: "core", plans: "APEV", name: "Dedicated Support", url: "https://support.sharefile.com/s/article/ShareFile-Support-Offerings-and-Coverage",
+    d: { es: "Especialistas de onboarding y Customer Care para configuración y soporte.", en: "Onboarding specialists and Customer Care for setup and support.", pt: "Especialistas de onboarding e Customer Care para configuração e suporte." } },
+  { id: "storage", g: "core", plans: "APE", name: "All the Storage You Need", url: D + "account_settings/storage/storage-quota",
+    d: { es: "1 TB por licencia, agregado en la cuenta; mínimo 3 TB. Paquetes extra de 3 TB.", en: "1 TB per license pooled at account level; 3 TB minimum. Extra 3 TB packs.", pt: "1 TB por licença, agregado na conta; mínimo de 3 TB. Pacotes extras de 3 TB." } },
+  { id: "vdr_storage", g: "core", plans: "V", name: "1 GB of Account Storage per License", url: D + "account_settings/storage/storage-quota",
+    d: { es: "En VDR: 1 GB por licencia, con mínimo de 5 licencias.", en: "VDR: 1 GB per license, with a 5-license minimum.", pt: "No VDR: 1 GB por licença, com mínimo de 5 licenças." } },
+  { id: "umt", g: "core", plans: "APEV", name: "User Management Tool", url: D + "user-management-tool/1-7/sf-umt-overview",
+    d: { es: "Crea cuentas de empleados y grupos de distribución desde Active Directory.", en: "Provision employee accounts and distribution groups from Active Directory.", pt: "Provisione contas de funcionários e grupos de distribuição a partir do Active Directory." } },
+  { id: "reports", g: "core", plans: "APEV", name: "Activity Logs and Reports", url: D + "account_settings/reporting/reports_overview",
+    d: { es: "Reportes programables de uso, acceso, mensajería y almacenamiento.", en: "Schedulable reports on usage, access, messaging and storage.", pt: "Relatórios agendáveis de uso, acesso, mensagens e armazenamento." } },
+  { id: "cloud_connectors", g: "core", plans: "APEV", name: "Personal Cloud Connectors", url: D + "account_settings/connectors/connectors_overview",
+    d: { es: "Conecta SharePoint Online, OneDrive, Dropbox, Box y Google Drive.", en: "Connect SharePoint Online, OneDrive, Dropbox, Box and Google Drive.", pt: "Conecte SharePoint Online, OneDrive, Dropbox, Box e Google Drive." } },
+
+  // ── Trust and security
+  { id: "archiving", g: "sec", plans: "APEV", name: "Archiving", url: D + "configure/archiving", badges: ["request"],
+    d: { es: "Archiva archivos y recupéralos cuando se necesiten.", en: "Archive files and retrieve them when needed.", pt: "Arquive arquivos e recupere-os quando necessário." } },
+  { id: "encrypted_email", g: "sec", plans: "APE", name: "Encrypted Email", url: D + "account_settings/email_settings/encrypted_email",
+    d: { es: "Cifra cuerpo y adjuntos; el destinatario responde cifrado sin tener cuenta.", en: "Encrypts body and attachments; recipients reply encrypted without an account.", pt: "Criptografa corpo e anexos; o destinatário responde criptografado sem ter conta." } },
+  { id: "threat_alerts", g: "sec", plans: "APEV", name: "Threat Detection Alerts", url: D + "sharefile-app/sharefile-web/threat-detection-alerts",
+    d: { es: "Alertas por inicios de sesión o autenticación inusuales y malware.", en: "Alerts on unusual sign-ins, unusual authentication and malware.", pt: "Alertas de logins ou autenticação incomuns e malware." } },
+  { id: "auto_remediation", g: "sec", plans: "APEV", name: "Automated Threat Remediation", url: D + "account_settings/security/auto_remediation",
+    d: { es: "Responde a riesgos de seguridad sin intervención manual constante.", en: "Responds to security risks without constant manual work.", pt: "Responde a riscos de segurança sem intervenção manual constante." } },
+  { id: "watermark", g: "sec", plans: "PEV", name: "Dynamic Watermarking", url: D + "account_settings/file_settings/watermark",
+    d: { es: "Estampa datos del lector (correo, IP, fecha, nombre o texto) en cada archivo visto o descargado.", en: "Stamps viewer details (email, IP, date, name or text) on every viewed or downloaded file.", pt: "Insere dados do leitor (e-mail, IP, data, nome ou texto) em cada arquivo visto ou baixado." } },
+  { id: "view_only", g: "sec", plans: "APEV", name: "View-Only Sharing and Access", url: D + "sharefile-app/sharefile-web/view-only-sharing",
+    d: { es: "Impide descargar, editar, copiar o redistribuir, con controles para toda la cuenta.", en: "Prevents download, edit, copy or redistribution, with account-wide controls.", pt: "Impede download, edição, cópia ou redistribuição, com controles para toda a conta." } },
+  { id: "casb_dlp", g: "sec", plans: "APEV", name: "On-Premises Storage with 3rd Party CASB Integration for DLP", url: D + "storage-zones-controller/6-0/data-loss-prevention",
+    d: { es: "DLP on-premises más integración con CASB para entornos híbridos.", en: "On-prem DLP plus CASB integrations for hybrid environments.", pt: "DLP on-premises mais integração com CASB para ambientes híbridos." } },
+  { id: "kms", g: "sec", plans: "APEV", name: "Key Management Services (KMS)", url: D + "configure/customer-managed-encryption-keys",
+    d: { es: "Cifra archivos de una zona administrada por ShareFile con una llave en Amazon KMS.", en: "Encrypt files in a ShareFile-managed zone with a key in Amazon KMS.", pt: "Criptografe arquivos de uma zona gerenciada pelo ShareFile com uma chave no Amazon KMS." } },
+  { id: "folder_qa", g: "sec", plans: "V", name: "Folder Q&A", url: D + "sharefile-vdr/question-and-answer", badges: ["check"],
+    note: { es: "La tabla oficial lo marca de forma inconsistente; aquí se trata como exclusivo de VDR.", en: "The official table marks it inconsistently; treated here as VDR-only.", pt: "A tabela oficial o marca de forma inconsistente; aqui é tratado como exclusivo do VDR." },
+    d: { es: "Preguntas y respuestas rastreables por carpeta, exportables como registro de auditoría.", en: "Tracked Q&A per folder, exportable as an audit record.", pt: "Perguntas e respostas rastreáveis por pasta, exportáveis como registro de auditoria." } },
+  { id: "terms", g: "sec", plans: "APEV", name: "Terms and Conditions for Users", url: D + "account_settings/security/terms_and_conditions",
+    d: { es: "Exige aceptar tu NDA o términos antes de iniciar sesión.", en: "Require users to accept your NDA or terms before signing in.", pt: "Exija aceitar seu NDA ou termos antes de entrar." } },
+  { id: "checkinout", g: "sec", plans: "APE", name: "File Check In/Out", url: D + "sharefile-app/sharefile-web/check-in-check-out",
+    d: { es: "Bloquea un documento mientras se edita y muestra quién lo tiene.", en: "Lock a document while editing and see who has it.", pt: "Bloqueie um documento durante a edição e veja quem está com ele." } },
+  { id: "hipaa", g: "sec", plans: "PEV", name: "HIPAA Eligible", url: D + "account_settings/admin_overview/enable_hipaa", badges: ["usreg"],
+    note: { es: "Requiere BAA firmado con Progress Software Corporation.", en: "Requires a signed BAA with Progress Software Corporation.", pt: "Requer BAA assinado com a Progress Software Corporation." },
+    d: { es: "Apoya el cumplimiento de HIPAA. Algunas funciones pueden estar limitadas.", en: "Supports HIPAA compliance. Some features may be limited.", pt: "Apoia a conformidade com a HIPAA. Alguns recursos podem ser limitados." } },
+  { id: "sec_finra", g: "sec", plans: "PEV", name: "SEC+FINRA Eligible", url: D + "learn-more/enterprise-archiving", badges: ["usreg"],
+    note: { es: "Requiere adenda SEC firmada con Progress. Uso justo de 200 GB por usuario.", en: "Requires a signed SEC addendum with Progress. 200 GB/user fair use.", pt: "Requer adendo SEC assinado com a Progress. Uso justo de 200 GB por usuário." },
+    d: { es: "Archivado para apoyar requisitos de SEC y FINRA.", en: "Archiving to support SEC and FINRA requirements.", pt: "Arquivamento para apoiar requisitos da SEC e FINRA." } },
+  { id: "scim", g: "sec", plans: "E", name: "SCIM Provisioning", url: D + "account_settings/user_provisioning/entra_id_scim", badges: ["new", "third"],
+    also: [{ label: "User Provisioning (SCIM)", url: D + "account_settings/user_provisioning" }],
+    d: { es: "Crea, actualiza y desactiva usuarios automáticamente. Compatible con Microsoft Entra ID.", en: "Automatically provisions, updates and deactivates users. Supports Microsoft Entra ID.", pt: "Provisiona, atualiza e desativa usuários automaticamente. Compatível com Microsoft Entra ID." } },
+  { id: "siem", g: "sec", plans: "E", name: "SIEM Integration", url: D + "account_settings/security/sentinel-integration", badges: ["new", "third"],
+    also: [{ label: "Splunk", url: D + "account_settings/security/splunk-integration" }],
+    d: { es: "Envía bitácoras y alertas a las herramientas del SOC. Compatible con Microsoft Sentinel y Splunk.", en: "Sends activity logs and alerts to SOC tools. Supports Microsoft Sentinel and Splunk.", pt: "Envia logs e alertas às ferramentas do SOC. Compatível com Microsoft Sentinel e Splunk." } },
+  { id: "native_dlp", g: "sec", plans: "E", name: "Native Data Loss Prevention (DLP)", url: D + "account_settings/security/native_dlp", badges: ["new"],
+    d: { es: "Detecta contenido sensible en texto y alerta o bloquea el compartir y descargar.", en: "Detects sensitive text content and alerts or blocks sharing and downloads.", pt: "Detecta conteúdo sensível em texto e alerta ou bloqueia compartilhamento e download." } },
+  { id: "ueba", g: "sec", plans: "E", name: "UEBA Threat Detection", url: D + "sharefile-app/sharefile-web/auto-remediation#understanding-behavioral-alerts", badges: ["new"],
+    d: { es: "Detecta comportamiento inusual: descargas anómalas o acceso fuera de horario.", en: "Surfaces unusual behavior such as abnormal downloads or off-hours access.", pt: "Detecta comportamento incomum: downloads anômalos ou acesso fora do horário." } },
+  { id: "security_center", g: "sec", plans: "E", name: "Security Center", url: D + "account_settings/security/security-center", badges: ["new"],
+    d: { es: "Un solo lugar para alertas, actividad de usuarios y contexto de investigación.", en: "One place for alerts, user activity and investigation context.", pt: "Um só lugar para alertas, atividade de usuários e contexto de investigação." } },
+  { id: "click_trails", g: "sec", plans: "V", name: "Click Trails", url: D + "sharefile-vdr/click-trails",
+    d: { es: "Línea de tiempo de cada sesión: dónde navegó el usuario y cuánto tiempo.", en: "Timeline of each session: where the user went and for how long.", pt: "Linha do tempo de cada sessão: onde o usuário navegou e por quanto tempo." } },
+  { id: "vdr_analytics", g: "sec", plans: "V", name: "Visibility Analytics and Reporting", url: D + "sharefile-vdr/advanced-analytics",
+    d: { es: "Usuarios más activos, documentos más vistos, búsquedas y auditoría completa.", en: "Most active users, most viewed documents, searches and full audit trails.", pt: "Usuários mais ativos, documentos mais vistos, buscas e auditoria completa." } },
+
+  // ── AI workflows
+  { id: "ai_rename", g: "ai", plans: "PEV", name: "File Renaming", url: D + "ai/ai-file-rename", badges: ["usage"],
+    d: { es: "Estandariza nombres de archivo en lote con IA.", en: "Standardizes file names in bulk with AI.", pt: "Padroniza nomes de arquivos em lote com IA." } },
+  { id: "ai_validation", g: "ai", plans: "PEV", name: "Document Validation", url: D + "ai/ai-document-validation", badges: ["usage"],
+    d: { es: "Verifica que los archivos subidos cumplan lo requerido antes de enviarlos.", en: "Checks uploaded files meet requirements before submission.", pt: "Verifica se os arquivos enviados atendem aos requisitos antes da submissão." } },
+  { id: "ai_assistant", g: "ai", plans: "PEV", name: "AI Document Assistant", url: D + "sharefile-app/sharefile-web/ai-powered-doc-summarization", badges: ["usage"],
+    also: [{ label: "Document Q&A", url: D + "ai/ai-doc-qa" }],
+    d: { es: "Resume, extrae datos clave y responde preguntas sobre documentos.", en: "Summarizes, extracts key details and answers questions about documents.", pt: "Resume, extrai dados-chave e responde perguntas sobre documentos." } },
+  { id: "ai_rl_gen", g: "ai", plans: "PEV", name: "Request List Generation", url: D + "ai/ai-request-list-generation", badges: ["usage"],
+    d: { es: "Genera listas de solicitud de documentos a la medida.", en: "Generates tailored document request lists.", pt: "Gera listas de solicitação de documentos sob medida." } },
+  { id: "ai_share_rec", g: "ai", plans: "PEV", name: "Secure Share Recommendations", url: D + "ai/secure-share-recommender", badges: ["usage"],
+    d: { es: "Sugiere cómo compartir de forma segura según el contenido.", en: "Suggests secure sharing settings based on content.", pt: "Sugere como compartilhar com segurança conforme o conteúdo." } },
+
+  // ── Workflows
+  { id: "feedback_approval", g: "flow", plans: "APE", name: "Feedback & Approval", url: D + "learn-more/feedback-and-approval-workflow",
+    d: { es: "Envía un documento para comentarios en línea o aprobación.", en: "Send a document for inline feedback or approval.", pt: "Envie um documento para comentários ou aprovação." } },
+  { id: "automated_workflows", g: "flow", plans: "PE", name: "Automated Workflows", url: D + "sharefile-app/sharefile-web/automated-workflows",
+    d: { es: "Crea flujos propios para automatizar procesos documentales repetitivos.", en: "Build your own workflows for repetitive document processes.", pt: "Crie fluxos próprios para processos documentais repetitivos." } },
+  { id: "rapid_onboarding", g: "flow", plans: "PE", name: "Rapid Client Onboarding", url: D + "sharefile-app/sharefile-web/accelerated-agreements",
+    d: { es: "Acuerdo integrado para empezar a dar servicio a nuevos clientes más rápido.", en: "Built-in agreement to start serving new clients faster.", pt: "Acordo integrado para começar a atender novos clientes mais rápido." } },
+  { id: "folder_templates", g: "flow", plans: "APEV", name: "Folder Creation Templates", url: D + "account_settings/folder_templates/folder-templates",
+    d: { es: "Estructuras de subcarpetas predefinidas para carpetas nuevas o existentes.", en: "Default subfolder structures for new or existing folders.", pt: "Estruturas de subpastas padrão para pastas novas ou existentes." } },
+  { id: "templates", g: "flow", plans: "PEV", name: "Templates", url: D + "templates/templates_overview",
+    d: { es: "Plantillas de documentos, proyectos, tareas, listas de solicitud y tablas.", en: "Templates for documents, projects, tasks, request lists and tables.", pt: "Modelos de documentos, projetos, tarefas, listas de solicitação e tabelas." } },
+  { id: "data_tables", g: "flow", plans: "PE", name: "Data Tables", url: D + "sharefile-projects/tables/tables_overview",
+    d: { es: "Tablas estructuradas para organizar datos de proyectos.", en: "Structured tables to organize project data.", pt: "Tabelas estruturadas para organizar dados de projetos." } },
+  { id: "tasks_workspace", g: "flow", plans: "PEV", name: "Tasks Workspace", url: D + "sharefile-tasks/tasks_workspace/tasks_overview",
+    d: { es: "Gestiona tareas, listas de solicitud y formularios con responsables y fechas.", en: "Manage tasks, request lists and forms with owners and due dates.", pt: "Gerencie tarefas, listas de solicitação e formulários com responsáveis e prazos." } },
+
+  // ── Integrated e-signature
+  { id: "esign", g: "sign", plans: "PEV", name: "All the E-Signatures You Need", url: D + "signatures/signatures",
+    also: [{ label: "E-signature legal", url: D + "electronic-signature/legal" }],
+    d: { es: "Hasta 100,000 documentos al mes para firma, a nivel de cuenta.", en: "Up to 100,000 documents per month for signature, at account level.", pt: "Até 100.000 documentos por mês para assinatura, no nível da conta." } },
+  { id: "kba", g: "sign", plans: "PEV", name: "Knowledge-Based Authentication (KBA)", url: D + "signatures/kba-signature", badges: ["us"],
+    note: { es: "La documentación oficial indica que KBA está pensado para verificar identidades de EE.UU.", en: "Official docs state KBA is intended for U.S. identity verification.", pt: "A documentação oficial indica que o KBA é voltado a identidades dos EUA." },
+    d: { es: "Verifica la identidad del firmante con preguntas de conocimiento.", en: "Verifies signer identity with knowledge-based questions.", pt: "Verifica a identidade do signatário com perguntas de conhecimento." } },
+  { id: "doc_templates", g: "sign", plans: "PEV", name: "Document Templates", url: D + "templates/document_templates",
+    d: { es: "Documentos reutilizables listos para enviar a firma.", en: "Reusable documents ready to send for signature.", pt: "Documentos reutilizáveis prontos para assinatura." } },
+  { id: "bulk_send", g: "sign", plans: "PEV", name: "Bulk Send", url: D + "signatures/bulk-send",
+    d: { es: "Envía el mismo documento a muchos firmantes en un solo paso.", en: "Send the same document to many signers in one step.", pt: "Envie o mesmo documento a vários signatários em uma etapa." } },
+  { id: "doc_packager", g: "sign", plans: "PEV", name: "Document Packager", url: D + "electronic-signature/help/document-package",
+    d: { es: "Une varios documentos en un solo paquete para firma.", en: "Merge several documents into one package for signature.", pt: "Junte vários documentos em um só pacote para assinatura." } },
+  { id: "eidas", g: "sign", plans: "PE", name: "eIDAS-supported E-Signatures", url: D + "signatures/eidas-signature", badges: ["eu", "check"],
+    note: { es: "No aparece en la tabla de precios; fuente: documentación. Premium o superior, control plane UE, firmantes de UE y Reino Unido.", en: "Not in the pricing table; source: documentation. Premium or higher, EU control plane, EU/UK signers.", pt: "Não aparece na tabela de preços; fonte: documentação. Premium ou superior, control plane UE, signatários da UE e Reino Unido." },
+    d: { es: "Firmas avanzadas (AES) y cualificadas (QES) bajo eIDAS.", en: "Advanced (AES) and Qualified (QES) signatures under eIDAS.", pt: "Assinaturas avançadas (AES) e qualificadas (QES) sob o eIDAS." } },
+
+  // ── Client experience
+  { id: "file_drop", g: "client", plans: "APEV", name: "File Drop Links", url: D + "account_settings/file_drops/file-drops",
+    d: { es: "Enlace seguro de carga que guarda los archivos en la carpeta elegida.", en: "Secure upload link that saves files to a chosen folder.", pt: "Link seguro de upload que salva os arquivos na pasta escolhida." } },
+  { id: "request_list", g: "client", plans: "PEV", name: "Request List", url: D + "sharefile-tasks/request_lists/rl_overview",
+    d: { es: "Solicita, recibe y da seguimiento a archivos de clientes en una lista.", en: "Request, collect and track client files in one list.", pt: "Solicite, receba e acompanhe arquivos de clientes em uma lista." } },
+  { id: "projects", g: "client", plans: "PEV", name: "Projects", url: D + "sharefile-projects/projects_overview",
+    d: { es: "Espacios con archivos, tareas y comentarios por proyecto con el cliente.", en: "Spaces with files, tasks and comments per client engagement.", pt: "Espaços com arquivos, tarefas e comentários por projeto com o cliente." } },
+  { id: "task_mgmt", g: "client", plans: "PE", name: "Task Management", url: D + "sharefile-tasks/to_dos/to_dos_overview",
+    d: { es: "Crea, asigna y gestiona tareas dentro de un proyecto.", en: "Create, assign and manage tasks within a project.", pt: "Crie, atribua e gerencie tarefas dentro de um projeto." } },
+  { id: "full_text_search", g: "client", plans: "APEV", name: "Full Text Search", url: D + "sharefile-app/sharefile-web/full-text-search",
+    d: { es: "Busca nombres y también palabras dentro de los documentos.", en: "Search names and words inside documents.", pt: "Pesquise nomes e palavras dentro dos documentos." } },
+  { id: "forms", g: "client", plans: "PEV", name: "Forms", url: D + "sharefile-tasks/forms/forms_overview",
+    d: { es: "Recoge información de clientes con formularios propios.", en: "Collect client information with custom forms.", pt: "Colete informações de clientes com formulários próprios." } },
+  { id: "basic_portal", g: "client", plans: "A", name: "Basic Client Portal", url: D + "client_portal/client_portal_faq",
+    d: { es: "Portal con contraseña y acceso a archivos y carpetas.", en: "Password-protected portal with file and folder access.", pt: "Portal com senha e acesso a arquivos e pastas." } },
+  { id: "enhanced_portal", g: "client", plans: "PEV", name: "Enhanced Client Portal", url: W + "product-feature/client-portal",
+    also: [{ label: "Client Portal FAQ", url: D + "client_portal/client_portal_faq" }],
+    d: { es: "Suma mensajería, tareas, notificaciones automáticas y acciones rápidas.", en: "Adds messaging, tasks, automated notifications and quick actions.", pt: "Adiciona mensagens, tarefas, notificações automáticas e ações rápidas." } },
+  { id: "client_hub", g: "client", plans: "PEV", name: "Client Hub", url: D + "client_hub/client_hub_overview",
+    d: { es: "Gestiona clientes, vincúlalos a carpetas y proyectos y coordina equipos.", en: "Manage clients, link them to folders and projects, coordinate teams.", pt: "Gerencie clientes, vincule-os a pastas e projetos e coordene equipes." } },
+
+  // ── Integrations
+  { id: "email_plugins", g: "integ", plans: "APEV", name: "Email Plug-ins for Outlook and Google Workspace", url: D + "sharefile-app/sharefile-for-outlook",
+    also: [{ label: "Google Workspace", url: D + "sharefile-app/sharefile-for-google-workspace" }],
+    d: { es: "Envía y solicita adjuntos grandes de forma segura desde Outlook o Gmail.", en: "Send and request large attachments securely from Outlook or Gmail.", pt: "Envie e solicite anexos grandes com segurança pelo Outlook ou Gmail." } },
+  { id: "api", g: "integ", plans: "APEV", name: "Developer API", url: "https://api.sharefile.com",
+    d: { es: "Crea integraciones y aplicaciones sobre ShareFile.", en: "Build integrations and apps on top of ShareFile.", pt: "Crie integrações e aplicativos sobre o ShareFile." } },
+  { id: "coediting", g: "integ", plans: "APE", name: "Co-Editing Documents", url: D + "sharefile-app/sharefile-web/co-editing",
+    d: { es: "Varios usuarios editan documentos de Microsoft 365 guardados en ShareFile.", en: "Multiple users edit Microsoft 365 documents stored in ShareFile.", pt: "Vários usuários editam documentos do Microsoft 365 no ShareFile." } },
+  { id: "sf_docgen", g: "integ", plans: "PE", name: "Salesforce Document Generation", url: W + "apps-integrations", badges: ["us"],
+    d: { es: "Genera contratos, acuerdos y cotizaciones con datos de Salesforce.", en: "Generate contracts, agreements and quotes from Salesforce data.", pt: "Gere contratos, acordos e cotações com dados do Salesforce." } },
+  { id: "quickbooks", g: "integ", plans: "PE", name: "QuickBooks", url: W + "apps-integrations", badges: ["us"],
+    d: { es: "Firma de acuerdos integrada con QuickBooks.", en: "Agreement signing integrated with QuickBooks.", pt: "Assinatura de acordos integrada ao QuickBooks." } },
+  { id: "network_connectors", g: "integ", plans: "APE", name: "Network Share Connectors", url: D + "account_settings/connectors/add_onpremises_connectors",
+    d: { es: "Accede a archivos en recursos de red conectados, locales o en la nube.", en: "Access files on connected on-premises or cloud network shares.", pt: "Acesse arquivos em compartilhamentos de rede conectados, locais ou na nuvem." } },
+  { id: "file_export", g: "integ", plans: "PEV", name: "File Export Integrations", url: D + "catalog/integrations/export", badges: ["us"],
+    d: { es: "Exporta archivos a FreshBooks, Pipedrive, QuickBooks, Xero y Salesforce.", en: "Export files to FreshBooks, Pipedrive, QuickBooks, Xero and Salesforce.", pt: "Exporte arquivos para FreshBooks, Pipedrive, QuickBooks, Xero e Salesforce." } }
+];
+
+/* Industries: capabilities each official industry page highlights, mapped to features.
+   Plan minimum is computed, never typed by hand. */
+const INDUSTRIES = [
+  { id: "accounting", url: W + "industry/accounting", name: { es: "Contabilidad", en: "Accounting", pt: "Contabilidade" },
+    f: ["esign", "request_list", "ai_rl_gen", "rapid_onboarding", "enhanced_portal", "view_only", "reports", "threat_alerts", "auto_remediation"],
+    warn: { es: "La solución de declaraciones de impuestos y el programa AICPA que menciona la página son de EE.UU.", en: "The tax return solution and AICPA program on this page are U.S.-specific.", pt: "A solução de declaração de impostos e o programa AICPA citados são dos EUA." } },
+  { id: "construction", url: W + "industry/construction", name: { es: "Construcción", en: "Construction", pt: "Construção" },
+    f: ["rapid_onboarding", "projects", "enhanced_portal", "encrypted_email", "view_only", "mfa", "sso"] },
+  { id: "finance", url: W + "industry/finance", name: { es: "Finanzas", en: "Finance", pt: "Finanças" },
+    f: ["request_list", "rapid_onboarding", "esign", "enhanced_portal", "encrypted_email", "view_only", "sec_finra"],
+    subs: [
+      { id: "banking", name: { es: "Banca y crédito", en: "Banking & Lending", pt: "Bancos e crédito" } },
+      { id: "wealth",  name: { es: "Gestión patrimonial", en: "Wealth Management", pt: "Gestão de patrimônio" } },
+      { id: "invest",  name: { es: "Firmas de inversión", en: "Investment Firms", pt: "Firmas de investimento" }, vdr: true }
+    ],
+    warn: { es: "SEC y FINRA son regulación de EE.UU.", en: "SEC and FINRA are U.S. regulations.", pt: "SEC e FINRA são regulações dos EUA." } },
+  { id: "healthcare", url: W + "industry/healthcare", name: { es: "Salud", en: "Healthcare", pt: "Saúde" },
+    f: ["esign", "hipaa", "view_only", "encrypted_email", "email_plugins"],
+    warn: { es: "HIPAA es regulación de EE.UU. y requiere BAA firmado.", en: "HIPAA is a U.S. regulation and requires a signed BAA.", pt: "HIPAA é regulação dos EUA e requer BAA assinado." } },
+  { id: "insurance", url: W + "industry/insurance", name: { es: "Seguros", en: "Insurance", pt: "Seguros" },
+    f: ["enhanced_portal", "esign", "projects", "rapid_onboarding", "request_list", "encrypted_email"] },
+  { id: "legal", url: W + "industry/legal", name: { es: "Legal", en: "Legal", pt: "Jurídico" },
+    f: ["esign", "projects", "automated_workflows", "rapid_onboarding", "enhanced_portal", "request_list", "threat_alerts", "view_only"] },
+  { id: "manufacturing", url: W + "industry/manufacturing", name: { es: "Manufactura", en: "Manufacturing", pt: "Manufatura" },
+    f: ["esign", "projects", "automated_workflows", "enhanced_portal", "rapid_onboarding", "watermark", "reports", "view_only", "encrypted_email"] },
+  { id: "realestate", url: W + "industry/real-estate", name: { es: "Bienes raíces", en: "Real Estate", pt: "Imobiliário" },
+    f: ["request_list", "automated_workflows", "esign", "enhanced_portal", "forms", "mfa", "encrypted_email"],
+    warn: { es: "La integración con QuickBooks que menciona la página solo opera en control plane de EE.UU.", en: "The QuickBooks integration on this page works only on U.S. control planes.", pt: "A integração com QuickBooks citada só funciona em control plane dos EUA." } },
+  { id: "hr", url: W + "industry/human-resources", name: { es: "Recursos humanos", en: "Human Resources", pt: "Recursos humanos" },
+    f: ["esign", "rapid_onboarding", "encrypted_email", "view_only", "projects"] }
+];
+
+const SIZES = [
+  { id: "small", url: W + "small-business", name: { es: "Pequeña", en: "Small", pt: "Pequena" },
+    hint: { es: "Hasta 350 empleados, según sharefile.com", en: "Up to 350 employees, per sharefile.com", pt: "Até 350 funcionários, segundo sharefile.com" } },
+  { id: "mid", url: W + "mid-size-business", name: { es: "Mediana", en: "Mid-size", pt: "Média" },
+    hint: { es: "De 100 a 10,000 clientes atendidos", en: "Serving 100 to 10,000 clients", pt: "De 100 a 10.000 clientes atendidos" } },
+  { id: "large", url: W + "enterprise", name: { es: "Grande", en: "Large", pt: "Grande" },
+    hint: { es: "Organizaciones de gran escala", en: "Enterprise-scale organizations", pt: "Organizações de grande escala" } }
+];
+
+/* Enterprise signals: wording follows the FAQ on sharefile.com/plans/sharefile-enterprise. */
+const SIGNALS = [
+  { id: "soc", f: ["siem", "security_center"],
+    t: { es: "Tienen un SOC o SIEM (Microsoft Sentinel o Splunk)", en: "They run a SOC or SIEM (Microsoft Sentinel or Splunk)", pt: "Têm um SOC ou SIEM (Microsoft Sentinel ou Splunk)" } },
+  { id: "entra", f: ["scim"],
+    t: { es: "Gestionan identidades en Microsoft Entra ID y quieren automatizar altas y bajas", en: "They manage identities in Microsoft Entra ID and want automated joiners and leavers", pt: "Gerenciam identidades no Microsoft Entra ID e querem automatizar entradas e saídas" } },
+  { id: "dlp", f: ["native_dlp"],
+    t: { es: "Deben impedir que se compartan o descarguen datos sensibles", en: "They must stop sensitive data from being shared or downloaded", pt: "Precisam impedir que dados sensíveis sejam compartilhados ou baixados" } },
+  { id: "regulated", f: ["ueba", "security_center", "native_dlp"],
+    t: { es: "Su regulación exige monitoreo, protección de datos e investigación", en: "Their regulation requires monitoring, data protection and investigation", pt: "Sua regulação exige monitoramento, proteção de dados e investigação" } },
+  { id: "growth", f: ["scim", "ueba"],
+    t: { es: "Están creciendo rápido en usuarios", en: "They are adding users quickly", pt: "Estão crescendo rápido em usuários" } },
+  { id: "dealroom", vdr: true, f: ["click_trails", "vdr_analytics", "folder_qa"],
+    t: { es: "Necesitan un espacio para M&A, auditorías o litigios", en: "They need a space for M&A, audits or litigation", pt: "Precisam de um espaço para M&A, auditorias ou litígios" } }
+];
+
+const GLOSSARY = [
+  { term: "Employee user", d: { es: "Usuario interno con licencia. Administra la cuenta, envía y solicita archivos.", en: "Licensed internal user. Manages the account and sends and requests files.", pt: "Usuário interno licenciado. Administra a conta e envia e solicita arquivos." } },
+  { term: "Client user", d: { es: "Usuario externo sin costo de licencia. Sube y descarga archivos. Ilimitados en todos los planes.", en: "External user with no license cost. Uploads and downloads files. Unlimited on all plans.", pt: "Usuário externo sem custo de licença. Envia e baixa arquivos. Ilimitados em todos os planos." } },
+  { term: "Storage zone", d: { es: "Ubicación donde se guardan los archivos. Puede ser administrada por ShareFile (por ejemplo EE.UU., UE, Brasil o Canadá) o por el cliente.", en: "Where files are stored. Either ShareFile-managed (for example U.S., EU, Brazil or Canada) or customer-managed.", pt: "Onde os arquivos ficam. Pode ser gerenciada pelo ShareFile (por exemplo EUA, UE, Brasil ou Canadá) ou pelo cliente." } },
+  { term: "Storage Zones Controller", d: { es: "Software para guardar los datos de ShareFile en la infraestructura propia del cliente, on-premises o en su nube.", en: "Software to keep ShareFile data in the customer's own infrastructure, on-premises or in their cloud.", pt: "Software para manter os dados do ShareFile na infraestrutura do próprio cliente, local ou na nuvem dele." } },
+  { term: "Control plane", d: { es: "Región que aloja la cuenta y sus servicios. Algunas funciones dependen de ella (por ejemplo eIDAS en la UE o QuickBooks en EE.UU.).", en: "Region hosting the account and its services. Some features depend on it (eIDAS in the EU, QuickBooks in the U.S.).", pt: "Região que hospeda a conta e seus serviços. Alguns recursos dependem dela (eIDAS na UE, QuickBooks nos EUA)." } },
+  { term: "SSO", d: { es: "Single Sign-On: entrar con las credenciales corporativas, por ejemplo de Active Directory.", en: "Single Sign-On: sign in with corporate credentials, for example Active Directory.", pt: "Single Sign-On: entrar com as credenciais corporativas, por exemplo do Active Directory." } },
+  { term: "MFA", d: { es: "Autenticación multifactor: un segundo paso además de la contraseña.", en: "Multi-factor authentication: a second step beyond the password.", pt: "Autenticação multifator: uma segunda etapa além da senha." } },
+  { term: "SCIM", d: { es: "Estándar para crear, actualizar y desactivar usuarios automáticamente desde el directorio de identidades.", en: "Standard to create, update and deactivate users automatically from the identity directory.", pt: "Padrão para criar, atualizar e desativar usuários automaticamente a partir do diretório de identidades." } },
+  { term: "SIEM", d: { es: "Plataforma donde el equipo de seguridad centraliza bitácoras y alertas, como Microsoft Sentinel o Splunk.", en: "Platform where security teams centralize logs and alerts, such as Microsoft Sentinel or Splunk.", pt: "Plataforma onde a equipe de segurança centraliza logs e alertas, como Microsoft Sentinel ou Splunk." } },
+  { term: "SOC", d: { es: "Centro de operaciones de seguridad: el equipo que monitorea e investiga incidentes.", en: "Security operations center: the team that monitors and investigates incidents.", pt: "Centro de operações de segurança: a equipe que monitora e investiga incidentes." } },
+  { term: "UEBA", d: { es: "Análisis del comportamiento de usuarios y entidades para detectar actividad inusual.", en: "User and entity behavior analytics to detect unusual activity.", pt: "Análise de comportamento de usuários e entidades para detectar atividade incomum." } },
+  { term: "DLP", d: { es: "Prevención de pérdida de datos: detecta contenido sensible y controla cómo se comparte.", en: "Data loss prevention: detects sensitive content and controls how it is shared.", pt: "Prevenção de perda de dados: detecta conteúdo sensível e controla como é compartilhado." } },
+  { term: "CASB", d: { es: "Cloud Access Security Broker: herramienta que aplica seguridad y DLP sobre servicios en la nube.", en: "Cloud Access Security Broker: applies security and DLP to cloud services.", pt: "Cloud Access Security Broker: aplica segurança e DLP a serviços em nuvem." } },
+  { term: "KMS", d: { es: "Servicio de administración de llaves de cifrado. ShareFile admite llaves en Amazon KMS.", en: "Key management service. ShareFile supports keys held in Amazon KMS.", pt: "Serviço de gerenciamento de chaves. O ShareFile aceita chaves no Amazon KMS." } },
+  { term: "KBA", d: { es: "Autenticación basada en conocimiento para verificar al firmante. Pensada para identidades de EE.UU.", en: "Knowledge-based authentication to verify the signer. Intended for U.S. identities.", pt: "Autenticação baseada em conhecimento para verificar o signatário. Voltada a identidades dos EUA." } },
+  { term: "eIDAS · AES · QES", d: { es: "Marco europeo de firma electrónica. AES es firma avanzada y QES cualificada. En ShareFile: control plane UE.", en: "EU e-signature framework. AES is advanced, QES is qualified. In ShareFile: EU control plane.", pt: "Marco europeu de assinatura eletrônica. AES é avançada e QES qualificada. No ShareFile: control plane UE." } },
+  { term: "BAA", d: { es: "Business Associate Agreement: contrato requerido por HIPAA con Progress para manejar información de salud.", en: "Business Associate Agreement: HIPAA contract with Progress required to handle health information.", pt: "Business Associate Agreement: contrato exigido pela HIPAA com a Progress para tratar dados de saúde." } },
+  { term: "VDR", d: { es: "Virtual Data Room: espacio para documentos confidenciales de M&A, auditorías o litigios.", en: "Virtual Data Room: space for confidential documents in M&A, audits or litigation.", pt: "Virtual Data Room: espaço para documentos confidenciais de M&A, auditorias ou litígios." } },
+  { term: "Request List", d: { es: "Lista para pedir, recibir y dar seguimiento a documentos de un cliente.", en: "List to request, collect and track a client's documents.", pt: "Lista para pedir, receber e acompanhar documentos de um cliente." } },
+  { term: "Client Hub", d: { es: "Directorio central de clientes vinculado a carpetas, proyectos y equipos.", en: "Central client directory linked to folders, projects and teams.", pt: "Diretório central de clientes vinculado a pastas, projetos e equipes." } },
+  { term: "MSRP", d: { es: "Precio de lista sugerido por el fabricante. El precio final puede variar por canal, volumen o plazo.", en: "Manufacturer's suggested list price. Final price may vary by channel, volume or term.", pt: "Preço de lista sugerido pelo fabricante. O preço final pode variar por canal, volume ou prazo." } }
+];
+
+const KNOWLEDGE = [
+  { g: { es: "Planes y producto", en: "Plans and product", pt: "Planos e produto" }, links: [
+    { t: "Plans & Pricing", u: W + "plans" },
+    { t: "ShareFile Enterprise Plan", u: W + "plans/sharefile-enterprise" },
+    { t: "Enterprise plan documentation", u: D + "learn-more/sf-enterprise-plan" },
+    { t: "Virtual Data Room", u: W + "plans/sharefile-virtual-data-room" },
+    { t: "Apps & Integrations", u: W + "apps-integrations" },
+    { t: "What's new", u: D + "whats-new" }
+  ]},
+  { g: { es: "Documentación", en: "Documentation", pt: "Documentação" }, links: [
+    { t: "ShareFile documentation", u: D + "welcome" },
+    { t: "Resource library", u: D + "learn-more/resource-library" },
+    { t: "Admin guide", u: D + "get-started/sharefile-admin-guide" },
+    { t: "Client user guide", u: D + "client-resources/client-help-guide" },
+    { t: "Previewing higher-tier features", u: D + "learn-more/faq-previewing-higher-tiered-features" }
+  ]},
+  { g: { es: "Seguridad, datos y cumplimiento", en: "Security, data and compliance", pt: "Segurança, dados e conformidade" }, links: [
+    { t: "ShareFile Trust Center", u: "https://trust.sharefile.com" },
+    { t: "Security FAQ", u: D + "legal/sharefile-security-faq" },
+    { t: "Service availability by country", u: D + "sf-geo" },
+    { t: "ShareFile-managed storage zones", u: D + "account_settings/storage/sharefile-managed-storage-zones" },
+    { t: "Storage Zones Controller 6.0", u: D + "storage-zones-controller/6-0" },
+    { t: "AI-Assisted products (legal)", u: D + "legal/sharefile-ai/sf-ai" },
+    { t: "AI Principles", u: W + "ai-principles" }
+  ]},
+  { g: { es: "Firma electrónica", en: "E-signature", pt: "Assinatura eletrônica" }, links: [
+    { t: "E-signature legal overview", u: D + "electronic-signature/legal" },
+    { t: "eIDAS-supported e-signatures", u: D + "signatures/eidas-signature" },
+    { t: "E-signature security", u: D + "electronic-signature/security" }
+  ]},
+  { g: { es: "Soporte y estado", en: "Support and status", pt: "Suporte e status" }, links: [
+    { t: "Help Center", u: "https://support.sharefile.com/" },
+    { t: "Support offerings and coverage", u: "https://support.sharefile.com/s/article/ShareFile-Support-Offerings-and-Coverage" },
+    { t: "ShareFile status", u: "https://status.sharefile.com/" },
+    { t: "Feature requests (Ideas portal)", u: "https://sharefile.ideas.aha.io/" }
+  ]},
+  { g: { es: "Aprender y partners", en: "Learn and partners", pt: "Aprender e parceiros" }, links: [
+    { t: "ShareFile Training", u: W + "training" },
+    { t: "ShareFile YouTube", u: "https://www.youtube.com/@progresssharefile" },
+    { t: "Customer stories", u: W + "customer-stories" },
+    { t: "ROI calculator", u: W + "client-coordination-cost-calculator" },
+    { t: "Partner overview", u: W + "partners" },
+    { t: "Partner login", u: "https://partnercommunity.sharefile.com/s/login/" }
+  ]}
+];
+
+const DISCREPANCIES = [
+  { where: W + "plans", d: { es: "La fila Folder Q&A dice \"Included in Virtual Data Room\" en las cuatro columnas. Aquí se trata como exclusivo de VDR.", en: "The Folder Q&A row reads \"Included in Virtual Data Room\" in all four columns. Treated here as VDR-only.", pt: "A linha Folder Q&A diz \"Included in Virtual Data Room\" nas quatro colunas. Aqui é tratada como exclusiva do VDR." } },
+  { where: W + "plans", d: { es: "La fila Feedback & Approval aparece duplicada dentro de Workflows.", en: "The Feedback & Approval row appears twice under Workflows.", pt: "A linha Feedback & Approval aparece duplicada em Workflows." } },
+  { where: W + "plans", d: { es: "HIPAA Eligible dice \"Available only in ShareFile Premium\", pero la tabla lo marca también en Enterprise y VDR.", en: "HIPAA Eligible says \"Available only in ShareFile Premium\", yet the table also marks Enterprise and VDR.", pt: "HIPAA Eligible diz \"Available only in ShareFile Premium\", mas a tabela também marca Enterprise e VDR." } },
+  { where: D + "signatures/eidas-signature", d: { es: "Las firmas eIDAS están documentadas para Premium y superiores, pero no aparecen en la tabla de precios.", en: "eIDAS signatures are documented for Premium and higher but are missing from the pricing table.", pt: "As assinaturas eIDAS estão documentadas para Premium e superiores, mas não aparecem na tabela de preços." } },
+  { where: W + "enterprise", d: { es: "La página de tamaño \"Large\" (/enterprise) no menciona las funciones del plan Enterprise, y el menú la llama a veces \"Large\" y a veces \"Enterprise\".", en: "The \"Large\" company-size page (/enterprise) does not mention Enterprise plan features, and the menu labels it \"Large\" or \"Enterprise\" inconsistently.", pt: "A página de porte \"Large\" (/enterprise) não cita os recursos do plano Enterprise, e o menu a chama ora de \"Large\", ora de \"Enterprise\"." } },
+  { where: W + "industry/finance", d: { es: "Algunas páginas (Finance, Healthcare, Real Estate, Small Business, /enterprise) todavía muestran \"Industry Advantage\" en el menú, aunque ya no aparece en /plans.", en: "Some pages (Finance, Healthcare, Real Estate, Small Business, /enterprise) still list \"Industry Advantage\" in the menu, though it is gone from /plans.", pt: "Algumas páginas (Finance, Healthcare, Real Estate, Small Business, /enterprise) ainda mostram \"Industry Advantage\" no menu, embora não esteja mais em /plans." } }
+];
+
+const CHANGELOG = [
+  { v: "1.0.0", date: "2026-10-08", d: { es: "Primera versión: mapas de planes, VDR, recomendador, comparador, matriz, calculadora, conocimiento y glosario en ES, EN y PT.", en: "First release: plan maps, VDR, recommender, comparator, matrix, calculator, knowledge and glossary in ES, EN and PT.", pt: "Primeira versão: mapas de planos, VDR, recomendador, comparador, matriz, calculadora, conhecimento e glossário em ES, EN e PT." } }
+];
+
+/* Interface text. Feature names stay in official English; everything else is translated. */
+const UI = {
+  es: {
+    lang: "Español", siteTag: "Mapa de planes ShareFile", unofficial: "Sitio no oficial",
+    nav: { home: "Inicio", map: "Mapa de planes", vdr: "Data Room", recommend: "Recomendador", compare: "Comparador", matrix: "Matriz", calc: "Calculadora", knowledge: "Conocimiento", glossary: "Glosario", changelog: "Cambios", discrepancies: "Discrepancias" },
+    by: "Por", updated: "Actualizado",
+    home: {
+      plans: "Planes", industries: "Industrias", sizes: "Tamaño de empresa", tools: "Herramientas", resources: "Recursos",
+      allPlans: "Todos", stepup: "step-up", perUser: "por usuario / mes, anual", min: "mín.", users: "usuarios",
+      lead: "Qué incluye cada plan de ShareFile, cuál conviene según la industria y el tamaño, y cuánto cuesta. Cada función enlaza a la documentación oficial."
+    },
+    map: {
+      title: "Mapa de planes ShareFile", vdrTitle: "Virtual Data Room",
+      tierA: "Advanced", tierP: "Premium step-up", tierE: "Enterprise step-up",
+      tierAHint: "Base", tierPHint: "Agrega a Advanced", tierEHint: "Agrega a Premium",
+      highlight: "Resaltar por industria", none: "Ninguna", views: "Vista",
+      viewAll: "Completo", viewA: "Advanced", viewP: "Premium step-up", viewE: "Enterprise step-up",
+      legend: "Clic en un recuadro abre la documentación oficial. El botón i muestra detalles.",
+      vdrOnly: "Exclusivo de VDR", notInVdr: "Funciones de Advanced, Premium o Enterprise que no incluye VDR",
+      vdrLead: "VDR es un plan aparte, no un nivel superior. Estas son las funciones que incluye.",
+      count: "funciones"
+    },
+    detail: { docs: "Ver documentación oficial", plans: "Incluido en", source: "Fuente de inclusión", also: "También", close: "Cerrar", note: "Nota" },
+    rec: {
+      title: "Recomendador", lead: "Responde tres preguntas. El resultado sale de lo que publica sharefile.com para cada industria y del FAQ oficial del plan Enterprise.",
+      q1: "1. Industria", q1b: "Segmento", q2: "2. Tamaño de la empresa", q3: "3. Señales de Enterprise", q3hint: "Marca las que apliquen.",
+      other: "Otra / general", otherHint: "Solo compartir y guardar archivos de forma segura",
+      result: "Plan recomendado", why: "Por qué", needs: "Funciones que destaca la página oficial de la industria", from: "desde",
+      sigAdds: "Las señales marcadas agregan", vdrToo: "Además, considera Virtual Data Room", vdrWhy: "Para M&A, auditorías o litigios, sharefile.com recomienda Virtual Data Room.",
+      warnings: "Ten en cuenta", sizeNote: "El tamaño ajusta el mensaje, pero no cambia el plan por sí solo. Lo que justifica Enterprise son las señales de seguridad.",
+      industryPage: "Página oficial de la industria", sizePage: "Página oficial del tamaño", openCalc: "Calcular costo", openCompare: "Comparar con el plan anterior",
+      baseReason: "Todas las funciones que destaca la página de {ind} están incluidas desde {plan}.",
+      advReason: "Para compartir y guardar archivos sin firma, portal ni flujos, Advanced cubre lo necesario.",
+      entReason: "Marcaste señales que sharefile.com asocia a Enterprise: organizaciones grandes o reguladas que necesitan monitoreo, protección de datos e investigación."
+    },
+    cmp: {
+      title: "Comparador", lead: "Elige dos planes y mira qué cambia. Los precios son MSRP en USD.",
+      planA: "Plan A", planB: "Plan B", users: "Usuarios", billing: "Facturación", annual: "Anual", monthly: "Mensual",
+      onlyA: "Solo en {p}", onlyB: "Solo en {p}", both: "En ambos", diff: "Diferencia", perUser: "por usuario / mes",
+      perMonth: "por mes", perYear: "por año", same: "Elige dos planes distintos.", highlight: "Resaltar por industria", relevant: "relevante para la industria"
+    },
+    mx: {
+      title: "Matriz de funciones", lead: "Todas las funciones de la tabla oficial, en una sola vista. El enlace de la página guarda tus filtros.",
+      search: "Buscar función", group: "Grupo", all: "Todos", industry: "Industria", onlyDiff: "Solo diferencias",
+      feature: "Función", export: "Exportar CSV", copy: "Copiar enlace", copied: "Enlace copiado", shown: "funciones visibles"
+    },
+    calc: {
+      title: "Calculadora", lead: "Costo de lista y almacenamiento incluido según usuarios y plan.",
+      plan: "Plan", users: "Usuarios con licencia", billing: "Facturación", annual: "Anual", monthly: "Mensual",
+      perUser: "Precio por usuario / mes", monthTotal: "Total mensual", yearTotal: "Total anual", storage: "Almacenamiento incluido",
+      minApplied: "Se aplica el mínimo de {n} licencias del plan.", allPlans: "Mismo número de usuarios en cada plan",
+      storageNote: "Advanced, Premium y Enterprise: 1 TB por licencia agregado, mínimo 3 TB. VDR: 1 GB por licencia. Se pueden sumar paquetes de 3 TB.",
+      priceNote: "Precios MSRP de sharefile.com/plans. El precio final puede variar por canal, volumen o plazo."
+    },
+    kn: { title: "Conocimiento", lead: "Enlaces oficiales de ShareFile y Progress, agrupados por tema." },
+    gl: { title: "Glosario", lead: "Términos que aparecen en planes y conversaciones de venta.", search: "Buscar término" },
+    ch: { title: "Registro de cambios", lead: "Qué cambió en este sitio y cuándo." },
+    ds: { title: "Discrepancias en la fuente oficial", lead: "Inconsistencias encontradas en sharefile.com o en la documentación, y cómo se tratan aquí.", where: "Dónde" },
+    foot: {
+      disclaimer: "Sitio no oficial, mantenido de forma independiente. No representa a Progress Software Corporation. ShareFile y Progress son marcas de Progress Software Corporation.",
+      truth: "La única fuente autorizada es sharefile.com y docs.sharefile.com. Valida cualquier decisión de compra con tu ejecutivo o partner de ShareFile.",
+      prices: "Precios MSRP en USD tomados de sharefile.com/plans."
+    },
+    cookies: { text: "Usamos cookies de analítica para saber qué secciones se consultan. No identifican a nadie.", accept: "Aceptar", reject: "Rechazar" },
+    theme: "Tema", light: "Claro", dark: "Oscuro", system: "Sistema", info: "Detalles"
+  },
+
+  en: {
+    lang: "English", siteTag: "ShareFile plans map", unofficial: "Unofficial site",
+    nav: { home: "Home", map: "Plans map", vdr: "Data Room", recommend: "Recommender", compare: "Comparator", matrix: "Matrix", calc: "Calculator", knowledge: "Knowledge", glossary: "Glossary", changelog: "Changes", discrepancies: "Discrepancies" },
+    by: "By", updated: "Updated",
+    home: {
+      plans: "Plans", industries: "Industries", sizes: "Company size", tools: "Tools", resources: "Resources",
+      allPlans: "All", stepup: "step-up", perUser: "per user / month, annual", min: "min.", users: "users",
+      lead: "What each ShareFile plan includes, which one fits by industry and size, and what it costs. Every feature links to official documentation."
+    },
+    map: {
+      title: "ShareFile plans map", vdrTitle: "Virtual Data Room",
+      tierA: "Advanced", tierP: "Premium step-up", tierE: "Enterprise step-up",
+      tierAHint: "Base", tierPHint: "Adds to Advanced", tierEHint: "Adds to Premium",
+      highlight: "Highlight by industry", none: "None", views: "View",
+      viewAll: "Full", viewA: "Advanced", viewP: "Premium step-up", viewE: "Enterprise step-up",
+      legend: "Click a tile to open the official documentation. The i button shows details.",
+      vdrOnly: "VDR only", notInVdr: "Advanced, Premium or Enterprise features that VDR does not include",
+      vdrLead: "VDR is a separate plan, not a higher tier. These are the features it includes.",
+      count: "features"
+    },
+    detail: { docs: "Open official documentation", plans: "Included in", source: "Inclusion source", also: "Also", close: "Close", note: "Note" },
+    rec: {
+      title: "Recommender", lead: "Answer three questions. The result comes from what sharefile.com publishes for each industry and from the official Enterprise plan FAQ.",
+      q1: "1. Industry", q1b: "Segment", q2: "2. Company size", q3: "3. Enterprise signals", q3hint: "Check all that apply.",
+      other: "Other / general", otherHint: "Only secure file sharing and storage",
+      result: "Recommended plan", why: "Why", needs: "Features the official industry page highlights", from: "from",
+      sigAdds: "The checked signals add", vdrToo: "Also consider Virtual Data Room", vdrWhy: "For M&A, audits or litigation, sharefile.com recommends Virtual Data Room.",
+      warnings: "Keep in mind", sizeNote: "Size shapes the message but does not change the plan by itself. Security signals are what justify Enterprise.",
+      industryPage: "Official industry page", sizePage: "Official company-size page", openCalc: "Calculate cost", openCompare: "Compare with the plan below",
+      baseReason: "Every feature the {ind} page highlights is included from {plan}.",
+      advReason: "For secure file sharing and storage without e-signature, portal or workflows, Advanced covers it.",
+      entReason: "You checked signals sharefile.com links to Enterprise: larger or regulated organizations that need monitoring, data protection and investigation."
+    },
+    cmp: {
+      title: "Comparator", lead: "Pick two plans and see what changes. Prices are MSRP in USD.",
+      planA: "Plan A", planB: "Plan B", users: "Users", billing: "Billing", annual: "Annual", monthly: "Monthly",
+      onlyA: "Only in {p}", onlyB: "Only in {p}", both: "In both", diff: "Difference", perUser: "per user / month",
+      perMonth: "per month", perYear: "per year", same: "Pick two different plans.", highlight: "Highlight by industry", relevant: "relevant to the industry"
+    },
+    mx: {
+      title: "Feature matrix", lead: "Every feature in the official table, in one view. The page link keeps your filters.",
+      search: "Search features", group: "Group", all: "All", industry: "Industry", onlyDiff: "Differences only",
+      feature: "Feature", export: "Export CSV", copy: "Copy link", copied: "Link copied", shown: "features shown"
+    },
+    calc: {
+      title: "Calculator", lead: "List cost and included storage by users and plan.",
+      plan: "Plan", users: "Licensed users", billing: "Billing", annual: "Annual", monthly: "Monthly",
+      perUser: "Price per user / month", monthTotal: "Monthly total", yearTotal: "Annual total", storage: "Included storage",
+      minApplied: "The plan's {n}-license minimum applies.", allPlans: "Same number of users on every plan",
+      storageNote: "Advanced, Premium and Enterprise: 1 TB per license pooled, 3 TB minimum. VDR: 1 GB per license. 3 TB packs can be added.",
+      priceNote: "MSRP from sharefile.com/plans. Final price may vary by channel, volume or term."
+    },
+    kn: { title: "Knowledge", lead: "Official ShareFile and Progress links, grouped by topic." },
+    gl: { title: "Glossary", lead: "Terms that come up in plans and sales conversations.", search: "Search terms" },
+    ch: { title: "Change log", lead: "What changed on this site and when." },
+    ds: { title: "Discrepancies in the official source", lead: "Inconsistencies found on sharefile.com or in the documentation, and how this site handles them.", where: "Where" },
+    foot: {
+      disclaimer: "Unofficial site, independently maintained. It does not represent Progress Software Corporation. ShareFile and Progress are trademarks of Progress Software Corporation.",
+      truth: "The only authoritative sources are sharefile.com and docs.sharefile.com. Validate any purchasing decision with your ShareFile account executive or partner.",
+      prices: "MSRP in USD from sharefile.com/plans."
+    },
+    cookies: { text: "We use analytics cookies to learn which sections are used. They do not identify anyone.", accept: "Accept", reject: "Decline" },
+    theme: "Theme", light: "Light", dark: "Dark", system: "System", info: "Details"
+  },
+
+  pt: {
+    lang: "Português", siteTag: "Mapa de planos ShareFile", unofficial: "Site não oficial",
+    nav: { home: "Início", map: "Mapa de planos", vdr: "Data Room", recommend: "Recomendador", compare: "Comparador", matrix: "Matriz", calc: "Calculadora", knowledge: "Conhecimento", glossary: "Glossário", changelog: "Mudanças", discrepancies: "Discrepâncias" },
+    by: "Por", updated: "Atualizado",
+    home: {
+      plans: "Planos", industries: "Setores", sizes: "Porte da empresa", tools: "Ferramentas", resources: "Recursos",
+      allPlans: "Todos", stepup: "step-up", perUser: "por usuário / mês, anual", min: "mín.", users: "usuários",
+      lead: "O que cada plano do ShareFile inclui, qual convém por setor e porte, e quanto custa. Cada recurso leva à documentação oficial."
+    },
+    map: {
+      title: "Mapa de planos ShareFile", vdrTitle: "Virtual Data Room",
+      tierA: "Advanced", tierP: "Premium step-up", tierE: "Enterprise step-up",
+      tierAHint: "Base", tierPHint: "Adiciona ao Advanced", tierEHint: "Adiciona ao Premium",
+      highlight: "Destacar por setor", none: "Nenhum", views: "Visão",
+      viewAll: "Completo", viewA: "Advanced", viewP: "Premium step-up", viewE: "Enterprise step-up",
+      legend: "Clique em um bloco para abrir a documentação oficial. O botão i mostra detalhes.",
+      vdrOnly: "Exclusivo do VDR", notInVdr: "Recursos de Advanced, Premium ou Enterprise que o VDR não inclui",
+      vdrLead: "O VDR é um plano à parte, não um nível superior. Estes são os recursos que ele inclui.",
+      count: "recursos"
+    },
+    detail: { docs: "Abrir documentação oficial", plans: "Incluído em", source: "Fonte da inclusão", also: "Também", close: "Fechar", note: "Nota" },
+    rec: {
+      title: "Recomendador", lead: "Responda três perguntas. O resultado vem do que o sharefile.com publica para cada setor e do FAQ oficial do plano Enterprise.",
+      q1: "1. Setor", q1b: "Segmento", q2: "2. Porte da empresa", q3: "3. Sinais de Enterprise", q3hint: "Marque os que se aplicam.",
+      other: "Outro / geral", otherHint: "Só compartilhar e guardar arquivos com segurança",
+      result: "Plano recomendado", why: "Por quê", needs: "Recursos que a página oficial do setor destaca", from: "a partir do",
+      sigAdds: "Os sinais marcados adicionam", vdrToo: "Considere também o Virtual Data Room", vdrWhy: "Para M&A, auditorias ou litígios, o sharefile.com recomenda o Virtual Data Room.",
+      warnings: "Atenção", sizeNote: "O porte ajusta a mensagem, mas não muda o plano sozinho. O que justifica o Enterprise são os sinais de segurança.",
+      industryPage: "Página oficial do setor", sizePage: "Página oficial do porte", openCalc: "Calcular custo", openCompare: "Comparar com o plano anterior",
+      baseReason: "Todos os recursos que a página de {ind} destaca estão incluídos a partir do {plan}.",
+      advReason: "Para compartilhar e guardar arquivos sem assinatura, portal ou fluxos, o Advanced atende.",
+      entReason: "Você marcou sinais que o sharefile.com associa ao Enterprise: organizações maiores ou reguladas que precisam de monitoramento, proteção de dados e investigação."
+    },
+    cmp: {
+      title: "Comparador", lead: "Escolha dois planos e veja o que muda. Os preços são MSRP em USD.",
+      planA: "Plano A", planB: "Plano B", users: "Usuários", billing: "Cobrança", annual: "Anual", monthly: "Mensal",
+      onlyA: "Só no {p}", onlyB: "Só no {p}", both: "Em ambos", diff: "Diferença", perUser: "por usuário / mês",
+      perMonth: "por mês", perYear: "por ano", same: "Escolha dois planos diferentes.", highlight: "Destacar por setor", relevant: "relevante para o setor"
+    },
+    mx: {
+      title: "Matriz de recursos", lead: "Todos os recursos da tabela oficial, em uma só visão. O link da página guarda seus filtros.",
+      search: "Buscar recurso", group: "Grupo", all: "Todos", industry: "Setor", onlyDiff: "Só diferenças",
+      feature: "Recurso", export: "Exportar CSV", copy: "Copiar link", copied: "Link copiado", shown: "recursos visíveis"
+    },
+    calc: {
+      title: "Calculadora", lead: "Custo de lista e armazenamento incluído por usuários e plano.",
+      plan: "Plano", users: "Usuários licenciados", billing: "Cobrança", annual: "Anual", monthly: "Mensal",
+      perUser: "Preço por usuário / mês", monthTotal: "Total mensal", yearTotal: "Total anual", storage: "Armazenamento incluído",
+      minApplied: "Aplica-se o mínimo de {n} licenças do plano.", allPlans: "Mesmo número de usuários em cada plano",
+      storageNote: "Advanced, Premium e Enterprise: 1 TB por licença agregado, mínimo de 3 TB. VDR: 1 GB por licença. É possível adicionar pacotes de 3 TB.",
+      priceNote: "Preços MSRP de sharefile.com/plans. O preço final pode variar por canal, volume ou prazo."
+    },
+    kn: { title: "Conhecimento", lead: "Links oficiais do ShareFile e da Progress, agrupados por tema." },
+    gl: { title: "Glossário", lead: "Termos que aparecem em planos e conversas de venda.", search: "Buscar termo" },
+    ch: { title: "Registro de mudanças", lead: "O que mudou neste site e quando." },
+    ds: { title: "Discrepâncias na fonte oficial", lead: "Inconsistências encontradas no sharefile.com ou na documentação, e como são tratadas aqui.", where: "Onde" },
+    foot: {
+      disclaimer: "Site não oficial, mantido de forma independente. Não representa a Progress Software Corporation. ShareFile e Progress são marcas da Progress Software Corporation.",
+      truth: "As únicas fontes autorizadas são sharefile.com e docs.sharefile.com. Valide qualquer decisão de compra com seu executivo ou parceiro ShareFile.",
+      prices: "Preços MSRP em USD de sharefile.com/plans."
+    },
+    cookies: { text: "Usamos cookies de análise para saber quais seções são consultadas. Eles não identificam ninguém.", accept: "Aceitar", reject: "Recusar" },
+    theme: "Tema", light: "Claro", dark: "Escuro", system: "Sistema", info: "Detalhes"
+  }
+};
+
+/* ShareFile Maps — app. Plain JS, no dependencies. */
+(function () {
+  "use strict";
+
+  // ── Storage (tolerant)
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem("sfm." + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+    set(k, v) { try { localStorage.setItem("sfm." + k, JSON.stringify(v)); } catch (e) { /* ignore */ } }
+  };
+
+  // ── Indexes
+  const F = Object.fromEntries(FEATURES.map(f => [f.id, f]));
+  const P = Object.fromEntries(PLANS.map(p => [p.id, p]));
+  const G = Object.fromEntries(GROUPS.map(g => [g.id, g]));
+  const IND = Object.fromEntries(INDUSTRIES.map(i => [i.id, i]));
+  const TIERS = ["A", "P", "E"];
+
+  // ── Language
+  const pickLang = () => {
+    const saved = store.get("lang", null);
+    if (saved && UI[saved]) return saved;
+    const n = (navigator.language || "es").slice(0, 2);
+    return UI[n] ? n : "es";
+  };
+  let lang = pickLang();
+  const t = () => UI[lang];
+  const L = obj => (obj && (obj[lang] || obj.es || obj.en)) || "";
+  const fmt = (s, map) => s.replace(/\{(\w+)\}/g, (_, k) => map[k] ?? "");
+  const money = (n, dec = 2) => new Intl.NumberFormat(lang === "en" ? "en-US" : lang === "pt" ? "pt-BR" : "es-CR",
+    { style: "currency", currency: "USD", minimumFractionDigits: dec, maximumFractionDigits: dec }).format(n);
+  const int = n => new Intl.NumberFormat(lang === "en" ? "en-US" : lang === "pt" ? "pt-BR" : "es-CR").format(n);
+
+  // ── Helpers
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const tierOf = f => TIERS.find(x => f.plans.includes(x)) || null;
+  const minPlan = ids => {
+    let idx = 0;
+    ids.forEach(id => { const tr = tierOf(F[id]); if (tr) idx = Math.max(idx, TIERS.indexOf(tr)); });
+    return TIERS[idx];
+  };
+  const ext = (url, label, cls = "") => `<a href="${esc(url)}" target="_blank" rel="noopener" class="${cls}">${label}</a>`;
+  const flagsFor = f => (f.badges || []).filter(b => ["new", "us", "eu", "usreg"].includes(b))
+    .map(b => `<span>${b === "new" ? "NEW" : b === "eu" ? "EU" : "US"}</span>`).join("");
+
+  const tileHTML = (f, opts = {}) => {
+    const cls = ["tile", "g-" + f.g];
+    if (f.plans === "V") cls.push("vdr-only");
+    if (opts.rel === false) cls.push("dim");
+    if (opts.rel === true) cls.push("hit");
+    return `<div class="${cls.join(" ")}">
+      <a href="${esc(f.url)}" target="_blank" rel="noopener" title="${esc(L(f.d))}">${esc(f.name)}</a>
+      <button class="i" type="button" data-detail="${f.id}" aria-label="${esc(t().info + ": " + f.name)}">i</button>
+      <div class="flags" aria-hidden="true">${flagsFor(f)}</div>
+    </div>`;
+  };
+
+  // ── State
+  const state = {
+    hl: store.get("hl", ""),
+    rec: store.get("rec", { ind: "accounting", sub: "", size: "mid", sig: [] }),
+    cmp: store.get("cmp", { a: "P", b: "E", users: 25, bill: "annual", hl: "" }),
+    calc: store.get("calc", { plan: "P", users: 25, bill: "annual" }),
+    mx: { q: "", g: "", i: "", diff: false }
+  };
+  try {
+    const qs = new URLSearchParams(location.search);
+    state.mx = { q: qs.get("q") || "", g: qs.get("g") || "", i: qs.get("i") || "", diff: qs.get("diff") === "1" };
+  } catch (e) { /* ignore */ }
+
+  // ── Routes
+  const routes = {
+    home: renderHome, map: () => renderMap("all"), "map-a": () => renderMap("A"), "map-p": () => renderMap("P"), "map-e": () => renderMap("E"),
+    vdr: renderVdr, recommend: renderRec, compare: renderCompare, matrix: renderMatrix, calc: renderCalc,
+    knowledge: renderKnowledge, glossary: renderGlossary, changelog: renderChangelog, discrepancies: renderDisc
+  };
+  const navKeys = ["home", "map", "vdr", "recommend", "compare", "matrix", "calc", "knowledge", "glossary"];
+
+  function route() {
+    let h = (location.hash || "#home").slice(1) || "home";
+    if (h.startsWith("recommend-size-")) { state.rec.size = h.slice(15); h = "recommend"; }
+    else if (h.startsWith("recommend-")) { const id = h.slice(10); if (IND[id] || id === "other") { state.rec.ind = id; state.rec.sub = ""; } h = "recommend"; }
+    const fn = routes[h] || renderHome;
+    const navKey = h.startsWith("map") ? "map" : (routes[h] ? h : "home");
+    renderChrome(navKey);
+    $("#view").innerHTML = "";
+    fn();
+    document.title = (navKey === "home" ? "" : t().nav[navKey] + " · ") + "ShareFile Maps";
+    window.scrollTo(0, 0);
+  }
+
+  // ── Chrome
+  function renderChrome(active) {
+    const u = t();
+    $("#nav").innerHTML = navKeys.map(k => `<a href="#${k}" ${k === active ? 'aria-current="page"' : ""}>${u.nav[k]}</a>`).join("");
+    $("#brand-tag").textContent = u.siteTag;
+    $("#unofficial").textContent = u.unofficial;
+    $("#lang").value = lang;
+    $("#lang").setAttribute("aria-label", u.lang);
+    const th = store.get("theme", "system");
+    $("#theme").textContent = th === "dark" ? "◐ " + u.dark : th === "light" ? "◑ " + u.light : "◒ " + u.system;
+    $("#theme").setAttribute("aria-label", u.theme);
+    $("#foot").innerHTML = `
+      <p>${esc(u.foot.disclaimer)}</p>
+      <p>${esc(u.foot.truth)} ${esc(u.foot.prices)}</p>
+      <p>${u.by} ${esc(SITE.author)} · ${u.updated} <span class="num">${SITE.updated}</span> · v<span class="num">${SITE.version}</span> ·
+        <a href="#changelog">${u.nav.changelog}</a> · <a href="#discrepancies">${u.nav.discrepancies}</a></p>`;
+  }
+
+  const head = (title, lead, extra = "") => `<div class="page-head"><h1>${esc(title)}</h1>${lead ? `<p class="lead">${esc(lead)}</p>` : ""}${extra}</div>`;
+  const updatedLine = () => `<p class="meta">${t().updated} <span class="num">${SITE.updated}</span> · ${ext(SITE.pricingSource, "sharefile.com/plans")}</p>`;
+
+  // ── Home
+  function renderHome() {
+    const u = t(), h = u.home;
+    const row = (label, links) => `<div class="index-row"><b>${esc(label)}</b><div class="index-links">${links}</div></div>`;
+    const a = (href, txt) => `<a href="${href}">${esc(txt)}</a>`;
+    $("#view").innerHTML = `
+      <div class="page-head">
+        <p class="eyebrow">${esc(u.siteTag)}</p>
+        <h1>ShareFile Maps</h1>
+        <p class="meta">${u.by} ${esc(SITE.author)} — <b>${new Date(SITE.updated + "T12:00:00").toLocaleDateString(lang === "en" ? "en-US" : lang === "pt" ? "pt-BR" : "es-CR", { month: "long", year: "numeric" })}</b></p>
+        <p class="lead">${esc(h.lead)}</p>
+      </div>
+      <div class="index">
+        ${row(h.plans, [a("#map", h.allPlans), a("#map-a", "Advanced"), a("#map-p", "Premium " + h.stepup), a("#map-e", "Enterprise " + h.stepup), a("#vdr", "Virtual Data Room")].join(""))}
+        ${row(h.industries, INDUSTRIES.map(i => a("#recommend-" + i.id, L(i.name))).join(""))}
+        ${row(h.sizes, SIZES.map(s => a("#recommend-size-" + s.id, L(s.name))).join(""))}
+        ${row(h.tools, ["recommend", "compare", "matrix", "calc"].map(k => a("#" + k, u.nav[k])).join(""))}
+        ${row(h.resources, ["knowledge", "glossary", "changelog", "discrepancies"].map(k => a("#" + k, u.nav[k])).join(""))}
+      </div>
+      <div class="price-row">
+        ${PLANS.map(p => {
+          const n = FEATURES.filter(f => f.plans.includes(p.id)).length;
+          return `<a class="price" href="${p.id === "V" ? "#vdr" : "#map-" + p.id.toLowerCase()}" style="text-decoration:none;color:inherit">
+            <span class="eyebrow">${esc(p.name)}</span>
+            <span class="amt">${money(p.annual)} <small>${esc(h.perUser)}</small></span>
+            <span class="muted" style="font-size:.85rem">${esc(L(p.tag))}</span>
+            <span class="tier-bar" aria-hidden="true"><i style="width:${Math.round(n / FEATURES.length * 100)}%"></i></span>
+            <span class="hint">${n} ${esc(u.map.count)} · ${h.min} ${p.min} ${h.users}</span>
+          </a>`;
+        }).join("")}
+      </div>`;
+  }
+
+  // ── Plan map
+  function industrySelect(id, val) {
+    return `<select id="${id}"><option value="">${esc(t().map.none)}</option>${INDUSTRIES.map(i => `<option value="${i.id}" ${i.id === val ? "selected" : ""}>${esc(L(i.name))}</option>`).join("")}</select>`;
+  }
+  function relSet(indId) { return indId && IND[indId] ? new Set(IND[indId].f) : null; }
+
+  function renderMap(view) {
+    const u = t(), m = u.map;
+    const cols = view === "all" ? TIERS : [view];
+    const rel = relSet(state.hl);
+    const names = { A: m.tierA, P: m.tierP, E: m.tierE };
+    const hints = { A: m.tierAHint, P: m.tierPHint, E: m.tierEHint };
+    const title = view === "all" ? m.title : names[view];
+    const bands = GROUPS.map(g => {
+      const cells = cols.map(tr => {
+        const fs = FEATURES.filter(f => f.g === g.id && tierOf(f) === tr);
+        return `<div class="cell"><span class="cell-tier">${esc(names[tr])}</span>${fs.map(f => tileHTML(f, { rel: rel ? rel.has(f.id) : undefined })).join("")}</div>`;
+      });
+      const any = cols.some(tr => FEATURES.some(f => f.g === g.id && tierOf(f) === tr));
+      if (!any) return "";
+      return `<div class="band"><div class="band-label g-${g.id}">${esc(L(g.name))}</div>${cells.join("")}</div>`;
+    }).join("");
+    const counts = cols.map(tr => FEATURES.filter(f => tierOf(f) === tr).length);
+    $("#view").innerHTML = `
+      ${head(title, view === "all" ? u.home.lead : "", updatedLine())}
+      <div class="toolbar">
+        <span class="seg" role="group" aria-label="${esc(m.views)}">
+          ${[["map", m.viewAll], ["map-a", m.viewA], ["map-p", m.viewP], ["map-e", m.viewE]].map(([h, lbl]) =>
+            `<a href="#${h}" ${(h === "map" && view === "all") || h === "map-" + view.toLowerCase() ? 'aria-current="true"' : ""}>${esc(lbl)}</a>`).join("")}
+        </span>
+        <label>${esc(m.highlight)} ${industrySelect("hl", state.hl)}</label>
+      </div>
+      <div class="map-frame">
+        <div class="map-title"><h2>${esc(title)}</h2><p>${esc(SITE.updated)} · ShareFile Maps</p></div>
+        <div class="map" style="--cols:${cols.length}">
+          <div class="map-head"><div></div>${cols.map((tr, i) => `<div class="th t-${tr}">${esc(names[tr])}<small>${esc(hints[tr])} · ${counts[i]} ${esc(m.count)} · ${money(P[tr].annual)}</small></div>`).join("")}</div>
+          ${bands}
+        </div>
+        <div class="map-foot">
+          ${GROUPS.map(g => `<span class="k"><i class="g-${g.id}"></i>${esc(L(g.name))}</span>`).join("")}
+          <span class="k">${esc(m.legend)}</span>
+        </div>
+      </div>`;
+    $("#hl").addEventListener("change", e => { state.hl = e.target.value; store.set("hl", state.hl); renderMap(view); });
+  }
+
+  function renderVdr() {
+    const u = t(), m = u.map;
+    const rel = relSet(state.hl);
+    const inV = FEATURES.filter(f => f.plans.includes("V"));
+    const notV = FEATURES.filter(f => !f.plans.includes("V") && /[APE]/.test(f.plans));
+    const bands = GROUPS.map(g => {
+      const fs = inV.filter(f => f.g === g.id);
+      if (!fs.length) return "";
+      return `<div class="band"><div class="band-label g-${g.id}">${esc(L(g.name))}</div><div class="cell">${fs.map(f => tileHTML(f, { rel: rel ? rel.has(f.id) : undefined })).join("")}</div></div>`;
+    }).join("");
+    $("#view").innerHTML = `
+      ${head(m.vdrTitle, m.vdrLead, updatedLine())}
+      <div class="toolbar"><label>${esc(m.highlight)} ${industrySelect("hl", state.hl)}</label>
+        <span class="chip num">${money(P.V.annual)} · ${u.home.min} ${P.V.min} ${u.home.users}</span>
+        ${ext(P.V.page, "sharefile.com/plans/sharefile-virtual-data-room")}</div>
+      <div class="map-frame">
+        <div class="map-title"><h2>Virtual Data Room</h2><p>${inV.length} ${esc(m.count)}</p></div>
+        <div class="map" style="--cols:1">${bands}</div>
+        <div class="map-foot"><span class="k"><i style="box-shadow:0 0 0 2px var(--vdr);background:var(--surface)"></i>${esc(m.vdrOnly)}</span><span class="k">${esc(m.legend)}</span></div>
+      </div>
+      <div class="vdr-out box">
+        <h3>${esc(m.notInVdr)}</h3>
+        <div class="cell">${notV.map(f => tileHTML(f)).join("")}</div>
+      </div>`;
+    $("#hl").addEventListener("change", e => { state.hl = e.target.value; store.set("hl", state.hl); renderVdr(); });
+  }
+
+  // ── Detail panel
+  function openDetail(id) {
+    const f = F[id]; if (!f) return;
+    const u = t(), dd = u.detail;
+    const inds = INDUSTRIES.filter(i => i.f.includes(f.id));
+    const wrap = document.createElement("div");
+    wrap.className = "scrim";
+    wrap.innerHTML = `<aside class="panel" role="dialog" aria-modal="true" aria-labelledby="dt-title">
+      <div class="swatch g-${f.g}"></div>
+      <p class="eyebrow">${esc(L(G[f.g].name))}</p>
+      <h2 id="dt-title">${esc(f.name)}</h2>
+      <p>${esc(L(f.d))}</p>
+      ${(f.badges || []).length ? `<div class="pills">${f.badges.map(b => `<span class="pill ${["us", "usreg", "eu", "third", "check"].includes(b) ? "warn" : "ok"}">${esc(L(BADGES[b]))}</span>`).join("")}</div>` : ""}
+      ${f.note ? `<div class="note"><b>${esc(dd.note)}:</b> ${esc(L(f.note))}</div>` : ""}
+      ${G[f.g].note ? `<div class="note">${esc(L(G[f.g].note))}</div>` : ""}
+      <dl>
+        <dt>${esc(dd.plans)}</dt><dd>${PLANS.filter(p => f.plans.includes(p.id)).map(p => esc(p.name)).join(", ")}</dd>
+        ${inds.length ? `<dt>${esc(u.home.industries)}</dt><dd>${inds.map(i => esc(L(i.name))).join(", ")}</dd>` : ""}
+        <dt>${esc(dd.source)}</dt><dd>${f.id === "eidas" ? ext(f.url, "docs.sharefile.com") : ext(SITE.pricingSource, "sharefile.com/plans")}</dd>
+        ${f.also ? `<dt>${esc(dd.also)}</dt><dd>${f.also.map(a => ext(a.url, esc(a.label))).join(" · ")}</dd>` : ""}
+      </dl>
+      <div class="actions">${ext(f.url, esc(dd.docs) + " ↗", "btn primary")}<button class="btn" type="button" data-close>${esc(dd.close)}</button></div>
+    </aside>`;
+    const close = () => { wrap.remove(); document.removeEventListener("keydown", onKey); };
+    const onKey = e => { if (e.key === "Escape") close(); };
+    wrap.addEventListener("click", e => { if (e.target === wrap || e.target.closest("[data-close]")) close(); });
+    document.addEventListener("keydown", onKey);
+    document.body.appendChild(wrap);
+    $("[data-close]", wrap).focus();
+  }
+
+  // ── Recommender
+  function recompute() {
+    const r = state.rec;
+    const ind = IND[r.ind];
+    const needs = ind ? ind.f : [];
+    let plan = ind ? minPlan(needs) : "A";
+    const sigs = SIGNALS.filter(s => r.sig.includes(s.id));
+    const entSigs = sigs.filter(s => !s.vdr);
+    if (entSigs.length) plan = "E";
+    const sub = ind && ind.subs ? ind.subs.find(s => s.id === r.sub) : null;
+    const vdr = sigs.some(s => s.vdr) || (sub && sub.vdr);
+    return { ind, needs, plan, entSigs, vdr, sub };
+  }
+
+  function renderRec() {
+    const u = t(), R = u.rec, r = state.rec;
+    const choice = (name, val, label, checked, extra = "") => `<label class="choice"><input type="radio" name="${name}" value="${val}" ${checked ? "checked" : ""}><span>${esc(label)}</span></label>${extra}`;
+    $("#view").innerHTML = `
+      ${head(R.title, R.lead)}
+      <div class="grid2">
+        <form class="box" id="recf" onsubmit="return false">
+          <fieldset><legend>${esc(R.q1)}</legend><div class="choices">
+            ${INDUSTRIES.map(i => choice("ind", i.id, L(i.name), r.ind === i.id)).join("")}
+            ${choice("ind", "other", R.other, r.ind === "other")}
+          </div>${r.ind === "other" ? `<p class="hint">${esc(R.otherHint)}</p>` : ""}</fieldset>
+          ${IND[r.ind] && IND[r.ind].subs ? `<fieldset><legend>${esc(R.q1b)}</legend><div class="choices">
+            ${IND[r.ind].subs.map(s => choice("sub", s.id, L(s.name), r.sub === s.id)).join("")}</div></fieldset>` : ""}
+          <fieldset><legend>${esc(R.q2)}</legend><div class="choices">
+            ${SIZES.map(s => choice("size", s.id, L(s.name), r.size === s.id)).join("")}
+          </div><p class="hint">${esc(L((SIZES.find(s => s.id === r.size) || SIZES[1]).hint))}</p></fieldset>
+          <fieldset><legend>${esc(R.q3)}</legend><p class="hint">${esc(R.q3hint)}</p>
+            ${SIGNALS.map(s => `<label class="check"><input type="checkbox" name="sig" value="${s.id}" ${r.sig.includes(s.id) ? "checked" : ""}><span>${esc(L(s.t))}</span></label>`).join("")}
+          </fieldset>
+        </form>
+        <section class="box" id="recout" aria-live="polite"></section>
+      </div>`;
+    $("#recf").addEventListener("change", e => {
+      const el = e.target;
+      if (el.name === "ind") { r.ind = el.value; r.sub = ""; store.set("rec", r); renderRec(); return; }
+      if (el.name === "sub") r.sub = el.value;
+      if (el.name === "size") { r.size = el.value; store.set("rec", r); renderRec(); return; }
+      if (el.name === "sig") r.sig = [...document.querySelectorAll('input[name="sig"]:checked')].map(x => x.value);
+      store.set("rec", r); renderRecOut();
+    });
+    renderRecOut();
+  }
+
+  function renderRecOut() {
+    const u = t(), R = u.rec, res = recompute();
+    const p = P[res.plan];
+    const size = SIZES.find(s => s.id === state.rec.size);
+    const prev = TIERS[Math.max(0, TIERS.indexOf(res.plan) - 1)];
+    const reasons = [];
+    if (res.ind) reasons.push(fmt(R.baseReason, { ind: L(res.ind.name), plan: P[minPlan(res.needs)].name }));
+    else reasons.push(R.advReason);
+    if (res.entSigs.length) reasons.push(R.entReason);
+    const fl = ids => `<ul class="flist">${ids.map(id => { const f = F[id]; const tr = tierOf(f) || "V";
+      return `<li><span><i class="dot g-${f.g}"></i>${ext(f.url, esc(f.name))}</span><span>${esc(R.from)} ${esc(P[tr].name)}</span></li>`; }).join("")}</ul>`;
+    const sigFeatures = [...new Set(res.entSigs.flatMap(s => s.f))];
+    const warns = [];
+    if (res.ind && res.ind.warn) warns.push(L(res.ind.warn));
+    if (sigFeatures.includes("scim") || sigFeatures.includes("siem")) warns.push(L(F.scim.badges && BADGES.third) + ": SCIM / SIEM.");
+    $("#recout").innerHTML = `
+      <p class="eyebrow">${esc(R.result)}</p>
+      <div class="result-plan"><strong>${esc(p.name)}</strong><span class="num">${money(p.annual)}</span><span class="muted">${esc(u.home.perUser)}</span></div>
+      <div><h3>${esc(R.why)}</h3><ul>${reasons.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>
+      ${res.ind ? `<div><h3>${esc(R.needs)}</h3>${fl(res.needs)}</div>` : ""}
+      ${sigFeatures.length ? `<div><h3>${esc(R.sigAdds)}</h3>${fl(sigFeatures)}</div>` : ""}
+      ${res.vdr ? `<div class="note"><b>${esc(R.vdrToo)}.</b> ${esc(R.vdrWhy)} <span class="num">${money(P.V.annual)}</span> · <a href="#vdr">${esc(u.nav.vdr)}</a></div>` : ""}
+      ${warns.length ? `<div><h3>${esc(R.warnings)}</h3><ul>${warns.map(w => `<li>${esc(w)}</li>`).join("")}</ul></div>` : ""}
+      <p class="hint">${esc(R.sizeNote)}</p>
+      <div class="actions">
+        ${res.ind ? ext(res.ind.url, esc(R.industryPage) + " ↗", "btn") : ""}
+        ${size ? ext(size.url, esc(R.sizePage) + " ↗", "btn") : ""}
+        <button class="btn primary" type="button" id="toCalc">${esc(R.openCalc)}</button>
+        ${res.plan !== "A" ? `<button class="btn" type="button" id="toCmp">${esc(R.openCompare)}</button>` : ""}
+      </div>`;
+    $("#toCalc").addEventListener("click", () => { state.calc.plan = res.plan; store.set("calc", state.calc); location.hash = "calc"; });
+    const tc = $("#toCmp");
+    if (tc) tc.addEventListener("click", () => { Object.assign(state.cmp, { a: prev, b: res.plan, hl: res.ind ? res.ind.id : "" }); store.set("cmp", state.cmp); location.hash = "compare"; });
+  }
+
+  // ── Compare
+  function renderCompare() {
+    const u = t(), C = u.cmp, c = state.cmp;
+    const planSel = (id, val) => `<select id="${id}">${PLANS.map(p => `<option value="${p.id}" ${p.id === val ? "selected" : ""}>${esc(p.name)}</option>`).join("")}</select>`;
+    $("#view").innerHTML = `
+      ${head(C.title, C.lead, updatedLine())}
+      <div class="box">
+        <div class="cmp-head">
+          <label class="hint">${esc(C.planA)}<br>${planSel("ca", c.a)}</label>
+          <label class="hint">${esc(C.planB)}<br>${planSel("cb", c.b)}</label>
+          <label class="hint">${esc(C.users)}<br><input id="cu" type="number" min="1" max="100000" value="${c.users}"></label>
+          <label class="hint">${esc(C.billing)}<br><select id="cbill"><option value="annual" ${c.bill === "annual" ? "selected" : ""}>${esc(C.annual)}</option><option value="monthly" ${c.bill === "monthly" ? "selected" : ""}>${esc(C.monthly)}</option></select></label>
+          <label class="hint">${esc(C.highlight)}<br>${industrySelect("chl", c.hl)}</label>
+        </div>
+        <div id="cmpout"></div>
+      </div>`;
+    const upd = () => {
+      c.a = $("#ca").value; c.b = $("#cb").value; c.bill = $("#cbill").value; c.hl = $("#chl").value;
+      c.users = Math.max(1, Math.min(100000, parseInt($("#cu").value, 10) || 1));
+      store.set("cmp", c); renderCmpOut();
+    };
+    ["#ca", "#cb", "#cbill", "#chl"].forEach(s => $(s).addEventListener("change", upd));
+    $("#cu").addEventListener("input", upd);
+    renderCmpOut();
+  }
+
+  function renderCmpOut() {
+    const u = t(), C = u.cmp, c = state.cmp, A = P[c.a], B = P[c.b];
+    if (c.a === c.b) { $("#cmpout").innerHTML = `<p class="note">${esc(C.same)}</p>`; return; }
+    const rel = relSet(c.hl);
+    const onlyA = FEATURES.filter(f => f.plans.includes(c.a) && !f.plans.includes(c.b));
+    const onlyB = FEATURES.filter(f => f.plans.includes(c.b) && !f.plans.includes(c.a));
+    const both = FEATURES.filter(f => f.plans.includes(c.a) && f.plans.includes(c.b));
+    const price = p => c.bill === "annual" ? p.annual : p.monthly;
+    const seats = p => Math.max(c.users, p.min);
+    const tot = p => price(p) * seats(p);
+    const dU = price(B) - price(A), dM = tot(B) - tot(A);
+    const list = arr => arr.length ? `<ul class="flist">${GROUPS.flatMap(g => arr.filter(f => f.g === g.id)).map(f =>
+      `<li class="${rel && rel.has(f.id) ? "rel" : ""}"><span><i class="dot g-${f.g}"></i>${ext(f.url, esc(f.name))}</span><span>${esc(L(G[f.g].name))}</span></li>`).join("")}</ul>` : `<p class="muted">—</p>`;
+    const sign = n => (n > 0 ? "+" : n < 0 ? "−" : "") + money(Math.abs(n));
+    $("#cmpout").innerHTML = `
+      <div class="kpis" style="margin-top:16px">
+        <div class="kpi"><span>${esc(C.diff)} · ${esc(C.perUser)}</span><b class="delta ${dU > 0 ? "up" : "down"}">${sign(dU)}</b></div>
+        <div class="kpi"><span>${esc(C.diff)} · ${esc(C.perMonth)} (${int(c.users)} ${esc(u.home.users)})</span><b class="delta ${dM > 0 ? "up" : "down"}">${sign(dM)}</b></div>
+        <div class="kpi"><span>${esc(C.diff)} · ${esc(C.perYear)}</span><b class="delta ${dM > 0 ? "up" : "down"}">${sign(dM * 12)}</b></div>
+        <div class="kpi"><span>${esc(C.both)}</span><b class="num">${both.length}</b></div>
+      </div>
+      ${rel ? `<p class="hint" style="margin-top:10px">● ${esc(C.relevant)}: ${esc(L(IND[c.hl].name))}</p>` : ""}
+      <div class="cmp-cols">
+        <div><h3>${esc(fmt(C.onlyA, { p: A.name }))} <span class="muted num">(${onlyA.length})</span></h3>${list(onlyA)}</div>
+        <div><h3>${esc(fmt(C.onlyB, { p: B.name }))} <span class="muted num">(${onlyB.length})</span></h3>${list(onlyB)}</div>
+      </div>`;
+  }
+
+  // ── Matrix
+  function renderMatrix() {
+    const u = t(), M = u.mx, s = state.mx;
+    $("#view").innerHTML = `
+      ${head(M.title, M.lead, updatedLine())}
+      <div class="toolbar">
+        <input id="mq" type="search" placeholder="${esc(M.search)}" value="${esc(s.q)}" aria-label="${esc(M.search)}">
+        <label>${esc(M.group)} <select id="mg"><option value="">${esc(M.all)}</option>${GROUPS.map(g => `<option value="${g.id}" ${s.g === g.id ? "selected" : ""}>${esc(L(g.name))}</option>`).join("")}</select></label>
+        <label>${esc(M.industry)} ${industrySelect("mi", s.i)}</label>
+        <label class="check" style="padding:0"><input id="md" type="checkbox" ${s.diff ? "checked" : ""}><span>${esc(M.onlyDiff)}</span></label>
+        <button class="btn" type="button" id="mexp">${esc(M.export)}</button>
+        <button class="btn" type="button" id="mcopy">${esc(M.copy)}</button>
+        <span class="mx-count" id="mcount"></span>
+      </div>
+      <div class="tbl-wrap"><table><thead><tr><th>${esc(M.feature)}</th>${PLANS.map(p => `<th class="c">${esc(p.name)}<br><span class="num muted" style="font-weight:500">${money(p.annual)}</span></th>`).join("")}</tr></thead><tbody id="mbody"></tbody></table></div>`;
+    const upd = () => {
+      s.q = $("#mq").value.trim(); s.g = $("#mg").value; s.i = $("#mi").value; s.diff = $("#md").checked;
+      try {
+        const qs = new URLSearchParams();
+        if (s.q) qs.set("q", s.q); if (s.g) qs.set("g", s.g); if (s.i) qs.set("i", s.i); if (s.diff) qs.set("diff", "1");
+        history.replaceState(null, "", (qs.toString() ? "?" + qs : location.pathname) + "#matrix");
+      } catch (e) { /* ignore */ }
+      renderMxBody();
+    };
+    $("#mq").addEventListener("input", upd);
+    ["#mg", "#mi", "#md"].forEach(x => $(x).addEventListener("change", upd));
+    $("#mexp").addEventListener("click", exportCsv);
+    $("#mcopy").addEventListener("click", () => {
+      const done = () => toast(M.copied);
+      try { navigator.clipboard.writeText(location.href).then(done, () => toast(location.href)); } catch (e) { toast(location.href); }
+    });
+    renderMxBody();
+  }
+
+  function mxRows() {
+    const s = state.mx, q = s.q.toLowerCase(), rel = relSet(s.i);
+    return FEATURES.filter(f =>
+      (!s.g || f.g === s.g) &&
+      (!rel || rel.has(f.id)) &&
+      (!s.diff || f.plans.length < 4) &&
+      (!q || f.name.toLowerCase().includes(q) || L(f.d).toLowerCase().includes(q)));
+  }
+
+  function renderMxBody() {
+    const u = t(), rows = mxRows();
+    const html = GROUPS.map(g => {
+      const fs = rows.filter(f => f.g === g.id);
+      if (!fs.length) return "";
+      return `<tr class="grp"><td colspan="5">${esc(L(g.name))}</td></tr>` + fs.map(f => `<tr>
+        <td><span class="feat">${ext(f.url, esc(f.name))} <button class="i" type="button" data-detail="${f.id}" aria-label="${esc(u.info)}" style="border:0;background:none;color:var(--muted);padding:0 4px">ⓘ</button></span>
+          <span class="sub">${esc(L(f.d))}</span>
+          ${(f.badges || []).length ? `<span class="pills" style="margin-top:4px">${f.badges.map(b => `<span class="pill ${["us", "usreg", "eu", "third", "check"].includes(b) ? "warn" : "ok"}">${esc(L(BADGES[b]))}</span>`).join("")}</span>` : ""}</td>
+        ${PLANS.map(p => f.plans.includes(p.id) ? `<td class="c yes" aria-label="✓">✓</td>` : `<td class="c no" aria-label="—">—</td>`).join("")}</tr>`).join("");
+    }).join("");
+    $("#mbody").innerHTML = html;
+    $("#mcount").textContent = rows.length + " " + u.mx.shown;
+  }
+
+  function exportCsv() {
+    const rows = mxRows();
+    const q = v => '"' + String(v).replace(/"/g, '""') + '"';
+    const lines = [["Group", "Feature", ...PLANS.map(p => p.name), "Description", "Notes", "Documentation"].map(q).join(",")];
+    rows.forEach(f => lines.push([L(G[f.g].name), f.name, ...PLANS.map(p => f.plans.includes(p.id) ? "Yes" : ""), L(f.d), (f.badges || []).map(b => L(BADGES[b])).join("; "), f.url].map(q).join(",")));
+    try {
+      const blob = new Blob(["﻿" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob); a.download = "sharefile-maps-matrix-" + SITE.updated + ".csv";
+      document.body.appendChild(a); a.click(); a.remove();
+    } catch (e) { /* ignore */ }
+  }
+
+  // ── Calculator
+  function renderCalc() {
+    const u = t(), K = u.calc, c = state.calc;
+    $("#view").innerHTML = `
+      ${head(K.title, K.lead, updatedLine())}
+      <div class="grid2">
+        <form class="box" id="calcf" onsubmit="return false">
+          <fieldset><legend>${esc(K.plan)}</legend><div class="choices">
+            ${PLANS.map(p => `<label class="choice"><input type="radio" name="plan" value="${p.id}" ${c.plan === p.id ? "checked" : ""}><span>${esc(p.name)}</span></label>`).join("")}
+          </div></fieldset>
+          <label class="hint">${esc(K.users)}<br><input id="kusers" type="number" min="1" max="100000" value="${c.users}"></label>
+          <fieldset><legend>${esc(K.billing)}</legend><div class="choices">
+            ${["annual", "monthly"].map(b => `<label class="choice"><input type="radio" name="bill" value="${b}" ${c.bill === b ? "checked" : ""}><span>${esc(K[b])}</span></label>`).join("")}
+          </div></fieldset>
+          <p class="hint">${esc(K.storageNote)}</p>
+          <p class="hint">${esc(K.priceNote)}</p>
+        </form>
+        <section class="box" id="calcout" aria-live="polite"></section>
+      </div>`;
+    const upd = () => {
+      c.plan = ($('input[name="plan"]:checked') || {}).value || "P";
+      c.bill = ($('input[name="bill"]:checked') || {}).value || "annual";
+      c.users = Math.max(1, Math.min(100000, parseInt($("#kusers").value, 10) || 1));
+      store.set("calc", c); renderCalcOut();
+    };
+    $("#calcf").addEventListener("change", upd);
+    $("#kusers").addEventListener("input", upd);
+    renderCalcOut();
+  }
+
+  const storageFor = (p, seats) => p.id === "V" ? int(seats) + " GB" : int(Math.max(3, seats)) + " TB";
+
+  function renderCalcOut() {
+    const u = t(), K = u.calc, c = state.calc, p = P[c.plan];
+    const seats = Math.max(c.users, p.min);
+    const per = c.bill === "annual" ? p.annual : p.monthly;
+    $("#calcout").innerHTML = `
+      <p class="eyebrow">${esc(p.name)} · ${esc(K[c.bill])}</p>
+      <div class="kpis">
+        <div class="kpi"><span>${esc(K.perUser)}</span><b>${money(per)}</b></div>
+        <div class="kpi"><span>${esc(K.monthTotal)}</span><b>${money(per * seats)}</b></div>
+        <div class="kpi"><span>${esc(K.yearTotal)}</span><b>${money(per * seats * 12, 0)}</b></div>
+        <div class="kpi"><span>${esc(K.storage)}</span><b>${storageFor(p, seats)}</b></div>
+      </div>
+      ${seats > c.users ? `<p class="note">${esc(fmt(K.minApplied, { n: p.min }))}</p>` : ""}
+      <h3>${esc(K.allPlans)}</h3>
+      <div class="tbl-wrap"><table><thead><tr><th></th><th class="c">${esc(K.perUser)}</th><th class="c">${esc(K.monthTotal)}</th><th class="c">${esc(K.yearTotal)}</th><th class="c">${esc(K.storage)}</th></tr></thead><tbody>
+        ${PLANS.map(q => { const s = Math.max(c.users, q.min), pr = c.bill === "annual" ? q.annual : q.monthly;
+          return `<tr ${q.id === p.id ? 'style="background:var(--accent-soft)"' : ""}><td><b>${esc(q.name)}</b></td><td class="c num">${money(pr)}</td><td class="c num">${money(pr * s)}</td><td class="c num">${money(pr * s * 12, 0)}</td><td class="c num">${storageFor(q, s)}</td></tr>`; }).join("")}
+      </tbody></table></div>`;
+  }
+
+  // ── Knowledge, glossary, logs
+  function renderKnowledge() {
+    const u = t();
+    $("#view").innerHTML = `${head(u.kn.title, u.kn.lead)}
+      <div class="cols">${KNOWLEDGE.map(k => `<section class="box"><h3>${esc(L(k.g))}</h3><ul class="links">${k.links.map(l => `<li>${ext(l.u, esc(l.t))}</li>`).join("")}</ul></section>`).join("")}</div>
+      <div class="box" style="margin-top:16px"><h3>${esc(u.home.industries)} · ${esc(u.home.sizes)}</h3>
+        <ul class="links" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">${INDUSTRIES.map(i => `<li>${ext(i.url, esc(L(i.name)))}</li>`).join("")}${SIZES.map(s => `<li>${ext(s.url, esc(L(s.name)))}</li>`).join("")}</ul></div>`;
+  }
+
+  function renderGlossary() {
+    const u = t();
+    $("#view").innerHTML = `${head(u.gl.title, u.gl.lead)}
+      <div class="toolbar"><input id="gq" type="search" placeholder="${esc(u.gl.search)}" aria-label="${esc(u.gl.search)}"></div>
+      <dl class="gl box" id="gll"></dl>`;
+    const draw = () => {
+      const q = $("#gq").value.toLowerCase();
+      $("#gll").innerHTML = GLOSSARY.filter(g => !q || g.term.toLowerCase().includes(q) || L(g.d).toLowerCase().includes(q))
+        .map(g => `<div><dt>${esc(g.term)}</dt><dd>${esc(L(g.d))}</dd></div>`).join("");
+    };
+    $("#gq").addEventListener("input", draw); draw();
+  }
+
+  function renderChangelog() {
+    const u = t();
+    $("#view").innerHTML = `${head(u.ch.title, u.ch.lead)}
+      <div class="tbl-wrap"><table><tbody>${CHANGELOG.map(c => `<tr><td class="num" style="width:110px">${c.date}</td><td class="num" style="width:70px">v${c.v}</td><td>${esc(L(c.d))}</td></tr>`).join("")}</tbody></table></div>`;
+  }
+
+  function renderDisc() {
+    const u = t();
+    $("#view").innerHTML = `${head(u.ds.title, u.ds.lead)}
+      <div class="tbl-wrap"><table><thead><tr><th>#</th><th>${esc(u.ds.title)}</th><th>${esc(u.ds.where)}</th></tr></thead><tbody>
+      ${DISCREPANCIES.map((d, i) => `<tr><td class="num">${i + 1}</td><td>${esc(L(d.d))}</td><td>${ext(d.where, esc(d.where.replace(/^https:\/\/(www\.)?/, "")))}</td></tr>`).join("")}
+      </tbody></table></div>`;
+  }
+
+  // ── Toast
+  function toast(msg) {
+    const el = document.createElement("div"); el.className = "toast"; el.textContent = msg;
+    document.body.appendChild(el); setTimeout(() => el.remove(), 2200);
+  }
+
+  // ── Analytics with consent (only when an ID is configured)
+  function loadAnalytics() {
+    if (!SITE.analyticsId) return;
+    const s = document.createElement("script");
+    s.async = true; s.src = "https://www.googletagmanager.com/gtag/js?id=" + encodeURIComponent(SITE.analyticsId);
+    document.head.appendChild(s);
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function () { window.dataLayer.push(arguments); };
+    window.gtag("js", new Date()); window.gtag("config", SITE.analyticsId, { anonymize_ip: true });
+  }
+  function cookieBanner() {
+    if (!SITE.analyticsId) return;
+    const c = store.get("consent", null);
+    if (c === "yes") { loadAnalytics(); return; }
+    if (c === "no") return;
+    const u = t(), el = document.createElement("div");
+    el.className = "cookie"; el.setAttribute("role", "region");
+    el.innerHTML = `<p>${esc(u.cookies.text)}</p><button class="btn" type="button" data-c="no">${esc(u.cookies.reject)}</button><button class="btn primary" type="button" data-c="yes">${esc(u.cookies.accept)}</button>`;
+    el.addEventListener("click", e => { const b = e.target.closest("[data-c]"); if (!b) return; store.set("consent", b.dataset.c); if (b.dataset.c === "yes") loadAnalytics(); el.remove(); });
+    document.body.appendChild(el);
+  }
+
+  // ── Theme
+  function applyTheme() {
+    const th = store.get("theme", "system");
+    if (th === "system") document.documentElement.removeAttribute("data-theme");
+    else document.documentElement.setAttribute("data-theme", th);
+  }
+
+  // ── Boot
+  document.addEventListener("click", e => {
+    const d = e.target.closest("[data-detail]");
+    if (d) { e.preventDefault(); openDetail(d.dataset.detail); }
+  });
+  $("#lang").addEventListener("change", e => { lang = e.target.value; store.set("lang", lang); document.documentElement.lang = lang; route(); });
+  $("#theme").addEventListener("click", () => {
+    const order = ["system", "light", "dark"], cur = store.get("theme", "system");
+    store.set("theme", order[(order.indexOf(cur) + 1) % 3]); applyTheme(); renderChrome(($("#nav [aria-current]") || {}).getAttribute ? $("#nav [aria-current]").getAttribute("href").slice(1) : "home");
+  });
+  window.addEventListener("hashchange", route);
+  document.documentElement.lang = lang;
+  applyTheme();
+  route();
+  cookieBanner();
+})();
+
+</script>
+
+</body>
+</html>
