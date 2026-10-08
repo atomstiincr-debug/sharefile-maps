@@ -9,7 +9,8 @@ const W = "https://www.sharefile.com/";
    f: feature ids, i: integration ids. dur: "m:ss" when known. */
 const VIDEOS = [
   { id: "MR-Me_hNW30", t: "Stream ShareFile Security Events to Your SIEM in Real Time", f: ["siem"], i: ["sentinel", "splunk"] },
-  { id: "8jr9qGIyBNo", t: "ShareFile Security Center and Threat Detection – From Diagnosis to Response", f: ["security_center", "ueba", "threat_alerts"] }
+  { id: "8jr9qGIyBNo", t: "ShareFile Security Center and Threat Detection – From Diagnosis to Response", f: ["security_center", "ueba", "threat_alerts"] },
+  { id: "2PV6NdKlig0", t: "Secure Access: Multi-Factor Authentication", f: ["mfa"] }
 ];
 
 const OVERVIEW_VIDEO = { id: "yQkpfDLkCk0", t: "Progress ShareFile - Built For The Way You Work Now—And Where You're Headed Next!" };
