@@ -20,7 +20,7 @@ const OVERVIEW_VIDEO = { id: "yQkpfDLkCk0", t: "Progress ShareFile - Built For T
 const TUTORIALS = "https://www.youtube.com/playlist?list=PLSKW9Jc-tCY9W-cB3G2OTYx00GXZrrzZB";
 
 const SITE = {
-  version: "1.5.5",
+  version: "1.5.6",
   updated: "2026-10-08",
   author: "Adrián Bonilla",
   pricingSource: W + "plans",
@@ -210,7 +210,7 @@ const FEATURES = [
     d: { es: "Busca nombres y también palabras dentro de los documentos.", en: "Search names and words inside documents.", pt: "Pesquise nomes e palavras dentro dos documentos." } },
   { id: "forms", g: "client", plans: "PEV", name: "Forms", url: D + "sharefile-tasks/forms/forms_overview",
     d: { es: "Recoge información de clientes con formularios propios.", en: "Collect client information with custom forms.", pt: "Colete informações de clientes com formulários próprios." } },
-  { id: "basic_portal", g: "client", plans: "A", name: "Basic Client Portal", url: D + "client_portal/client_portal_faq",
+  { id: "basic_portal", g: "client", plans: "A", up: "enhanced_portal", name: "Basic Client Portal", url: D + "client_portal/client_portal_faq",
     d: { es: "Portal con contraseña y acceso a archivos y carpetas.", en: "Password-protected portal with file and folder access.", pt: "Portal com senha e acesso a arquivos e pastas." } },
   { id: "enhanced_portal", g: "client", plans: "PEV", name: "Enhanced Client Portal", url: W + "product-feature/client-portal",
     also: [{ label: "Client Portal FAQ", url: D + "client_portal/client_portal_faq" }],
@@ -380,6 +380,7 @@ const DISCREPANCIES = [
 
 
 const CHANGELOG = [
+  { v: "1.5.6", date: "2026-10-08", d: { es: "Comparador: resumen en una frase, bloque con la base común de funciones por categoría (desplegable), diferencias agrupadas por categoría con su nombre y el Basic Client Portal marcado como mejora a Enhanced Client Portal.", en: "Comparator: one-line summary, shared-base block with feature counts by category (expandable), differences grouped under named categories, and Basic Client Portal marked as upgrading to Enhanced Client Portal.", pt: "Comparador: resumo em uma frase, bloco com a base comum de recursos por categoria (expansível), diferenças agrupadas por categoria com nome e o Basic Client Portal indicado como evolução para o Enhanced Client Portal." } },
   { v: "1.5.5", date: "2026-10-08", d: { es: "El comparador abre por defecto con Advanced vs Premium.", en: "The comparator opens with Advanced vs Premium by default.", pt: "O comparador abre por padrão com Advanced vs Premium." } },
   { v: "1.5.4", date: "2026-10-08", d: { es: "Calculadora: botón rápido de 3 licencias y nota oficial: no hay máximo publicado de licencias por plan y los usuarios cliente son ilimitados.", en: "Calculator: 3-license quick pick and official note: no published maximum licenses per plan, and client users are unlimited.", pt: "Calculadora: botão rápido de 3 licenças e nota oficial: não há máximo publicado de licenças por plano e os usuários clientes são ilimitados." } },
   { v: "1.5.3", date: "2026-10-08", d: { es: "Calculadora y comparador: el campo de usuarios empieza en el mínimo oficial del plan y lo sigue al cambiar de plan hasta que escribes tu cantidad; botones rápidos (5 a 250); nunca muestra 0.", en: "Calculator and comparator: the users field starts at the plan's official minimum and follows it when you switch plans until you type your number; quick picks (5 to 250); never shows 0.", pt: "Calculadora e comparador: o campo de usuários começa no mínimo oficial do plano e o acompanha ao trocar de plano até você digitar sua quantidade; botões rápidos (5 a 250); nunca mostra 0." } },

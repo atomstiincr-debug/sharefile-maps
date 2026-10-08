@@ -403,22 +403,41 @@
     const seats = p => Math.max(c.users, p.min);
     const tot = p => price(p) * seats(p);
     const dU = price(B) - price(A), dM = tot(B) - tot(A);
-    const list = arr => arr.length ? `<ul class="flist">${GROUPS.flatMap(g => arr.filter(f => f.g === g.id)).map(f =>
-      `<li class="${rel && rel.has(f.id) ? "rel" : ""}"><span><i class="dot g-${f.g}"></i>${ext(f.url, esc(f.name))}</span><span>${esc(L(G[f.g].name))}</span></li>`).join("")}</ul>` : `<p class="muted">—</p>`;
     const sign = n => (n > 0 ? "+" : n < 0 ? "−" : "") + money(Math.abs(n));
+    // Feature in one plan whose upgraded version is in the other (e.g. Basic -> Enhanced Client Portal)
+    const upIn = (f, other) => f.up && F[f.up] && F[f.up].plans.includes(other.id) ? F[f.up] : null;
+    const item = (f, other) => { const up = other && upIn(f, other);
+      return `<li class="${rel && rel.has(f.id) ? "rel" : ""}"><span>${ext(f.url, esc(f.name))}</span>${up ? `<span class="up">↑ ${esc(fmt(C.upTo, { p: other.name, y: up.name }))}</span>` : ""}</li>`; };
+    const grouped = (arr, other) => arr.length ? GROUPS.map(g => { const xs = arr.filter(f => f.g === g.id);
+      return xs.length ? `<div class="fgrp"><h4><i class="dot g-${g.id}"></i>${esc(L(g.name))} <span class="muted num">${xs.length}</span></h4><ul class="flist">${xs.map(f => item(f, other)).join("")}</ul></div>` : ""; }).join("")
+      : `<p class="muted">${esc(C.none)}</p>`;
+    const chips = arr => `<div class="gchips">${GROUPS.map(g => { const n = arr.filter(f => f.g === g.id).length;
+      return n ? `<span class="gchip"><i class="dot g-${g.id}"></i>${esc(L(g.name))} <b class="num">${n}</b></span>` : ""; }).join("")}</div>`;
+    const nA = FEATURES.filter(f => f.plans.includes(c.a)).length, nB = FEATURES.filter(f => f.plans.includes(c.b)).length;
+    const lostA = onlyA.filter(f => !upIn(f, B)), upA = onlyA.filter(f => upIn(f, B));
+    const lostB = onlyB.filter(f => !upIn(f, A));
+    let summary;
+    if (!lostA.length) summary = upA.length ? fmt(C.sumSuperUp, { a: A.name, b: B.name, k: onlyB.length, x: upA[0].name, y: upIn(upA[0], B).name }) : fmt(C.sumSuper, { a: A.name, b: B.name, k: onlyB.length });
+    else if (!lostB.length) summary = fmt(C.sumSuper, { a: B.name, b: A.name, k: onlyA.length });
+    else summary = fmt(C.sumGen, { a: A.name, b: B.name, na: nA, nb: nB, n: both.length });
     $("#cmpout").innerHTML = `
       <div class="kpis" style="margin-top:16px">
         <div class="kpi"><span>${esc(C.diff)} · ${esc(C.perUser)}</span><b class="delta ${dU > 0 ? "up" : "down"}">${sign(dU)}</b></div>
         <div class="kpi"><span>${esc(C.diff)} · ${esc(C.perMonth)}</span><b class="delta ${dM > 0 ? "up" : "down"}">${sign(dM)}</b></div>
         <div class="kpi"><span>${esc(C.diff)} · ${esc(C.perYear)}</span><b class="delta ${dM > 0 ? "up" : "down"}">${sign(dM * 12)}</b></div>
-        <div class="kpi"><span>${esc(C.both)}</span><b class="num">${both.length}</b></div>
       </div>
       <p class="hint" style="margin-top:10px">${esc(fmt(C.seats, { u: int(c.users), list: [A, B].map(p => p.name + " " + int(seats(p)) + (seats(p) > c.users ? "*" : "")).join(" · ") }))}</p>
       ${[A, B].some(p => seats(p) > c.users) ? `<p class="note">${[A, B].filter(p => seats(p) > c.users).map(p => esc(fmt(C.seatsMin, { p: p.name, n: p.min }))).join("<br>")}</p>` : ""}
+      <p class="cmp-sum" id="cmpsum">${esc(summary)}</p>
+      <section class="box cmp-base" id="cmpbase">
+        <h3>${esc(fmt(C.base, { n: both.length, a: A.name, b: B.name }))}</h3>
+        ${chips(both)}
+        <details><summary>${esc(fmt(C.seeAll, { n: both.length }))}</summary><div class="fcols">${grouped(both)}</div></details>
+      </section>
       ${rel ? `<p class="hint" style="margin-top:10px">● ${esc(C.relevant)}: ${esc(L(IND[c.hl].name))}</p>` : ""}
       <div class="cmp-cols">
-        <div><h3>${esc(fmt(C.onlyA, { p: A.name }))} <span class="muted num">(${onlyA.length})</span></h3>${list(onlyA)}</div>
-        <div><h3>${esc(fmt(C.onlyB, { p: B.name }))} <span class="muted num">(${onlyB.length})</span></h3>${list(onlyB)}</div>
+        <div><h3>${esc(fmt(C.onlyA, { p: A.name }))} <span class="muted num">(${onlyA.length})</span></h3><p class="hint">${esc(fmt(C.total, { p: A.name, n: nA }))}</p>${grouped(onlyA, B)}</div>
+        <div><h3>${esc(fmt(C.onlyB, { p: B.name }))} <span class="muted num">(${onlyB.length})</span></h3><p class="hint">${esc(fmt(C.total, { p: B.name, n: nB }))}</p>${grouped(onlyB, A)}</div>
       </div>`;
   }
 

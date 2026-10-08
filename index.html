@@ -276,6 +276,20 @@ ol.path .why { display: block; color: var(--muted); font-size: .9rem; margin-top
 ol.path ul.sigs { margin: 6px 0 0; padding-left: 18px; font-size: .9rem; }
 .presets { display: inline-flex; flex-wrap: wrap; gap: 6px; vertical-align: middle; }
 .presets .chipbtn { padding: 2px 10px; min-height: 28px; }
+/* Comparator: shared base and grouped lists */
+.cmp-sum { font-size: 1.05rem; font-weight: 600; margin: 16px 0 10px; }
+.cmp-base { border-left: 4px solid var(--accent); }
+.cmp-base h3 { margin: 0 0 10px; }
+.gchips { display: flex; flex-wrap: wrap; gap: 8px; }
+.gchip { display: inline-flex; align-items: center; gap: 2px; border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; font-size: .85rem; background: var(--surface); }
+.gchip b { margin-left: 4px; }
+.cmp-base details { margin-top: 12px; }
+.cmp-base summary { cursor: pointer; color: var(--accent); font-weight: 600; }
+.fcols { columns: 3 260px; column-gap: 24px; margin-top: 10px; }
+.fgrp { break-inside: avoid; margin-bottom: 12px; }
+.fgrp h4 { display: flex; align-items: center; gap: 2px; font-size: .9rem; margin: 10px 0 4px; }
+.fgrp h4 .num { margin-left: 6px; }
+.flist li .up { color: var(--accent); font-size: .8rem; white-space: nowrap; }
 
 </style>
 </head>
@@ -327,7 +341,7 @@ const OVERVIEW_VIDEO = { id: "yQkpfDLkCk0", t: "Progress ShareFile - Built For T
 const TUTORIALS = "https://www.youtube.com/playlist?list=PLSKW9Jc-tCY9W-cB3G2OTYx00GXZrrzZB";
 
 const SITE = {
-  version: "1.5.5",
+  version: "1.5.6",
   updated: "2026-10-08",
   author: "Adrián Bonilla",
   pricingSource: W + "plans",
@@ -517,7 +531,7 @@ const FEATURES = [
     d: { es: "Busca nombres y también palabras dentro de los documentos.", en: "Search names and words inside documents.", pt: "Pesquise nomes e palavras dentro dos documentos." } },
   { id: "forms", g: "client", plans: "PEV", name: "Forms", url: D + "sharefile-tasks/forms/forms_overview",
     d: { es: "Recoge información de clientes con formularios propios.", en: "Collect client information with custom forms.", pt: "Colete informações de clientes com formulários próprios." } },
-  { id: "basic_portal", g: "client", plans: "A", name: "Basic Client Portal", url: D + "client_portal/client_portal_faq",
+  { id: "basic_portal", g: "client", plans: "A", up: "enhanced_portal", name: "Basic Client Portal", url: D + "client_portal/client_portal_faq",
     d: { es: "Portal con contraseña y acceso a archivos y carpetas.", en: "Password-protected portal with file and folder access.", pt: "Portal com senha e acesso a arquivos e pastas." } },
   { id: "enhanced_portal", g: "client", plans: "PEV", name: "Enhanced Client Portal", url: W + "product-feature/client-portal",
     also: [{ label: "Client Portal FAQ", url: D + "client_portal/client_portal_faq" }],
@@ -687,6 +701,7 @@ const DISCREPANCIES = [
 
 
 const CHANGELOG = [
+  { v: "1.5.6", date: "2026-10-08", d: { es: "Comparador: resumen en una frase, bloque con la base común de funciones por categoría (desplegable), diferencias agrupadas por categoría con su nombre y el Basic Client Portal marcado como mejora a Enhanced Client Portal.", en: "Comparator: one-line summary, shared-base block with feature counts by category (expandable), differences grouped under named categories, and Basic Client Portal marked as upgrading to Enhanced Client Portal.", pt: "Comparador: resumo em uma frase, bloco com a base comum de recursos por categoria (expansível), diferenças agrupadas por categoria com nome e o Basic Client Portal indicado como evolução para o Enhanced Client Portal." } },
   { v: "1.5.5", date: "2026-10-08", d: { es: "El comparador abre por defecto con Advanced vs Premium.", en: "The comparator opens with Advanced vs Premium by default.", pt: "O comparador abre por padrão com Advanced vs Premium." } },
   { v: "1.5.4", date: "2026-10-08", d: { es: "Calculadora: botón rápido de 3 licencias y nota oficial: no hay máximo publicado de licencias por plan y los usuarios cliente son ilimitados.", en: "Calculator: 3-license quick pick and official note: no published maximum licenses per plan, and client users are unlimited.", pt: "Calculadora: botão rápido de 3 licenças e nota oficial: não há máximo publicado de licenças por plano e os usuários clientes são ilimitados." } },
   { v: "1.5.3", date: "2026-10-08", d: { es: "Calculadora y comparador: el campo de usuarios empieza en el mínimo oficial del plan y lo sigue al cambiar de plan hasta que escribes tu cantidad; botones rápidos (5 a 250); nunca muestra 0.", en: "Calculator and comparator: the users field starts at the plan's official minimum and follows it when you switch plans until you type your number; quick picks (5 to 250); never shows 0.", pt: "Calculadora e comparador: o campo de usuários começa no mínimo oficial do plano e o acompanha ao trocar de plano até você digitar sua quantidade; botões rápidos (5 a 250); nunca mostra 0." } },
@@ -863,7 +878,7 @@ const UI = {
       planA: "Plan A", planB: "Plan B", users: "Usuarios", billing: "Facturación", annual: "Anual", monthly: "Mensual",
       onlyA: "Solo en {p}", onlyB: "Solo en {p}", both: "En ambos", diff: "Diferencia", perUser: "por usuario / mes",
       perMonth: "por mes", perYear: "por año", same: "Elige dos planes distintos.", highlight: "Resaltar por industria", relevant: "relevante para la industria",
-      seats: "Licencias facturadas con {u} usuarios: {list}", seatsMin: "* {p}: se factura el mínimo de {n} licencias del plan."
+      base: "Base común: {n} funciones que tienen {a} y {b}", seeAll: "Ver las {n} funciones", none: "Ninguna: todo lo de este plan está en el otro.", total: "{p} tiene {n} funciones en total.", upTo: "en {p} sube a {y}", sumSuper: "{b} incluye todo lo de {a} y agrega {k} funciones.", sumSuperUp: "{b} incluye todo lo de {a} ({x} sube a {y}) y agrega {k} funciones.", sumGen: "{a} tiene {na} funciones y {b} tiene {nb}; comparten {n}. Cada uno tiene funciones que el otro no.", seats: "Licencias facturadas con {u} usuarios: {list}", seatsMin: "* {p}: se factura el mínimo de {n} licencias del plan."
     },
     mx: {
       title: "Matriz de funciones", lead: "Todas las funciones de la tabla oficial, en una sola vista. El enlace de la página guarda tus filtros.",
@@ -936,7 +951,7 @@ const UI = {
       planA: "Plan A", planB: "Plan B", users: "Users", billing: "Billing", annual: "Annual", monthly: "Monthly",
       onlyA: "Only in {p}", onlyB: "Only in {p}", both: "In both", diff: "Difference", perUser: "per user / month",
       perMonth: "per month", perYear: "per year", same: "Pick two different plans.", highlight: "Highlight by industry", relevant: "relevant to the industry",
-      seats: "Billed licenses for {u} users: {list}", seatsMin: "* {p}: the plan's {n}-license minimum is billed."
+      base: "Shared base: {n} features in both {a} and {b}", seeAll: "See all {n} features", none: "None: everything in this plan is in the other.", total: "{p} has {n} features in total.", upTo: "in {p} upgrades to {y}", sumSuper: "{b} includes everything in {a} and adds {k} features.", sumSuperUp: "{b} includes everything in {a} ({x} upgrades to {y}) and adds {k} features.", sumGen: "{a} has {na} features and {b} has {nb}; they share {n}. Each has features the other lacks.", seats: "Billed licenses for {u} users: {list}", seatsMin: "* {p}: the plan's {n}-license minimum is billed."
     },
     mx: {
       title: "Feature matrix", lead: "Every feature in the official table, in one view. The page link keeps your filters.",
@@ -1009,7 +1024,7 @@ const UI = {
       planA: "Plano A", planB: "Plano B", users: "Usuários", billing: "Cobrança", annual: "Anual", monthly: "Mensal",
       onlyA: "Só no {p}", onlyB: "Só no {p}", both: "Em ambos", diff: "Diferença", perUser: "por usuário / mês",
       perMonth: "por mês", perYear: "por ano", same: "Escolha dois planos diferentes.", highlight: "Destacar por setor", relevant: "relevante para o setor",
-      seats: "Licenças faturadas com {u} usuários: {list}", seatsMin: "* {p}: fatura-se o mínimo de {n} licenças do plano."
+      base: "Base comum: {n} recursos que {a} e {b} têm", seeAll: "Ver os {n} recursos", none: "Nenhum: tudo deste plano está no outro.", total: "{p} tem {n} recursos no total.", upTo: "no {p} passa a {y}", sumSuper: "{b} inclui tudo do {a} e adiciona {k} recursos.", sumSuperUp: "{b} inclui tudo do {a} ({x} passa a {y}) e adiciona {k} recursos.", sumGen: "{a} tem {na} recursos e {b} tem {nb}; compartilham {n}. Cada um tem recursos que o outro não tem.", seats: "Licenças faturadas com {u} usuários: {list}", seatsMin: "* {p}: fatura-se o mínimo de {n} licenças do plano."
     },
     mx: {
       title: "Matriz de recursos", lead: "Todos os recursos da tabela oficial, em uma só visão. O link da página guarda seus filtros.",
@@ -1445,22 +1460,41 @@ const UI = {
     const seats = p => Math.max(c.users, p.min);
     const tot = p => price(p) * seats(p);
     const dU = price(B) - price(A), dM = tot(B) - tot(A);
-    const list = arr => arr.length ? `<ul class="flist">${GROUPS.flatMap(g => arr.filter(f => f.g === g.id)).map(f =>
-      `<li class="${rel && rel.has(f.id) ? "rel" : ""}"><span><i class="dot g-${f.g}"></i>${ext(f.url, esc(f.name))}</span><span>${esc(L(G[f.g].name))}</span></li>`).join("")}</ul>` : `<p class="muted">—</p>`;
     const sign = n => (n > 0 ? "+" : n < 0 ? "−" : "") + money(Math.abs(n));
+    // Feature in one plan whose upgraded version is in the other (e.g. Basic -> Enhanced Client Portal)
+    const upIn = (f, other) => f.up && F[f.up] && F[f.up].plans.includes(other.id) ? F[f.up] : null;
+    const item = (f, other) => { const up = other && upIn(f, other);
+      return `<li class="${rel && rel.has(f.id) ? "rel" : ""}"><span>${ext(f.url, esc(f.name))}</span>${up ? `<span class="up">↑ ${esc(fmt(C.upTo, { p: other.name, y: up.name }))}</span>` : ""}</li>`; };
+    const grouped = (arr, other) => arr.length ? GROUPS.map(g => { const xs = arr.filter(f => f.g === g.id);
+      return xs.length ? `<div class="fgrp"><h4><i class="dot g-${g.id}"></i>${esc(L(g.name))} <span class="muted num">${xs.length}</span></h4><ul class="flist">${xs.map(f => item(f, other)).join("")}</ul></div>` : ""; }).join("")
+      : `<p class="muted">${esc(C.none)}</p>`;
+    const chips = arr => `<div class="gchips">${GROUPS.map(g => { const n = arr.filter(f => f.g === g.id).length;
+      return n ? `<span class="gchip"><i class="dot g-${g.id}"></i>${esc(L(g.name))} <b class="num">${n}</b></span>` : ""; }).join("")}</div>`;
+    const nA = FEATURES.filter(f => f.plans.includes(c.a)).length, nB = FEATURES.filter(f => f.plans.includes(c.b)).length;
+    const lostA = onlyA.filter(f => !upIn(f, B)), upA = onlyA.filter(f => upIn(f, B));
+    const lostB = onlyB.filter(f => !upIn(f, A));
+    let summary;
+    if (!lostA.length) summary = upA.length ? fmt(C.sumSuperUp, { a: A.name, b: B.name, k: onlyB.length, x: upA[0].name, y: upIn(upA[0], B).name }) : fmt(C.sumSuper, { a: A.name, b: B.name, k: onlyB.length });
+    else if (!lostB.length) summary = fmt(C.sumSuper, { a: B.name, b: A.name, k: onlyA.length });
+    else summary = fmt(C.sumGen, { a: A.name, b: B.name, na: nA, nb: nB, n: both.length });
     $("#cmpout").innerHTML = `
       <div class="kpis" style="margin-top:16px">
         <div class="kpi"><span>${esc(C.diff)} · ${esc(C.perUser)}</span><b class="delta ${dU > 0 ? "up" : "down"}">${sign(dU)}</b></div>
         <div class="kpi"><span>${esc(C.diff)} · ${esc(C.perMonth)}</span><b class="delta ${dM > 0 ? "up" : "down"}">${sign(dM)}</b></div>
         <div class="kpi"><span>${esc(C.diff)} · ${esc(C.perYear)}</span><b class="delta ${dM > 0 ? "up" : "down"}">${sign(dM * 12)}</b></div>
-        <div class="kpi"><span>${esc(C.both)}</span><b class="num">${both.length}</b></div>
       </div>
       <p class="hint" style="margin-top:10px">${esc(fmt(C.seats, { u: int(c.users), list: [A, B].map(p => p.name + " " + int(seats(p)) + (seats(p) > c.users ? "*" : "")).join(" · ") }))}</p>
       ${[A, B].some(p => seats(p) > c.users) ? `<p class="note">${[A, B].filter(p => seats(p) > c.users).map(p => esc(fmt(C.seatsMin, { p: p.name, n: p.min }))).join("<br>")}</p>` : ""}
+      <p class="cmp-sum" id="cmpsum">${esc(summary)}</p>
+      <section class="box cmp-base" id="cmpbase">
+        <h3>${esc(fmt(C.base, { n: both.length, a: A.name, b: B.name }))}</h3>
+        ${chips(both)}
+        <details><summary>${esc(fmt(C.seeAll, { n: both.length }))}</summary><div class="fcols">${grouped(both)}</div></details>
+      </section>
       ${rel ? `<p class="hint" style="margin-top:10px">● ${esc(C.relevant)}: ${esc(L(IND[c.hl].name))}</p>` : ""}
       <div class="cmp-cols">
-        <div><h3>${esc(fmt(C.onlyA, { p: A.name }))} <span class="muted num">(${onlyA.length})</span></h3>${list(onlyA)}</div>
-        <div><h3>${esc(fmt(C.onlyB, { p: B.name }))} <span class="muted num">(${onlyB.length})</span></h3>${list(onlyB)}</div>
+        <div><h3>${esc(fmt(C.onlyA, { p: A.name }))} <span class="muted num">(${onlyA.length})</span></h3><p class="hint">${esc(fmt(C.total, { p: A.name, n: nA }))}</p>${grouped(onlyA, B)}</div>
+        <div><h3>${esc(fmt(C.onlyB, { p: B.name }))} <span class="muted num">(${onlyB.length})</span></h3><p class="hint">${esc(fmt(C.total, { p: B.name, n: nB }))}</p>${grouped(onlyB, A)}</div>
       </div>`;
   }
 

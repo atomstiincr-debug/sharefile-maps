@@ -93,6 +93,17 @@ for (const lang of ["es", "en", "pt"]) {
   sel("#ca", "A"); sel("#cb", "P");
   const onlyB = ctx.F.filter(f => f.plans.includes("P") && !f.plans.includes("A")).length;
   ok(text(env.d.querySelector("#cmpout")).includes(`(${onlyB})`), `compare A vs P: ${onlyB} Premium-only features shown`);
+  const both = ctx.F.filter(f => f.plans.includes("A") && f.plans.includes("P")).length;
+  ok(text(env.d.querySelector("#cmpbase h3")).includes(`${both} features in both Advanced and Premium`), `compare A vs P shared base ${both} shown`);
+  ok(env.d.querySelectorAll("#cmpbase .gchip").length >= 3, "compare shared base has category counts");
+  ok(/Premium includes everything in Advanced \(Basic Client Portal upgrades to Enhanced Client Portal\) and adds \d+ features/.test(text(env.d.querySelector("#cmpsum"))), "compare A vs P summary explains superset and portal upgrade: " + text(env.d.querySelector("#cmpsum")));
+  ok(/upgrades to Enhanced Client Portal/.test(text(env.d.querySelector(".cmp-cols"))), "compare marks Basic Client Portal as upgrade");
+  ok(env.d.querySelectorAll(".cmp-cols .fgrp h4").length >= 3, "compare differences grouped under named category headers");
+  sel("#ca", "E"); sel("#cb", "V");
+  ok(/share 49/.test(text(env.d.querySelector("#cmpsum"))), "compare E vs V general summary");
+  sel("#ca", "E"); sel("#cb", "P");
+  ok(/Enterprise includes everything in Premium and adds 5/.test(text(env.d.querySelector("#cmpsum"))), "compare reversed order summary");
+  sel("#ca", "A"); sel("#cb", "P");
   sel("#cb", "V"); const cu = env.d.querySelector("#cu"); cu.value = "2"; cu.dispatchEvent(new env.w.Event("input", { bubbles: true }));
   const co = text(env.d.querySelector("#cmpout"));
   ok(/Billed licenses for 2 users: Advanced 3\* · Virtual Data Room 5\*/.test(co), "compare shows billed licenses with minimums");

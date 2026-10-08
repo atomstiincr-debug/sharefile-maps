@@ -18,6 +18,7 @@ for (const f of FEATURES) {
   for (const b of f.badges || []) if (!BADGES[b]) err(f.id + " unknown badge " + b);
   if (f.note) for (const l of ["es", "en", "pt"]) if (!f.note[l]) err(f.id + " missing note " + l);
 }
+for (const f of FEATURES) if (f.up && !ids.has(f.up)) err(f.id + " unknown up " + f.up);
 for (const i of INDUSTRIES) for (const x of i.f) if (!ids.has(x)) err("industry " + i.id + " unknown feature " + x);
 for (const s of SIGNALS) for (const x of s.f) if (!ids.has(x)) err("signal " + s.id + " unknown feature " + x);
 // UI keys parity
