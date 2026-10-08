@@ -40,6 +40,9 @@
     return TIERS[idx];
   };
   const ext = (url, label, cls = "") => `<a href="${esc(url)}" target="_blank" rel="noopener" class="${cls}">${label}</a>`;
+  const YT = id => "https://www.youtube.com/watch?v=" + id;
+  const videosFor = (kind, id) => VIDEOS.filter(v => (v[kind] || []).includes(id));
+  const videoList = vs => vs.map(v => `<li><span>▶ ${ext(YT(v.id), esc(v.t))}</span><span>${v.dur ? esc(v.dur) + " · " : ""}YouTube</span></li>`).join("");
   const flagsFor = f => (f.badges || []).filter(b => ["new", "us", "eu", "usreg"].includes(b))
     .map(b => `<span>${b === "new" ? "NEW" : b === "eu" ? "EU" : "US"}</span>`).join("");
 
@@ -51,7 +54,7 @@
     return `<div class="${cls.join(" ")}">
       <a href="${esc(f.url)}" target="_blank" rel="noopener" title="${esc(L(f.d))}">${esc(f.name)}</a>
       <button class="i" type="button" data-detail="${f.id}" aria-label="${esc(t().info + ": " + f.name)}">i</button>
-      <div class="flags" aria-hidden="true">${flagsFor(f)}</div>
+      <div class="flags" aria-hidden="true">${videosFor("f", f.id).length ? "<span>▶</span>" : ""}${flagsFor(f)}</div>
     </div>`;
   };
 
@@ -249,6 +252,7 @@
         <dt>${esc(dd.plans)}</dt><dd>${PLANS.filter(p => f.plans.includes(p.id)).map(p => esc(p.name)).join(", ")}</dd>
         ${inds.length ? `<dt>${esc(u.home.industries)}</dt><dd>${inds.map(i => esc(L(i.name))).join(", ")}</dd>` : ""}
         <dt>${esc(dd.source)}</dt><dd>${f.id === "eidas" ? ext(f.url, "docs.sharefile.com") : ext(SITE.pricingSource, "sharefile.com/plans")}</dd>
+        ${videosFor("f", f.id).length ? `<dt>${esc(t().video.title)}</dt><dd><ul class="flist">${videoList(videosFor("f", f.id))}</ul></dd>` : ""}
         ${f.also ? `<dt>${esc(dd.also)}</dt><dd>${f.also.map(a => ext(a.url, esc(a.label))).join(" · ")}</dd>` : ""}
       </dl>
       <div class="actions">${ext(f.url, esc(dd.docs) + " ↗", "btn primary")}<button class="btn" type="button" data-close>${esc(dd.close)}</button></div>
@@ -531,6 +535,7 @@
       <p>${esc(L(x.d))}</p>
       ${x.n ? `<p class="hint">${esc(L(x.n))}</p>` : ""}
       <div class="pills">${planPills(x)}${(x.badges || []).map(b => `<span class="pill warn">${esc(L(BADGES[b]))}</span>`).join("")}${(x.ind || []).map(i => `<span class="pill ok">${esc(L(IND[i].name))}</span>`).join("")}</div>
+      ${videosFor("i", x.id).length ? `<ul class="flist">${videoList(videosFor("i", x.id))}</ul>` : ""}
       ${x.also ? `<p class="hint">${x.also.map(a => ext(a.url, esc(a.label) + " ↗")).join(" · ")}</p>` : ""}
     </article>`;
 

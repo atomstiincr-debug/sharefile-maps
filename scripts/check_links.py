@@ -10,6 +10,8 @@ urls = set(re.findall(r'"(https://[^"]+)"', data))
 urls |= {D + p for p in re.findall(r'D \+ "([^"]+)"', data)}
 urls |= {W + p for p in re.findall(r'W \+ "([^"]+)"', data)}
 urls = sorted(u.split("#")[0] for u in urls if "googletagmanager" not in u)
+# Videos: oEmbed returns 404 when a video is removed or made private
+urls += ["https://www.youtube.com/oembed?format=json&url=https://www.youtube.com/watch?v=" + v for v in re.findall(r'\{ id: "([A-Za-z0-9_-]{11})", t:', data)]
 
 bad = []
 for u in sorted(set(urls)):

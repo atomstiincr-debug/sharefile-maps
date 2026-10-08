@@ -47,3 +47,18 @@ console.log("✓ data OK");
   console.log("integrations", c2.INTEGRATIONS.length);
   if (e2) process.exit(1);
 }
+
+// Videos
+{
+  const c3 = {}; vm.createContext(c3);
+  vm.runInContext(fs.readFileSync(path.join(__dirname, "..", "src", "data.js"), "utf8") + "\nthis.VIDEOS=VIDEOS;this.FEATURES=FEATURES;this.INTEGRATIONS=INTEGRATIONS;", c3);
+  const fids = new Set(c3.FEATURES.map(f => f.id)), iids = new Set(c3.INTEGRATIONS.map(i => i.id));
+  let e3 = 0;
+  for (const v of c3.VIDEOS) {
+    if (!/^[A-Za-z0-9_-]{11}$/.test(v.id)) { e3++; console.error("✗ bad video id " + v.id); }
+    for (const f of v.f || []) if (!fids.has(f)) { e3++; console.error("✗ video " + v.id + " unknown feature " + f); }
+    for (const i of v.i || []) if (!iids.has(i)) { e3++; console.error("✗ video " + v.id + " unknown integration " + i); }
+  }
+  console.log("videos", c3.VIDEOS.length);
+  if (e3) process.exit(1);
+}
