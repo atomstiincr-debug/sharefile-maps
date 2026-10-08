@@ -290,6 +290,13 @@ ol.path ul.sigs { margin: 6px 0 0; padding-left: 18px; font-size: .9rem; }
 .fgrp h4 { display: flex; align-items: center; gap: 2px; font-size: .9rem; margin: 10px 0 4px; }
 .fgrp h4 .num { margin-left: 6px; }
 .flist li .up { color: var(--accent); font-size: .8rem; white-space: nowrap; }
+.cmp-col h3 { margin: 0 0 8px; }
+.cmp-col details.inherit { border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: var(--r); padding: 10px 12px; background: var(--accent-soft); }
+.cmp-col details.inherit summary { cursor: pointer; font-weight: 650; }
+.cmp-col details.inherit[open] summary { margin-bottom: 6px; }
+.cmp-col p.up { color: var(--accent); margin: 8px 0 0; }
+.cmp-col h4.plus { margin: 16px 0 2px; font-size: 1rem; }
+.fgrp .flist li > span:first-child { font-size: .88rem; color: inherit; white-space: normal; }
 
 </style>
 </head>
@@ -341,7 +348,7 @@ const OVERVIEW_VIDEO = { id: "yQkpfDLkCk0", t: "Progress ShareFile - Built For T
 const TUTORIALS = "https://www.youtube.com/playlist?list=PLSKW9Jc-tCY9W-cB3G2OTYx00GXZrrzZB";
 
 const SITE = {
-  version: "1.5.6",
+  version: "1.5.7",
   updated: "2026-10-08",
   author: "Adrián Bonilla",
   pricingSource: W + "plans",
@@ -701,6 +708,7 @@ const DISCREPANCIES = [
 
 
 const CHANGELOG = [
+  { v: "1.5.7", date: "2026-10-08", d: { es: "Comparador en columnas completas: cuando un plan contiene al otro, el menor muestra todas sus funciones y el mayor muestra «Todo lo de…» más lo que agrega.", en: "Comparator in full columns: when one plan contains the other, the smaller one lists all its features and the larger shows “Everything in…” plus what it adds.", pt: "Comparador em colunas completas: quando um plano contém o outro, o menor lista todos os seus recursos e o maior mostra «Tudo do…» mais o que adiciona." } },
   { v: "1.5.6", date: "2026-10-08", d: { es: "Comparador: resumen en una frase, bloque con la base común de funciones por categoría (desplegable), diferencias agrupadas por categoría con su nombre y el Basic Client Portal marcado como mejora a Enhanced Client Portal.", en: "Comparator: one-line summary, shared-base block with feature counts by category (expandable), differences grouped under named categories, and Basic Client Portal marked as upgrading to Enhanced Client Portal.", pt: "Comparador: resumo em uma frase, bloco com a base comum de recursos por categoria (expansível), diferenças agrupadas por categoria com nome e o Basic Client Portal indicado como evolução para o Enhanced Client Portal." } },
   { v: "1.5.5", date: "2026-10-08", d: { es: "El comparador abre por defecto con Advanced vs Premium.", en: "The comparator opens with Advanced vs Premium by default.", pt: "O comparador abre por padrão com Advanced vs Premium." } },
   { v: "1.5.4", date: "2026-10-08", d: { es: "Calculadora: botón rápido de 3 licencias y nota oficial: no hay máximo publicado de licencias por plan y los usuarios cliente son ilimitados.", en: "Calculator: 3-license quick pick and official note: no published maximum licenses per plan, and client users are unlimited.", pt: "Calculadora: botão rápido de 3 licenças e nota oficial: não há máximo publicado de licenças por plano e os usuários clientes são ilimitados." } },
@@ -878,7 +886,7 @@ const UI = {
       planA: "Plan A", planB: "Plan B", users: "Usuarios", billing: "Facturación", annual: "Anual", monthly: "Mensual",
       onlyA: "Solo en {p}", onlyB: "Solo en {p}", both: "En ambos", diff: "Diferencia", perUser: "por usuario / mes",
       perMonth: "por mes", perYear: "por año", same: "Elige dos planes distintos.", highlight: "Resaltar por industria", relevant: "relevante para la industria",
-      base: "Base común: {n} funciones que tienen {a} y {b}", seeAll: "Ver las {n} funciones", none: "Ninguna: todo lo de este plan está en el otro.", total: "{p} tiene {n} funciones en total.", upTo: "en {p} sube a {y}", sumSuper: "{b} incluye todo lo de {a} y agrega {k} funciones.", sumSuperUp: "{b} incluye todo lo de {a} ({x} sube a {y}) y agrega {k} funciones.", sumGen: "{a} tiene {na} funciones y {b} tiene {nb}; comparten {n}. Cada uno tiene funciones que el otro no.", seats: "Licencias facturadas con {u} usuarios: {list}", seatsMin: "* {p}: se factura el mínimo de {n} licencias del plan."
+      count: "{n} funciones", everything: "Todo lo de {p}", plus: "Más estas {k}:", own: "Solo en {p} ({k}):", base: "Base común: {n} funciones que tienen {a} y {b}", seeAll: "Ver las {n} funciones", none: "Ninguna: todo lo de este plan está en el otro.", total: "{p} tiene {n} funciones en total.", upTo: "en {p} sube a {y}", sumSuper: "{b} incluye todo lo de {a} y agrega {k} funciones.", sumSuperUp: "{b} incluye todo lo de {a} ({x} sube a {y}) y agrega {k} funciones.", sumGen: "{a} tiene {na} funciones y {b} tiene {nb}; comparten {n}. Cada uno tiene funciones que el otro no.", seats: "Licencias facturadas con {u} usuarios: {list}", seatsMin: "* {p}: se factura el mínimo de {n} licencias del plan."
     },
     mx: {
       title: "Matriz de funciones", lead: "Todas las funciones de la tabla oficial, en una sola vista. El enlace de la página guarda tus filtros.",
@@ -951,7 +959,7 @@ const UI = {
       planA: "Plan A", planB: "Plan B", users: "Users", billing: "Billing", annual: "Annual", monthly: "Monthly",
       onlyA: "Only in {p}", onlyB: "Only in {p}", both: "In both", diff: "Difference", perUser: "per user / month",
       perMonth: "per month", perYear: "per year", same: "Pick two different plans.", highlight: "Highlight by industry", relevant: "relevant to the industry",
-      base: "Shared base: {n} features in both {a} and {b}", seeAll: "See all {n} features", none: "None: everything in this plan is in the other.", total: "{p} has {n} features in total.", upTo: "in {p} upgrades to {y}", sumSuper: "{b} includes everything in {a} and adds {k} features.", sumSuperUp: "{b} includes everything in {a} ({x} upgrades to {y}) and adds {k} features.", sumGen: "{a} has {na} features and {b} has {nb}; they share {n}. Each has features the other lacks.", seats: "Billed licenses for {u} users: {list}", seatsMin: "* {p}: the plan's {n}-license minimum is billed."
+      count: "{n} features", everything: "Everything in {p}", plus: "Plus these {k}:", own: "Only in {p} ({k}):", base: "Shared base: {n} features in both {a} and {b}", seeAll: "See all {n} features", none: "None: everything in this plan is in the other.", total: "{p} has {n} features in total.", upTo: "in {p} upgrades to {y}", sumSuper: "{b} includes everything in {a} and adds {k} features.", sumSuperUp: "{b} includes everything in {a} ({x} upgrades to {y}) and adds {k} features.", sumGen: "{a} has {na} features and {b} has {nb}; they share {n}. Each has features the other lacks.", seats: "Billed licenses for {u} users: {list}", seatsMin: "* {p}: the plan's {n}-license minimum is billed."
     },
     mx: {
       title: "Feature matrix", lead: "Every feature in the official table, in one view. The page link keeps your filters.",
@@ -1024,7 +1032,7 @@ const UI = {
       planA: "Plano A", planB: "Plano B", users: "Usuários", billing: "Cobrança", annual: "Anual", monthly: "Mensal",
       onlyA: "Só no {p}", onlyB: "Só no {p}", both: "Em ambos", diff: "Diferença", perUser: "por usuário / mês",
       perMonth: "por mês", perYear: "por ano", same: "Escolha dois planos diferentes.", highlight: "Destacar por setor", relevant: "relevante para o setor",
-      base: "Base comum: {n} recursos que {a} e {b} têm", seeAll: "Ver os {n} recursos", none: "Nenhum: tudo deste plano está no outro.", total: "{p} tem {n} recursos no total.", upTo: "no {p} passa a {y}", sumSuper: "{b} inclui tudo do {a} e adiciona {k} recursos.", sumSuperUp: "{b} inclui tudo do {a} ({x} passa a {y}) e adiciona {k} recursos.", sumGen: "{a} tem {na} recursos e {b} tem {nb}; compartilham {n}. Cada um tem recursos que o outro não tem.", seats: "Licenças faturadas com {u} usuários: {list}", seatsMin: "* {p}: fatura-se o mínimo de {n} licenças do plano."
+      count: "{n} recursos", everything: "Tudo do {p}", plus: "Mais estes {k}:", own: "Só no {p} ({k}):", base: "Base comum: {n} recursos que {a} e {b} têm", seeAll: "Ver os {n} recursos", none: "Nenhum: tudo deste plano está no outro.", total: "{p} tem {n} recursos no total.", upTo: "no {p} passa a {y}", sumSuper: "{b} inclui tudo do {a} e adiciona {k} recursos.", sumSuperUp: "{b} inclui tudo do {a} ({x} passa a {y}) e adiciona {k} recursos.", sumGen: "{a} tem {na} recursos e {b} tem {nb}; compartilham {n}. Cada um tem recursos que o outro não tem.", seats: "Licenças faturadas com {u} usuários: {list}", seatsMin: "* {p}: fatura-se o mínimo de {n} licenças do plano."
     },
     mx: {
       title: "Matriz de recursos", lead: "Todos os recursos da tabela oficial, em uma só visão. O link da página guarda seus filtros.",
@@ -1477,6 +1485,22 @@ const UI = {
     if (!lostA.length) summary = upA.length ? fmt(C.sumSuperUp, { a: A.name, b: B.name, k: onlyB.length, x: upA[0].name, y: upIn(upA[0], B).name }) : fmt(C.sumSuper, { a: A.name, b: B.name, k: onlyB.length });
     else if (!lostB.length) summary = fmt(C.sumSuper, { a: B.name, b: A.name, k: onlyA.length });
     else summary = fmt(C.sumGen, { a: A.name, b: B.name, na: nA, nb: nB, n: both.length });
+    const neither = lostA.length && lostB.length;
+    const featsOf = p => FEATURES.filter(f => f.plans.includes(p.id));
+    // X = this column's plan, Y = the other; onlyX = features only in X; lostOther = Y-only features with no upgrade in X
+    const col = (X, Y, onlyX, lostOther) => {
+      const headX = `<h3>${esc(X.name)} <span class="muted num">· ${esc(fmt(C.count, { n: featsOf(X).length }))}</span></h3>`;
+      if (!lostOther.length) { // X contains everything in Y (superset)
+        const ups = FEATURES.filter(f => f.plans.includes(Y.id) && !f.plans.includes(X.id) && upIn(f, X));
+        return `<div class="cmp-col" data-col="${X.id}">${headX}
+          <details class="inherit"><summary>✓ ${esc(fmt(C.everything, { p: Y.name }))} <span class="muted num">(${both.length})</span></summary><div>${grouped(both)}</div></details>
+          ${ups.map(f => `<p class="hint up">↑ ${esc(f.name)} → ${esc(upIn(f, X).name)}</p>`).join("")}
+          <h4 class="plus">${esc(fmt(C.plus, { k: onlyX.length }))}</h4>${grouped(onlyX, Y)}</div>`;
+      }
+      if (!onlyX.filter(f => !upIn(f, Y)).length) // X is contained in Y: show X in full
+        return `<div class="cmp-col" data-col="${X.id}">${headX}${grouped(featsOf(X), Y)}</div>`;
+      return `<div class="cmp-col" data-col="${X.id}">${headX}<h4 class="plus">${esc(fmt(C.own, { p: X.name, k: onlyX.length }))}</h4>${grouped(onlyX, Y)}</div>`;
+    };
     $("#cmpout").innerHTML = `
       <div class="kpis" style="margin-top:16px">
         <div class="kpi"><span>${esc(C.diff)} · ${esc(C.perUser)}</span><b class="delta ${dU > 0 ? "up" : "down"}">${sign(dU)}</b></div>
@@ -1486,16 +1510,13 @@ const UI = {
       <p class="hint" style="margin-top:10px">${esc(fmt(C.seats, { u: int(c.users), list: [A, B].map(p => p.name + " " + int(seats(p)) + (seats(p) > c.users ? "*" : "")).join(" · ") }))}</p>
       ${[A, B].some(p => seats(p) > c.users) ? `<p class="note">${[A, B].filter(p => seats(p) > c.users).map(p => esc(fmt(C.seatsMin, { p: p.name, n: p.min }))).join("<br>")}</p>` : ""}
       <p class="cmp-sum" id="cmpsum">${esc(summary)}</p>
-      <section class="box cmp-base" id="cmpbase">
+      ${neither ? `<section class="box cmp-base" id="cmpbase">
         <h3>${esc(fmt(C.base, { n: both.length, a: A.name, b: B.name }))}</h3>
         ${chips(both)}
         <details><summary>${esc(fmt(C.seeAll, { n: both.length }))}</summary><div class="fcols">${grouped(both)}</div></details>
-      </section>
+      </section>` : ""}
       ${rel ? `<p class="hint" style="margin-top:10px">● ${esc(C.relevant)}: ${esc(L(IND[c.hl].name))}</p>` : ""}
-      <div class="cmp-cols">
-        <div><h3>${esc(fmt(C.onlyA, { p: A.name }))} <span class="muted num">(${onlyA.length})</span></h3><p class="hint">${esc(fmt(C.total, { p: A.name, n: nA }))}</p>${grouped(onlyA, B)}</div>
-        <div><h3>${esc(fmt(C.onlyB, { p: B.name }))} <span class="muted num">(${onlyB.length})</span></h3><p class="hint">${esc(fmt(C.total, { p: B.name, n: nB }))}</p>${grouped(onlyB, A)}</div>
-      </div>`;
+      <div class="cmp-cols">${col(A, B, onlyA, lostB)}${col(B, A, onlyB, lostA)}</div>`;
   }
 
   // ── Matrix

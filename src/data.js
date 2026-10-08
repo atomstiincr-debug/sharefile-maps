@@ -20,7 +20,7 @@ const OVERVIEW_VIDEO = { id: "yQkpfDLkCk0", t: "Progress ShareFile - Built For T
 const TUTORIALS = "https://www.youtube.com/playlist?list=PLSKW9Jc-tCY9W-cB3G2OTYx00GXZrrzZB";
 
 const SITE = {
-  version: "1.5.6",
+  version: "1.5.7",
   updated: "2026-10-08",
   author: "Adrián Bonilla",
   pricingSource: W + "plans",
@@ -380,6 +380,7 @@ const DISCREPANCIES = [
 
 
 const CHANGELOG = [
+  { v: "1.5.7", date: "2026-10-08", d: { es: "Comparador en columnas completas: cuando un plan contiene al otro, el menor muestra todas sus funciones y el mayor muestra «Todo lo de…» más lo que agrega.", en: "Comparator in full columns: when one plan contains the other, the smaller one lists all its features and the larger shows “Everything in…” plus what it adds.", pt: "Comparador em colunas completas: quando um plano contém o outro, o menor lista todos os seus recursos e o maior mostra «Tudo do…» mais o que adiciona." } },
   { v: "1.5.6", date: "2026-10-08", d: { es: "Comparador: resumen en una frase, bloque con la base común de funciones por categoría (desplegable), diferencias agrupadas por categoría con su nombre y el Basic Client Portal marcado como mejora a Enhanced Client Portal.", en: "Comparator: one-line summary, shared-base block with feature counts by category (expandable), differences grouped under named categories, and Basic Client Portal marked as upgrading to Enhanced Client Portal.", pt: "Comparador: resumo em uma frase, bloco com a base comum de recursos por categoria (expansível), diferenças agrupadas por categoria com nome e o Basic Client Portal indicado como evolução para o Enhanced Client Portal." } },
   { v: "1.5.5", date: "2026-10-08", d: { es: "El comparador abre por defecto con Advanced vs Premium.", en: "The comparator opens with Advanced vs Premium by default.", pt: "O comparador abre por padrão com Advanced vs Premium." } },
   { v: "1.5.4", date: "2026-10-08", d: { es: "Calculadora: botón rápido de 3 licencias y nota oficial: no hay máximo publicado de licencias por plan y los usuarios cliente son ilimitados.", en: "Calculator: 3-license quick pick and official note: no published maximum licenses per plan, and client users are unlimited.", pt: "Calculadora: botão rápido de 3 licenças e nota oficial: não há máximo publicado de licenças por plano e os usuários clientes são ilimitados." } },

@@ -420,6 +420,22 @@
     if (!lostA.length) summary = upA.length ? fmt(C.sumSuperUp, { a: A.name, b: B.name, k: onlyB.length, x: upA[0].name, y: upIn(upA[0], B).name }) : fmt(C.sumSuper, { a: A.name, b: B.name, k: onlyB.length });
     else if (!lostB.length) summary = fmt(C.sumSuper, { a: B.name, b: A.name, k: onlyA.length });
     else summary = fmt(C.sumGen, { a: A.name, b: B.name, na: nA, nb: nB, n: both.length });
+    const neither = lostA.length && lostB.length;
+    const featsOf = p => FEATURES.filter(f => f.plans.includes(p.id));
+    // X = this column's plan, Y = the other; onlyX = features only in X; lostOther = Y-only features with no upgrade in X
+    const col = (X, Y, onlyX, lostOther) => {
+      const headX = `<h3>${esc(X.name)} <span class="muted num">· ${esc(fmt(C.count, { n: featsOf(X).length }))}</span></h3>`;
+      if (!lostOther.length) { // X contains everything in Y (superset)
+        const ups = FEATURES.filter(f => f.plans.includes(Y.id) && !f.plans.includes(X.id) && upIn(f, X));
+        return `<div class="cmp-col" data-col="${X.id}">${headX}
+          <details class="inherit"><summary>✓ ${esc(fmt(C.everything, { p: Y.name }))} <span class="muted num">(${both.length})</span></summary><div>${grouped(both)}</div></details>
+          ${ups.map(f => `<p class="hint up">↑ ${esc(f.name)} → ${esc(upIn(f, X).name)}</p>`).join("")}
+          <h4 class="plus">${esc(fmt(C.plus, { k: onlyX.length }))}</h4>${grouped(onlyX, Y)}</div>`;
+      }
+      if (!onlyX.filter(f => !upIn(f, Y)).length) // X is contained in Y: show X in full
+        return `<div class="cmp-col" data-col="${X.id}">${headX}${grouped(featsOf(X), Y)}</div>`;
+      return `<div class="cmp-col" data-col="${X.id}">${headX}<h4 class="plus">${esc(fmt(C.own, { p: X.name, k: onlyX.length }))}</h4>${grouped(onlyX, Y)}</div>`;
+    };
     $("#cmpout").innerHTML = `
       <div class="kpis" style="margin-top:16px">
         <div class="kpi"><span>${esc(C.diff)} · ${esc(C.perUser)}</span><b class="delta ${dU > 0 ? "up" : "down"}">${sign(dU)}</b></div>
@@ -429,16 +445,13 @@
       <p class="hint" style="margin-top:10px">${esc(fmt(C.seats, { u: int(c.users), list: [A, B].map(p => p.name + " " + int(seats(p)) + (seats(p) > c.users ? "*" : "")).join(" · ") }))}</p>
       ${[A, B].some(p => seats(p) > c.users) ? `<p class="note">${[A, B].filter(p => seats(p) > c.users).map(p => esc(fmt(C.seatsMin, { p: p.name, n: p.min }))).join("<br>")}</p>` : ""}
       <p class="cmp-sum" id="cmpsum">${esc(summary)}</p>
-      <section class="box cmp-base" id="cmpbase">
+      ${neither ? `<section class="box cmp-base" id="cmpbase">
         <h3>${esc(fmt(C.base, { n: both.length, a: A.name, b: B.name }))}</h3>
         ${chips(both)}
         <details><summary>${esc(fmt(C.seeAll, { n: both.length }))}</summary><div class="fcols">${grouped(both)}</div></details>
-      </section>
+      </section>` : ""}
       ${rel ? `<p class="hint" style="margin-top:10px">● ${esc(C.relevant)}: ${esc(L(IND[c.hl].name))}</p>` : ""}
-      <div class="cmp-cols">
-        <div><h3>${esc(fmt(C.onlyA, { p: A.name }))} <span class="muted num">(${onlyA.length})</span></h3><p class="hint">${esc(fmt(C.total, { p: A.name, n: nA }))}</p>${grouped(onlyA, B)}</div>
-        <div><h3>${esc(fmt(C.onlyB, { p: B.name }))} <span class="muted num">(${onlyB.length})</span></h3><p class="hint">${esc(fmt(C.total, { p: B.name, n: nB }))}</p>${grouped(onlyB, A)}</div>
-      </div>`;
+      <div class="cmp-cols">${col(A, B, onlyA, lostB)}${col(B, A, onlyB, lostA)}</div>`;
   }
 
   // ── Matrix
