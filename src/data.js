@@ -5,10 +5,11 @@
 const D = "https://docs.sharefile.com/en-us/sharefile/";
 const W = "https://www.sharefile.com/";
 
+const OVERVIEW_VIDEO = { id: "yQkpfDLkCk0", t: "Progress ShareFile - Built For The Way You Work Now—And Where You're Headed Next!" };
 const TUTORIALS = "https://www.youtube.com/playlist?list=PLSKW9Jc-tCY9W-cB3G2OTYx00GXZrrzZB";
 
 const SITE = {
-  version: "1.3.1",
+  version: "1.3.2",
   updated: "2026-10-08",
   author: "Adrián Bonilla",
   pricingSource: W + "plans",
@@ -345,6 +346,7 @@ const KNOWLEDGE = [
   { g: { es: "Aprender y partners", en: "Learn and partners", pt: "Aprender e parceiros" }, links: [
     { t: "ShareFile Training", u: W + "training" },
     { t: "Progress ShareFile: Tutorials (34 videos)", u: "https://www.youtube.com/playlist?list=PLSKW9Jc-tCY9W-cB3G2OTYx00GXZrrzZB", v: 1 },
+    { t: "Progress ShareFile: Demos (38 videos)", u: "https://www.youtube.com/playlist?list=PLSKW9Jc-tCY8wmEjjJxq5I-0SIPjlI3oi", v: 1 },
     { t: "ShareFile YouTube", u: "https://www.youtube.com/@progresssharefile" },
     { t: "Customer stories", u: W + "customer-stories" },
     { t: "ROI calculator", u: W + "client-coordination-cost-calculator" },
@@ -365,6 +367,7 @@ const DISCREPANCIES = [
 
 
 const CHANGELOG = [
+  { v: "1.3.2", date: "2026-10-08", d: { es: "Video oficial de presentación de ShareFile en el Inicio y lista oficial de demos en Conocimiento.", en: "Official ShareFile overview video on Home and official demos playlist in Knowledge.", pt: "Vídeo oficial de apresentação do ShareFile no Início e playlist oficial de demos em Conhecimento." } },
   { v: "1.3.1", date: "2026-10-08", d: { es: "Se agrega la lista oficial de tutoriales de ShareFile en YouTube.", en: "Adds the official ShareFile tutorials playlist on YouTube.", pt: "Adiciona a playlist oficial de tutoriais do ShareFile no YouTube." } },
   { v: "1.3.0", date: "2026-10-08", d: { es: "Revisión de coherencia: se eliminan repeticiones entre Inicio, Mapa y Conocimiento; Integraciones pasa a Recursos. Videos oficiales por industria en el recomendador y videos de soporte en Conocimiento.", en: "Coherence review: removes repetition between Home, Map and Knowledge; Integrations moves to Resources. Official industry videos in the recommender and support videos in Knowledge.", pt: "Revisão de coerência: remove repetições entre Início, Mapa e Conhecimento; Integrações passa para Recursos. Vídeos oficiais por setor no recomendador e vídeos de suporte em Conhecimento." } },
   { v: "1.2.1", date: "2026-10-08", d: { es: "Integraciones: se agregan los conectores de OneDrive, Box y Dropbox y la ruta de activación para el administrador.", en: "Integrations: adds OneDrive, Box and Dropbox connectors and the admin path to enable them.", pt: "Integrações: adiciona os conectores OneDrive, Box e Dropbox e o caminho de ativação para o administrador." } },

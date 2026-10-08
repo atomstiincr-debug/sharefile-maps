@@ -1,7 +1,7 @@
 /* Interface text. Feature names stay in official English; everything else is translated. */
 const UI = {
   es: {
-    video: { title: "Video oficial", lang: "en inglés; activa los subtítulos en español", tutorials: "Tutoriales oficiales en YouTube" },
+    video: { title: "Video oficial", lang: "en inglés; activa los subtítulos en español", tutorials: "Tutoriales oficiales en YouTube", overview: "Ver qué es ShareFile (en inglés)" },
     int: { title: "Integraciones", lead: "ShareFile se conecta con las herramientas que tu organización ya usa. Cada integración enlaza a su documentación oficial.", m365Title: "ShareFile y Microsoft 365 se complementan", m365Msg: "ShareFile no reemplaza a Microsoft 365: se conecta a él. Los equipos siguen trabajando en Outlook, Word, OneDrive y SharePoint, y ShareFile suma lo necesario cuando los documentos salen de la organización y hay que trabajar con clientes, proveedores o socios.", m365Adds: "Lo que ShareFile agrega para trabajar con personas externas", plans: "Planes", planCheck: "Tabla de precios: desde Advanced. Documentación del plugin: Premium o superior.", group: "Categoría", industry: "Industria", all: "Todas", third: "Las integraciones de terceros requieren las licencias del proveedor correspondiente; algunas pueden estar limitadas o no disponibles.", source: "Fuentes: sharefile.com/apps-integrations y docs.sharefile.com.", forIndustry: "Integraciones para esta industria", count: "integraciones" },
     billing: { label: "Facturación", monthly: "Mensual", annual: "Anual", perUserMonth: "por usuario / mes", annualNote: "facturación anual", monthlyNote: "facturación mensual", save: "Ahorra {n}%", explain: "Precios MSRP en USD de sharefile.com/plans. Con facturación anual, el precio mensual por usuario baja." },
     lang: "Español", siteTag: "Mapa de planes ShareFile", unofficial: "Sitio no oficial",
@@ -70,7 +70,7 @@ const UI = {
   },
 
   en: {
-    video: { title: "Official video", lang: "English", tutorials: "Official tutorials on YouTube" },
+    video: { title: "Official video", lang: "English", tutorials: "Official tutorials on YouTube", overview: "See what ShareFile is" },
     int: { title: "Integrations", lead: "ShareFile connects with the tools your organization already uses. Each integration links to its official documentation.", m365Title: "ShareFile and Microsoft 365 work together", m365Msg: "ShareFile does not replace Microsoft 365; it connects to it. Teams keep working in Outlook, Word, OneDrive and SharePoint, and ShareFile adds what is needed when documents leave the organization and you work with clients, vendors or partners.", m365Adds: "What ShareFile adds for working with external people", plans: "Plans", planCheck: "Pricing table: from Advanced. Plug-in documentation: Premium or higher.", group: "Category", industry: "Industry", all: "All", third: "Third-party integrations require the vendor's licenses; some may be limited or unavailable.", source: "Sources: sharefile.com/apps-integrations and docs.sharefile.com.", forIndustry: "Integrations for this industry", count: "integrations" },
     billing: { label: "Billing", monthly: "Monthly", annual: "Annual", perUserMonth: "per user / month", annualNote: "billed annually", monthlyNote: "billed monthly", save: "Save {n}%", explain: "MSRP in USD from sharefile.com/plans. Annual billing lowers the monthly price per user." },
     lang: "English", siteTag: "ShareFile plans map", unofficial: "Unofficial site",
@@ -139,7 +139,7 @@ const UI = {
   },
 
   pt: {
-    video: { title: "Vídeo oficial", lang: "em inglês; ative as legendas em português", tutorials: "Tutoriais oficiais no YouTube" },
+    video: { title: "Vídeo oficial", lang: "em inglês; ative as legendas em português", tutorials: "Tutoriais oficiais no YouTube", overview: "Ver o que é o ShareFile (em inglês)" },
     int: { title: "Integrações", lead: "O ShareFile se conecta às ferramentas que sua organização já usa. Cada integração leva à documentação oficial.", m365Title: "ShareFile e Microsoft 365 se complementam", m365Msg: "O ShareFile não substitui o Microsoft 365: ele se conecta a ele. As equipes continuam trabalhando no Outlook, Word, OneDrive e SharePoint, e o ShareFile adiciona o necessário quando os documentos saem da organização e é preciso trabalhar com clientes, fornecedores ou parceiros.", m365Adds: "O que o ShareFile adiciona para trabalhar com pessoas externas", plans: "Planos", planCheck: "Tabela de preços: desde o Advanced. Documentação do plugin: Premium ou superior.", group: "Categoria", industry: "Setor", all: "Todas", third: "Integrações de terceiros exigem as licenças do fornecedor; algumas podem estar limitadas ou indisponíveis.", source: "Fontes: sharefile.com/apps-integrations e docs.sharefile.com.", forIndustry: "Integrações para este setor", count: "integrações" },
     billing: { label: "Cobrança", monthly: "Mensal", annual: "Anual", perUserMonth: "por usuário / mês", annualNote: "cobrança anual", monthlyNote: "cobrança mensal", save: "Economize {n}%", explain: "Preços MSRP em USD de sharefile.com/plans. Com cobrança anual, o preço mensal por usuário diminui." },
     lang: "Português", siteTag: "Mapa de planos ShareFile", unofficial: "Site não oficial",

@@ -130,6 +130,7 @@
         <h1>ShareFile Maps</h1>
         <p class="meta">${u.by} ${esc(SITE.author)} — <b>${new Date(SITE.updated + "T12:00:00").toLocaleDateString(lang === "en" ? "en-US" : lang === "pt" ? "pt-BR" : "es-CR", { month: "long", year: "numeric" })}</b></p>
         <p class="lead">${esc(h.lead)}</p>
+        <p class="actions">${ext("https://www.youtube.com/watch?v=" + OVERVIEW_VIDEO.id, "▶ " + esc(t().video.overview), "btn primary")}${ext(TUTORIALS, "▶ " + esc(t().video.tutorials), "btn")}</p>
       </div>
       <div class="index">
         ${row(h.plans, [a("#map", h.allPlans), a("#map-a", "Advanced"), a("#map-p", "Premium " + h.stepup), a("#map-e", "Enterprise " + h.stepup), a("#vdr", "Virtual Data Room")].join(""))}

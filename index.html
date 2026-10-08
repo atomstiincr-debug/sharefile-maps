@@ -290,10 +290,11 @@ footer .wrap { padding-block: 22px calc(22px + env(safe-area-inset-bottom, 0px))
 const D = "https://docs.sharefile.com/en-us/sharefile/";
 const W = "https://www.sharefile.com/";
 
+const OVERVIEW_VIDEO = { id: "yQkpfDLkCk0", t: "Progress ShareFile - Built For The Way You Work Now—And Where You're Headed Next!" };
 const TUTORIALS = "https://www.youtube.com/playlist?list=PLSKW9Jc-tCY9W-cB3G2OTYx00GXZrrzZB";
 
 const SITE = {
-  version: "1.3.1",
+  version: "1.3.2",
   updated: "2026-10-08",
   author: "Adrián Bonilla",
   pricingSource: W + "plans",
@@ -630,6 +631,7 @@ const KNOWLEDGE = [
   { g: { es: "Aprender y partners", en: "Learn and partners", pt: "Aprender e parceiros" }, links: [
     { t: "ShareFile Training", u: W + "training" },
     { t: "Progress ShareFile: Tutorials (34 videos)", u: "https://www.youtube.com/playlist?list=PLSKW9Jc-tCY9W-cB3G2OTYx00GXZrrzZB", v: 1 },
+    { t: "Progress ShareFile: Demos (38 videos)", u: "https://www.youtube.com/playlist?list=PLSKW9Jc-tCY8wmEjjJxq5I-0SIPjlI3oi", v: 1 },
     { t: "ShareFile YouTube", u: "https://www.youtube.com/@progresssharefile" },
     { t: "Customer stories", u: W + "customer-stories" },
     { t: "ROI calculator", u: W + "client-coordination-cost-calculator" },
@@ -650,6 +652,7 @@ const DISCREPANCIES = [
 
 
 const CHANGELOG = [
+  { v: "1.3.2", date: "2026-10-08", d: { es: "Video oficial de presentación de ShareFile en el Inicio y lista oficial de demos en Conocimiento.", en: "Official ShareFile overview video on Home and official demos playlist in Knowledge.", pt: "Vídeo oficial de apresentação do ShareFile no Início e playlist oficial de demos em Conhecimento." } },
   { v: "1.3.1", date: "2026-10-08", d: { es: "Se agrega la lista oficial de tutoriales de ShareFile en YouTube.", en: "Adds the official ShareFile tutorials playlist on YouTube.", pt: "Adiciona a playlist oficial de tutoriais do ShareFile no YouTube." } },
   { v: "1.3.0", date: "2026-10-08", d: { es: "Revisión de coherencia: se eliminan repeticiones entre Inicio, Mapa y Conocimiento; Integraciones pasa a Recursos. Videos oficiales por industria en el recomendador y videos de soporte en Conocimiento.", en: "Coherence review: removes repetition between Home, Map and Knowledge; Integrations moves to Resources. Official industry videos in the recommender and support videos in Knowledge.", pt: "Revisão de coerência: remove repetições entre Início, Mapa e Conhecimento; Integrações passa para Recursos. Vídeos oficiais por setor no recomendador e vídeos de suporte em Conhecimento." } },
   { v: "1.2.1", date: "2026-10-08", d: { es: "Integraciones: se agregan los conectores de OneDrive, Box y Dropbox y la ruta de activación para el administrador.", en: "Integrations: adds OneDrive, Box and Dropbox connectors and the admin path to enable them.", pt: "Integrações: adiciona os conectores OneDrive, Box e Dropbox e o caminho de ativação para o administrador." } },
@@ -779,7 +782,7 @@ const INTEGRATIONS = [
 /* Interface text. Feature names stay in official English; everything else is translated. */
 const UI = {
   es: {
-    video: { title: "Video oficial", lang: "en inglés; activa los subtítulos en español", tutorials: "Tutoriales oficiales en YouTube" },
+    video: { title: "Video oficial", lang: "en inglés; activa los subtítulos en español", tutorials: "Tutoriales oficiales en YouTube", overview: "Ver qué es ShareFile (en inglés)" },
     int: { title: "Integraciones", lead: "ShareFile se conecta con las herramientas que tu organización ya usa. Cada integración enlaza a su documentación oficial.", m365Title: "ShareFile y Microsoft 365 se complementan", m365Msg: "ShareFile no reemplaza a Microsoft 365: se conecta a él. Los equipos siguen trabajando en Outlook, Word, OneDrive y SharePoint, y ShareFile suma lo necesario cuando los documentos salen de la organización y hay que trabajar con clientes, proveedores o socios.", m365Adds: "Lo que ShareFile agrega para trabajar con personas externas", plans: "Planes", planCheck: "Tabla de precios: desde Advanced. Documentación del plugin: Premium o superior.", group: "Categoría", industry: "Industria", all: "Todas", third: "Las integraciones de terceros requieren las licencias del proveedor correspondiente; algunas pueden estar limitadas o no disponibles.", source: "Fuentes: sharefile.com/apps-integrations y docs.sharefile.com.", forIndustry: "Integraciones para esta industria", count: "integraciones" },
     billing: { label: "Facturación", monthly: "Mensual", annual: "Anual", perUserMonth: "por usuario / mes", annualNote: "facturación anual", monthlyNote: "facturación mensual", save: "Ahorra {n}%", explain: "Precios MSRP en USD de sharefile.com/plans. Con facturación anual, el precio mensual por usuario baja." },
     lang: "Español", siteTag: "Mapa de planes ShareFile", unofficial: "Sitio no oficial",
@@ -848,7 +851,7 @@ const UI = {
   },
 
   en: {
-    video: { title: "Official video", lang: "English", tutorials: "Official tutorials on YouTube" },
+    video: { title: "Official video", lang: "English", tutorials: "Official tutorials on YouTube", overview: "See what ShareFile is" },
     int: { title: "Integrations", lead: "ShareFile connects with the tools your organization already uses. Each integration links to its official documentation.", m365Title: "ShareFile and Microsoft 365 work together", m365Msg: "ShareFile does not replace Microsoft 365; it connects to it. Teams keep working in Outlook, Word, OneDrive and SharePoint, and ShareFile adds what is needed when documents leave the organization and you work with clients, vendors or partners.", m365Adds: "What ShareFile adds for working with external people", plans: "Plans", planCheck: "Pricing table: from Advanced. Plug-in documentation: Premium or higher.", group: "Category", industry: "Industry", all: "All", third: "Third-party integrations require the vendor's licenses; some may be limited or unavailable.", source: "Sources: sharefile.com/apps-integrations and docs.sharefile.com.", forIndustry: "Integrations for this industry", count: "integrations" },
     billing: { label: "Billing", monthly: "Monthly", annual: "Annual", perUserMonth: "per user / month", annualNote: "billed annually", monthlyNote: "billed monthly", save: "Save {n}%", explain: "MSRP in USD from sharefile.com/plans. Annual billing lowers the monthly price per user." },
     lang: "English", siteTag: "ShareFile plans map", unofficial: "Unofficial site",
@@ -917,7 +920,7 @@ const UI = {
   },
 
   pt: {
-    video: { title: "Vídeo oficial", lang: "em inglês; ative as legendas em português", tutorials: "Tutoriais oficiais no YouTube" },
+    video: { title: "Vídeo oficial", lang: "em inglês; ative as legendas em português", tutorials: "Tutoriais oficiais no YouTube", overview: "Ver o que é o ShareFile (em inglês)" },
     int: { title: "Integrações", lead: "O ShareFile se conecta às ferramentas que sua organização já usa. Cada integração leva à documentação oficial.", m365Title: "ShareFile e Microsoft 365 se complementam", m365Msg: "O ShareFile não substitui o Microsoft 365: ele se conecta a ele. As equipes continuam trabalhando no Outlook, Word, OneDrive e SharePoint, e o ShareFile adiciona o necessário quando os documentos saem da organização e é preciso trabalhar com clientes, fornecedores ou parceiros.", m365Adds: "O que o ShareFile adiciona para trabalhar com pessoas externas", plans: "Planos", planCheck: "Tabela de preços: desde o Advanced. Documentação do plugin: Premium ou superior.", group: "Categoria", industry: "Setor", all: "Todas", third: "Integrações de terceiros exigem as licenças do fornecedor; algumas podem estar limitadas ou indisponíveis.", source: "Fontes: sharefile.com/apps-integrations e docs.sharefile.com.", forIndustry: "Integrações para este setor", count: "integrações" },
     billing: { label: "Cobrança", monthly: "Mensal", annual: "Anual", perUserMonth: "por usuário / mês", annualNote: "cobrança anual", monthlyNote: "cobrança mensal", save: "Economize {n}%", explain: "Preços MSRP em USD de sharefile.com/plans. Com cobrança anual, o preço mensal por usuário diminui." },
     lang: "Português", siteTag: "Mapa de planos ShareFile", unofficial: "Site não oficial",
@@ -1118,6 +1121,7 @@ const UI = {
         <h1>ShareFile Maps</h1>
         <p class="meta">${u.by} ${esc(SITE.author)} — <b>${new Date(SITE.updated + "T12:00:00").toLocaleDateString(lang === "en" ? "en-US" : lang === "pt" ? "pt-BR" : "es-CR", { month: "long", year: "numeric" })}</b></p>
         <p class="lead">${esc(h.lead)}</p>
+        <p class="actions">${ext("https://www.youtube.com/watch?v=" + OVERVIEW_VIDEO.id, "▶ " + esc(t().video.overview), "btn primary")}${ext(TUTORIALS, "▶ " + esc(t().video.tutorials), "btn")}</p>
       </div>
       <div class="index">
         ${row(h.plans, [a("#map", h.allPlans), a("#map-a", "Advanced"), a("#map-p", "Premium " + h.stepup), a("#map-e", "Enterprise " + h.stepup), a("#vdr", "Virtual Data Room")].join(""))}
