@@ -5,7 +5,7 @@ on:
     - cron: "17 13 * * 1"   # Mondays 07:17 Costa Rica
   workflow_dispatch:
   push:
-    paths: ["src/data.js"]
+    paths: ["src/data.js", "scripts/check_links.py", "scripts/video_dates.py"]
 
 permissions:
   contents: read
@@ -28,13 +28,17 @@ jobs:
         id: check
         shell: bash
         run: set -o pipefail; python3 scripts/check_links.py | tee links.txt
+      - name: Check videos (recent, official channel, no Citrix)
+        if: always()
+        shell: bash
+        run: set -o pipefail; python3 scripts/video_dates.py | tee -a links.txt
       - name: Open issue on failure
         if: failure()
         uses: actions/github-script@v7
         with:
           script: |
             const fs = require('fs');
-            const body = fs.existsSync('links.txt') ? fs.readFileSync('links.txt','utf8').split('\n').filter(l => l.startsWith('BAD')).join('\n') : 'See workflow log.';
+            const body = fs.existsSync('links.txt') ? fs.readFileSync('links.txt','utf8').split('\n').filter(l => l.startsWith('BAD') || l.startsWith('FLAG')).join('\n') : 'See workflow log.';
             await github.rest.issues.create({ owner: context.repo.owner, repo: context.repo.repo,
               title: 'Broken official links ' + new Date().toISOString().slice(0,10),
               body: 'The weekly link check found broken links:\n\n```\n' + body + '\n```' });
