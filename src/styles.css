@@ -248,3 +248,17 @@ footer .wrap { padding-block: 22px calc(22px + env(safe-area-inset-bottom, 0px))
 .chipbtn[aria-pressed="true"] { background: var(--charcoal); border-color: var(--charcoal); color: #FFFFFF; box-shadow: inset 0 -3px 0 var(--brand); }
 .chipbtn[aria-pressed="true"] .num { color: #D9DCDF; }
 .igroup > .hint { max-width: 75ch; margin-top: -6px; }
+
+/* Recommender decision path */
+ol.path { list-style: none; counter-reset: step; margin: 14px 0; padding: 0; display: grid; gap: 10px; }
+ol.path > li { counter-increment: step; position: relative; padding: 10px 12px 10px 44px; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); }
+ol.path > li::before { content: counter(step); position: absolute; left: 12px; top: 10px; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: var(--surface); font-weight: 700; font-size: 12px; line-height: 22px; text-align: center; }
+/* Flash when a result re-renders */
+@keyframes sfm-flash { from { box-shadow: 0 0 0 3px var(--accent-soft); background-color: var(--accent-soft); } to { box-shadow: 0 0 0 0 transparent; } }
+#recout.updated, #ilist.updated #ifocus { animation: sfm-flash .6s ease-out; }
+/* Integrations: selected-industry block */
+.ind-focus { border-left: 4px solid var(--accent); }
+.ind-focus h2 { font-size: 1.05rem; margin: 0 0 8px; }
+ol.path .step { display: block; font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+ol.path .why { display: block; color: var(--muted); font-size: .9rem; margin-top: 2px; }
+ol.path ul.sigs { margin: 6px 0 0; padding-left: 18px; font-size: .9rem; }

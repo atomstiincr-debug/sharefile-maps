@@ -20,7 +20,7 @@ const OVERVIEW_VIDEO = { id: "yQkpfDLkCk0", t: "Progress ShareFile - Built For T
 const TUTORIALS = "https://www.youtube.com/playlist?list=PLSKW9Jc-tCY9W-cB3G2OTYx00GXZrrzZB";
 
 const SITE = {
-  version: "1.5.1",
+  version: "1.5.2",
   updated: "2026-10-08",
   author: "Adrián Bonilla",
   pricingSource: W + "plans",
@@ -238,13 +238,14 @@ const FEATURES = [
 
 /* Industries: capabilities each official industry page highlights, mapped to features.
    Plan minimum is computed, never typed by hand. */
+// fi = integrations featured in the "Integrate with your favorite tools" block of each official sharefile.com/industry page (checked 2026-10-08). Empty = the page names none.
 const INDUSTRIES = [
-  { id: "accounting", url: W + "industry/accounting", video: { id: "Y7nXmY5P5F8", t: "See How ShareFile Makes Work Flow" }, name: { es: "Contabilidad", en: "Accounting", pt: "Contabilidade" },
+  { id: "accounting", fi: [], url: W + "industry/accounting", video: { id: "Y7nXmY5P5F8", t: "See How ShareFile Makes Work Flow" }, name: { es: "Contabilidad", en: "Accounting", pt: "Contabilidade" },
     f: ["esign", "request_list", "ai_rl_gen", "rapid_onboarding", "enhanced_portal", "view_only", "reports", "threat_alerts", "auto_remediation"],
     warn: { es: "La solución de declaraciones de impuestos y el programa AICPA que menciona la página son de EE.UU.", en: "The tax return solution and AICPA program on this page are U.S.-specific.", pt: "A solução de declaração de impostos e o programa AICPA citados são dos EUA." } },
-  { id: "construction", url: W + "industry/construction", name: { es: "Construcción", en: "Construction", pt: "Construção" },
+  { id: "construction", fi: ["outlook", "gmail", "gdrive", "salesforce", "zapier", "app_mobile"], url: W + "industry/construction", name: { es: "Construcción", en: "Construction", pt: "Construção" },
     f: ["rapid_onboarding", "projects", "enhanced_portal", "encrypted_email", "view_only", "mfa", "sso"] },
-  { id: "finance", url: W + "industry/finance", video: { id: "DNzmtMCnhWU", t: "ShareFile for Banking, Wealth Management and Investment Services" }, name: { es: "Finanzas", en: "Finance", pt: "Finanças" },
+  { id: "finance", fi: ["outlook", "gmail", "gdrive", "salesforce", "zapier"], url: W + "industry/finance", video: { id: "DNzmtMCnhWU", t: "ShareFile for Banking, Wealth Management and Investment Services" }, name: { es: "Finanzas", en: "Finance", pt: "Finanças" },
     f: ["request_list", "rapid_onboarding", "esign", "enhanced_portal", "encrypted_email", "view_only", "sec_finra"],
     subs: [
       { id: "banking", name: { es: "Banca y crédito", en: "Banking & Lending", pt: "Bancos e crédito" } },
@@ -252,19 +253,19 @@ const INDUSTRIES = [
       { id: "invest",  name: { es: "Firmas de inversión", en: "Investment Firms", pt: "Firmas de investimento" }, vdr: true }
     ],
     warn: { es: "SEC y FINRA son regulación de EE.UU.", en: "SEC and FINRA are U.S. regulations.", pt: "SEC e FINRA são regulações dos EUA." } },
-  { id: "healthcare", url: W + "industry/healthcare", name: { es: "Salud", en: "Healthcare", pt: "Saúde" },
+  { id: "healthcare", fi: [], url: W + "industry/healthcare", name: { es: "Salud", en: "Healthcare", pt: "Saúde" },
     f: ["esign", "hipaa", "view_only", "encrypted_email", "email_plugins"],
     warn: { es: "HIPAA es regulación de EE.UU. y requiere BAA firmado.", en: "HIPAA is a U.S. regulation and requires a signed BAA.", pt: "HIPAA é regulação dos EUA e requer BAA assinado." } },
-  { id: "insurance", url: W + "industry/insurance", name: { es: "Seguros", en: "Insurance", pt: "Seguros" },
+  { id: "insurance", fi: ["outlook", "gmail", "gdrive", "salesforce", "zapier", "app_mobile"], url: W + "industry/insurance", name: { es: "Seguros", en: "Insurance", pt: "Seguros" },
     f: ["enhanced_portal", "esign", "projects", "rapid_onboarding", "request_list", "encrypted_email"] },
-  { id: "legal", url: W + "industry/legal", video: { id: "BDohGSWVCWs", t: "Legal document management with ShareFile" }, name: { es: "Legal", en: "Legal", pt: "Jurídico" },
+  { id: "legal", fi: ["outlook", "gmail", "gdrive", "salesforce", "zapier"], url: W + "industry/legal", video: { id: "BDohGSWVCWs", t: "Legal document management with ShareFile" }, name: { es: "Legal", en: "Legal", pt: "Jurídico" },
     f: ["esign", "projects", "automated_workflows", "rapid_onboarding", "enhanced_portal", "request_list", "threat_alerts", "view_only"] },
-  { id: "manufacturing", url: W + "industry/manufacturing", name: { es: "Manufactura", en: "Manufacturing", pt: "Manufatura" },
+  { id: "manufacturing", fi: ["outlook", "gmail", "gdrive", "salesforce", "zapier", "app_mobile"], url: W + "industry/manufacturing", name: { es: "Manufactura", en: "Manufacturing", pt: "Manufatura" },
     f: ["esign", "projects", "automated_workflows", "enhanced_portal", "rapid_onboarding", "watermark", "reports", "view_only", "encrypted_email"] },
-  { id: "realestate", url: W + "industry/real-estate", name: { es: "Bienes raíces", en: "Real Estate", pt: "Imobiliário" },
+  { id: "realestate", fi: ["outlook", "onedrive", "gmail", "gdrive", "quickbooks_int", "salesforce", "zapier"], url: W + "industry/real-estate", name: { es: "Bienes raíces", en: "Real Estate", pt: "Imobiliário" },
     f: ["request_list", "automated_workflows", "esign", "enhanced_portal", "forms", "mfa", "encrypted_email"],
     warn: { es: "La integración con QuickBooks que menciona la página solo opera en control plane de EE.UU.", en: "The QuickBooks integration on this page works only on U.S. control planes.", pt: "A integração com QuickBooks citada só funciona em control plane dos EUA." } },
-  { id: "hr", url: W + "industry/human-resources", name: { es: "Recursos humanos", en: "Human Resources", pt: "Recursos humanos" },
+  { id: "hr", fi: ["outlook", "gmail", "gdrive", "salesforce", "zapier", "app_mobile"], url: W + "industry/human-resources", name: { es: "Recursos humanos", en: "Human Resources", pt: "Recursos humanos" },
     f: ["esign", "rapid_onboarding", "encrypted_email", "view_only", "projects"] }
 ];
 
@@ -379,6 +380,7 @@ const DISCREPANCIES = [
 
 
 const CHANGELOG = [
+  { v: "1.5.2", date: "2026-10-08", d: { es: "Integraciones: el filtro por industria ahora reorganiza toda la página: arriba las específicas de la industria y las que destaca su página oficial en sharefile.com; abajo el resto por función; se ocultan las específicas de otras industrias.", en: "Integrations: the industry filter now reorganizes the whole page: the industry's specific integrations and those featured on its official sharefile.com page on top; the rest by function below; other industries' specific integrations are hidden.", pt: "Integrações: o filtro por setor agora reorganiza a página inteira: no topo as específicas do setor e as destacadas na sua página oficial em sharefile.com; abaixo as demais por função; as específicas de outros setores ficam ocultas." } },
   { v: "1.5.1", date: "2026-10-08", d: { es: "Calculadora y comparador muestran las licencias facturadas por plan y el mínimo de cada uno (VDR 5, resto 3); el campo de usuarios se ajusta al mínimo del plan. El recomendador muestra el camino de decisión: industria → plan base, necesidades → Enterprise.", en: "Calculator and comparator show billed licenses per plan and each plan's minimum (VDR 5, others 3); the users field adjusts to the plan minimum. The recommender shows its decision path: industry → base plan, needs → Enterprise.", pt: "Calculadora e comparador mostram as licenças faturadas por plano e o mínimo de cada um (VDR 5, demais 3); o campo de usuários se ajusta ao mínimo do plano. O recomendador mostra o caminho de decisão: setor → plano base, necessidades → Enterprise." } },
   { v: "1.5.0", date: "2026-10-08", d: { es: "Integraciones organizadas por función y no por proveedor, con buscador. Se elimina el bloque que daba a entender que solo Premium permite trabajar con externos.", en: "Integrations organized by function instead of vendor, with search. Removes the block that implied only Premium supports working with external people.", pt: "Integrações organizadas por função e não por fornecedor, com busca. Remove o bloco que dava a entender que só o Premium permite trabalhar com externos." } },
   { v: "1.4.0", date: "2026-10-08", d: { es: "Videos oficiales por función: ícono ▶ en el mapa, en el panel de detalle y en Integraciones. Videos: SIEM, Security Center y detección de amenazas.", en: "Official videos per feature: ▶ icon on the map, in the detail panel and in Integrations. Videos: SIEM, Security Center and threat detection.", pt: "Vídeos oficiais por recurso: ícone ▶ no mapa, no painel de detalhes e em Integrações. Vídeos: SIEM, Security Center e detecção de ameaças." } },

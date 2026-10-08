@@ -261,6 +261,20 @@ footer .wrap { padding-block: 22px calc(22px + env(safe-area-inset-bottom, 0px))
 .chipbtn[aria-pressed="true"] .num { color: #D9DCDF; }
 .igroup > .hint { max-width: 75ch; margin-top: -6px; }
 
+/* Recommender decision path */
+ol.path { list-style: none; counter-reset: step; margin: 14px 0; padding: 0; display: grid; gap: 10px; }
+ol.path > li { counter-increment: step; position: relative; padding: 10px 12px 10px 44px; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); }
+ol.path > li::before { content: counter(step); position: absolute; left: 12px; top: 10px; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: var(--surface); font-weight: 700; font-size: 12px; line-height: 22px; text-align: center; }
+/* Flash when a result re-renders */
+@keyframes sfm-flash { from { box-shadow: 0 0 0 3px var(--accent-soft); background-color: var(--accent-soft); } to { box-shadow: 0 0 0 0 transparent; } }
+#recout.updated, #ilist.updated #ifocus { animation: sfm-flash .6s ease-out; }
+/* Integrations: selected-industry block */
+.ind-focus { border-left: 4px solid var(--accent); }
+.ind-focus h2 { font-size: 1.05rem; margin: 0 0 8px; }
+ol.path .step { display: block; font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+ol.path .why { display: block; color: var(--muted); font-size: .9rem; margin-top: 2px; }
+ol.path ul.sigs { margin: 6px 0 0; padding-left: 18px; font-size: .9rem; }
+
 </style>
 </head>
 <body>
@@ -311,7 +325,7 @@ const OVERVIEW_VIDEO = { id: "yQkpfDLkCk0", t: "Progress ShareFile - Built For T
 const TUTORIALS = "https://www.youtube.com/playlist?list=PLSKW9Jc-tCY9W-cB3G2OTYx00GXZrrzZB";
 
 const SITE = {
-  version: "1.5.1",
+  version: "1.5.2",
   updated: "2026-10-08",
   author: "Adrián Bonilla",
   pricingSource: W + "plans",
@@ -529,13 +543,14 @@ const FEATURES = [
 
 /* Industries: capabilities each official industry page highlights, mapped to features.
    Plan minimum is computed, never typed by hand. */
+// fi = integrations featured in the "Integrate with your favorite tools" block of each official sharefile.com/industry page (checked 2026-10-08). Empty = the page names none.
 const INDUSTRIES = [
-  { id: "accounting", url: W + "industry/accounting", video: { id: "Y7nXmY5P5F8", t: "See How ShareFile Makes Work Flow" }, name: { es: "Contabilidad", en: "Accounting", pt: "Contabilidade" },
+  { id: "accounting", fi: [], url: W + "industry/accounting", video: { id: "Y7nXmY5P5F8", t: "See How ShareFile Makes Work Flow" }, name: { es: "Contabilidad", en: "Accounting", pt: "Contabilidade" },
     f: ["esign", "request_list", "ai_rl_gen", "rapid_onboarding", "enhanced_portal", "view_only", "reports", "threat_alerts", "auto_remediation"],
     warn: { es: "La solución de declaraciones de impuestos y el programa AICPA que menciona la página son de EE.UU.", en: "The tax return solution and AICPA program on this page are U.S.-specific.", pt: "A solução de declaração de impostos e o programa AICPA citados são dos EUA." } },
-  { id: "construction", url: W + "industry/construction", name: { es: "Construcción", en: "Construction", pt: "Construção" },
+  { id: "construction", fi: ["outlook", "gmail", "gdrive", "salesforce", "zapier", "app_mobile"], url: W + "industry/construction", name: { es: "Construcción", en: "Construction", pt: "Construção" },
     f: ["rapid_onboarding", "projects", "enhanced_portal", "encrypted_email", "view_only", "mfa", "sso"] },
-  { id: "finance", url: W + "industry/finance", video: { id: "DNzmtMCnhWU", t: "ShareFile for Banking, Wealth Management and Investment Services" }, name: { es: "Finanzas", en: "Finance", pt: "Finanças" },
+  { id: "finance", fi: ["outlook", "gmail", "gdrive", "salesforce", "zapier"], url: W + "industry/finance", video: { id: "DNzmtMCnhWU", t: "ShareFile for Banking, Wealth Management and Investment Services" }, name: { es: "Finanzas", en: "Finance", pt: "Finanças" },
     f: ["request_list", "rapid_onboarding", "esign", "enhanced_portal", "encrypted_email", "view_only", "sec_finra"],
     subs: [
       { id: "banking", name: { es: "Banca y crédito", en: "Banking & Lending", pt: "Bancos e crédito" } },
@@ -543,19 +558,19 @@ const INDUSTRIES = [
       { id: "invest",  name: { es: "Firmas de inversión", en: "Investment Firms", pt: "Firmas de investimento" }, vdr: true }
     ],
     warn: { es: "SEC y FINRA son regulación de EE.UU.", en: "SEC and FINRA are U.S. regulations.", pt: "SEC e FINRA são regulações dos EUA." } },
-  { id: "healthcare", url: W + "industry/healthcare", name: { es: "Salud", en: "Healthcare", pt: "Saúde" },
+  { id: "healthcare", fi: [], url: W + "industry/healthcare", name: { es: "Salud", en: "Healthcare", pt: "Saúde" },
     f: ["esign", "hipaa", "view_only", "encrypted_email", "email_plugins"],
     warn: { es: "HIPAA es regulación de EE.UU. y requiere BAA firmado.", en: "HIPAA is a U.S. regulation and requires a signed BAA.", pt: "HIPAA é regulação dos EUA e requer BAA assinado." } },
-  { id: "insurance", url: W + "industry/insurance", name: { es: "Seguros", en: "Insurance", pt: "Seguros" },
+  { id: "insurance", fi: ["outlook", "gmail", "gdrive", "salesforce", "zapier", "app_mobile"], url: W + "industry/insurance", name: { es: "Seguros", en: "Insurance", pt: "Seguros" },
     f: ["enhanced_portal", "esign", "projects", "rapid_onboarding", "request_list", "encrypted_email"] },
-  { id: "legal", url: W + "industry/legal", video: { id: "BDohGSWVCWs", t: "Legal document management with ShareFile" }, name: { es: "Legal", en: "Legal", pt: "Jurídico" },
+  { id: "legal", fi: ["outlook", "gmail", "gdrive", "salesforce", "zapier"], url: W + "industry/legal", video: { id: "BDohGSWVCWs", t: "Legal document management with ShareFile" }, name: { es: "Legal", en: "Legal", pt: "Jurídico" },
     f: ["esign", "projects", "automated_workflows", "rapid_onboarding", "enhanced_portal", "request_list", "threat_alerts", "view_only"] },
-  { id: "manufacturing", url: W + "industry/manufacturing", name: { es: "Manufactura", en: "Manufacturing", pt: "Manufatura" },
+  { id: "manufacturing", fi: ["outlook", "gmail", "gdrive", "salesforce", "zapier", "app_mobile"], url: W + "industry/manufacturing", name: { es: "Manufactura", en: "Manufacturing", pt: "Manufatura" },
     f: ["esign", "projects", "automated_workflows", "enhanced_portal", "rapid_onboarding", "watermark", "reports", "view_only", "encrypted_email"] },
-  { id: "realestate", url: W + "industry/real-estate", name: { es: "Bienes raíces", en: "Real Estate", pt: "Imobiliário" },
+  { id: "realestate", fi: ["outlook", "onedrive", "gmail", "gdrive", "quickbooks_int", "salesforce", "zapier"], url: W + "industry/real-estate", name: { es: "Bienes raíces", en: "Real Estate", pt: "Imobiliário" },
     f: ["request_list", "automated_workflows", "esign", "enhanced_portal", "forms", "mfa", "encrypted_email"],
     warn: { es: "La integración con QuickBooks que menciona la página solo opera en control plane de EE.UU.", en: "The QuickBooks integration on this page works only on U.S. control planes.", pt: "A integração com QuickBooks citada só funciona em control plane dos EUA." } },
-  { id: "hr", url: W + "industry/human-resources", name: { es: "Recursos humanos", en: "Human Resources", pt: "Recursos humanos" },
+  { id: "hr", fi: ["outlook", "gmail", "gdrive", "salesforce", "zapier", "app_mobile"], url: W + "industry/human-resources", name: { es: "Recursos humanos", en: "Human Resources", pt: "Recursos humanos" },
     f: ["esign", "rapid_onboarding", "encrypted_email", "view_only", "projects"] }
 ];
 
@@ -670,6 +685,7 @@ const DISCREPANCIES = [
 
 
 const CHANGELOG = [
+  { v: "1.5.2", date: "2026-10-08", d: { es: "Integraciones: el filtro por industria ahora reorganiza toda la página: arriba las específicas de la industria y las que destaca su página oficial en sharefile.com; abajo el resto por función; se ocultan las específicas de otras industrias.", en: "Integrations: the industry filter now reorganizes the whole page: the industry's specific integrations and those featured on its official sharefile.com page on top; the rest by function below; other industries' specific integrations are hidden.", pt: "Integrações: o filtro por setor agora reorganiza a página inteira: no topo as específicas do setor e as destacadas na sua página oficial em sharefile.com; abaixo as demais por função; as específicas de outros setores ficam ocultas." } },
   { v: "1.5.1", date: "2026-10-08", d: { es: "Calculadora y comparador muestran las licencias facturadas por plan y el mínimo de cada uno (VDR 5, resto 3); el campo de usuarios se ajusta al mínimo del plan. El recomendador muestra el camino de decisión: industria → plan base, necesidades → Enterprise.", en: "Calculator and comparator show billed licenses per plan and each plan's minimum (VDR 5, others 3); the users field adjusts to the plan minimum. The recommender shows its decision path: industry → base plan, needs → Enterprise.", pt: "Calculadora e comparador mostram as licenças faturadas por plano e o mínimo de cada um (VDR 5, demais 3); o campo de usuários se ajusta ao mínimo do plano. O recomendador mostra o caminho de decisão: setor → plano base, necessidades → Enterprise." } },
   { v: "1.5.0", date: "2026-10-08", d: { es: "Integraciones organizadas por función y no por proveedor, con buscador. Se elimina el bloque que daba a entender que solo Premium permite trabajar con externos.", en: "Integrations organized by function instead of vendor, with search. Removes the block that implied only Premium supports working with external people.", pt: "Integrações organizadas por função e não por fornecedor, com busca. Remove o bloco que dava a entender que só o Premium permite trabalhar com externos." } },
   { v: "1.4.0", date: "2026-10-08", d: { es: "Videos oficiales por función: ícono ▶ en el mapa, en el panel de detalle y en Integraciones. Videos: SIEM, Security Center y detección de amenazas.", en: "Official videos per feature: ▶ icon on the map, in the detail panel and in Integrations. Videos: SIEM, Security Center and threat detection.", pt: "Vídeos oficiais por recurso: ícone ▶ no mapa, no painel de detalhes e em Integrações. Vídeos: SIEM, Security Center e detecção de ameaças." } },
@@ -801,7 +817,7 @@ const INTEGRATIONS = [
 const UI = {
   es: {
     video: { title: "Video oficial", lang: "en inglés; activa los subtítulos en español", tutorials: "Tutoriales oficiales en YouTube", overview: "Ver qué es ShareFile (en inglés)", long: "video largo" },
-    int: { title: "Integraciones", lead: "Integraciones oficiales de ShareFile con herramientas de correo, almacenamiento, identidad, seguridad, CRM y contabilidad, más integraciones por industria. Cada una enlaza a su documentación oficial.", search: "Buscar integración (ej. Salesforce)", plans: "Planes", planCheck: "Tabla de precios: desde Advanced. Documentación del plugin: Premium o superior.", group: "Categoría", industry: "Industria", all: "Todas", third: "Las integraciones de terceros requieren las licencias del proveedor correspondiente; algunas pueden estar limitadas o no disponibles.", source: "Fuentes: sharefile.com/apps-integrations y docs.sharefile.com.", forIndustry: "Integraciones para esta industria", count: "integraciones" },
+    int: { title: "Integraciones", lead: "Integraciones oficiales de ShareFile con herramientas de correo, almacenamiento, identidad, seguridad, CRM y contabilidad, más integraciones por industria. Cada una enlaza a su documentación oficial.", search: "Buscar integración (ej. Salesforce)", plans: "Planes", planCheck: "Tabla de precios: desde Advanced. Documentación del plugin: Premium o superior.", group: "Categoría", industry: "Industria", all: "Todas", third: "Las integraciones de terceros requieren las licencias del proveedor correspondiente; algunas pueden estar limitadas o no disponibles.", source: "Fuentes: sharefile.com/apps-integrations y docs.sharefile.com.", forIndustry: "Integraciones para esta industria", specific: "Específicas de {i}", noSpecific: "ShareFile no publica integraciones específicas para {i}. Las de abajo sirven igual.", featured: "Destacadas en la página oficial de {i}", noFeatured: "La página oficial de {i} no destaca integraciones concretas.", general: "Resto de integraciones, por función (sirven para cualquier industria)", hidden: "Se ocultan {n} integraciones específicas de otras industrias.", count: "integraciones" },
     billing: { label: "Facturación", monthly: "Mensual", annual: "Anual", perUserMonth: "por usuario / mes", annualNote: "facturación anual", monthlyNote: "facturación mensual", save: "Ahorra {n}%", explain: "Precios MSRP en USD de sharefile.com/plans. Con facturación anual, el precio mensual por usuario baja." },
     lang: "Español", siteTag: "Mapa de planes ShareFile", unofficial: "Sitio no oficial",
     nav: { home: "Inicio", map: "Mapa de planes", vdr: "Data Room", recommend: "Recomendador", compare: "Comparador", matrix: "Matriz", calc: "Calculadora", knowledge: "Conocimiento", glossary: "Glosario", changelog: "Cambios", discrepancies: "Discrepancias", integrations: "Integraciones" },
@@ -874,7 +890,7 @@ const UI = {
 
   en: {
     video: { title: "Official video", lang: "English", tutorials: "Official tutorials on YouTube", overview: "See what ShareFile is", long: "long video" },
-    int: { title: "Integrations", lead: "Official ShareFile integrations with email, storage, identity, security, CRM and accounting tools, plus industry-specific integrations. Each links to its official documentation.", search: "Search integrations (e.g. Salesforce)", plans: "Plans", planCheck: "Pricing table: from Advanced. Plug-in documentation: Premium or higher.", group: "Category", industry: "Industry", all: "All", third: "Third-party integrations require the vendor's licenses; some may be limited or unavailable.", source: "Sources: sharefile.com/apps-integrations and docs.sharefile.com.", forIndustry: "Integrations for this industry", count: "integrations" },
+    int: { title: "Integrations", lead: "Official ShareFile integrations with email, storage, identity, security, CRM and accounting tools, plus industry-specific integrations. Each links to its official documentation.", search: "Search integrations (e.g. Salesforce)", plans: "Plans", planCheck: "Pricing table: from Advanced. Plug-in documentation: Premium or higher.", group: "Category", industry: "Industry", all: "All", third: "Third-party integrations require the vendor's licenses; some may be limited or unavailable.", source: "Sources: sharefile.com/apps-integrations and docs.sharefile.com.", forIndustry: "Integrations for this industry", specific: "Specific to {i}", noSpecific: "ShareFile publishes no integrations specific to {i}. The ones below still apply.", featured: "Featured on the official {i} page", noFeatured: "The official {i} page does not feature specific integrations.", general: "Other integrations, by function (useful for any industry)", hidden: "{n} integrations specific to other industries are hidden.", count: "integrations" },
     billing: { label: "Billing", monthly: "Monthly", annual: "Annual", perUserMonth: "per user / month", annualNote: "billed annually", monthlyNote: "billed monthly", save: "Save {n}%", explain: "MSRP in USD from sharefile.com/plans. Annual billing lowers the monthly price per user." },
     lang: "English", siteTag: "ShareFile plans map", unofficial: "Unofficial site",
     nav: { home: "Home", map: "Plans map", vdr: "Data Room", recommend: "Recommender", compare: "Comparator", matrix: "Matrix", calc: "Calculator", knowledge: "Knowledge", glossary: "Glossary", changelog: "Changes", discrepancies: "Discrepancies", integrations: "Integrations" },
@@ -947,7 +963,7 @@ const UI = {
 
   pt: {
     video: { title: "Vídeo oficial", lang: "em inglês; ative as legendas em português", tutorials: "Tutoriais oficiais no YouTube", overview: "Ver o que é o ShareFile (em inglês)", long: "vídeo longo" },
-    int: { title: "Integrações", lead: "Integrações oficiais do ShareFile com ferramentas de e-mail, armazenamento, identidade, segurança, CRM e contabilidade, além de integrações por setor. Cada uma leva à documentação oficial.", search: "Buscar integração (ex. Salesforce)", plans: "Planos", planCheck: "Tabela de preços: desde o Advanced. Documentação do plugin: Premium ou superior.", group: "Categoria", industry: "Setor", all: "Todas", third: "Integrações de terceiros exigem as licenças do fornecedor; algumas podem estar limitadas ou indisponíveis.", source: "Fontes: sharefile.com/apps-integrations e docs.sharefile.com.", forIndustry: "Integrações para este setor", count: "integrações" },
+    int: { title: "Integrações", lead: "Integrações oficiais do ShareFile com ferramentas de e-mail, armazenamento, identidade, segurança, CRM e contabilidade, além de integrações por setor. Cada uma leva à documentação oficial.", search: "Buscar integração (ex. Salesforce)", plans: "Planos", planCheck: "Tabela de preços: desde o Advanced. Documentação do plugin: Premium ou superior.", group: "Categoria", industry: "Setor", all: "Todas", third: "Integrações de terceiros exigem as licenças do fornecedor; algumas podem estar limitadas ou indisponíveis.", source: "Fontes: sharefile.com/apps-integrations e docs.sharefile.com.", forIndustry: "Integrações para este setor", specific: "Específicas de {i}", noSpecific: "O ShareFile não publica integrações específicas para {i}. As abaixo também se aplicam.", featured: "Destacadas na página oficial de {i}", noFeatured: "A página oficial de {i} não destaca integrações específicas.", general: "Demais integrações, por função (servem para qualquer setor)", hidden: "{n} integrações específicas de outros setores estão ocultas.", count: "integrações" },
     billing: { label: "Cobrança", monthly: "Mensal", annual: "Anual", perUserMonth: "por usuário / mês", annualNote: "cobrança anual", monthlyNote: "cobrança mensal", save: "Economize {n}%", explain: "Preços MSRP em USD de sharefile.com/plans. Com cobrança anual, o preço mensal por usuário diminui." },
     lang: "Português", siteTag: "Mapa de planos ShareFile", unofficial: "Site não oficial",
     nav: { home: "Início", map: "Mapa de planos", vdr: "Data Room", recommend: "Recomendador", compare: "Comparador", matrix: "Matriz", calc: "Calculadora", knowledge: "Conhecimento", glossary: "Glossário", changelog: "Mudanças", discrepancies: "Discrepâncias", integrations: "Integrações" },
@@ -1598,14 +1614,37 @@ const UI = {
       <p class="hint" style="margin-top:16px">${esc(I.third)} ${esc(I.source)}</p>`;
     const draw = () => {
       const s = state.intg, q = s.q.toLowerCase();
-      const rows = INTEGRATIONS.filter(x => (!s.g || x.g === s.g) && (!s.i || (x.ind || []).includes(s.i) || x.g !== "ind")
-        && (!q || x.name.toLowerCase().includes(q) || L(x.d).toLowerCase().includes(q)));
-      $("#ilist").innerHTML = INT_GROUPS.map(g => {
-        const xs = rows.filter(x => x.g === g.id);
-        return xs.length ? `<section class="igroup"><h2>${esc(L(g.name))}</h2>${g.note ? `<p class="hint">${esc(L(g.note))}</p>` : ""}<div class="igrid">${xs.map(intCard).join("")}</div></section>` : "";
+      const match = x => (!s.g || x.g === s.g) && (!q || x.name.toLowerCase().includes(q) || L(x.d).toLowerCase().includes(q));
+      const byGroup = xs => INT_GROUPS.map(g => {
+        const gx = xs.filter(x => x.g === g.id);
+        return gx.length ? `<section class="igroup"><h2>${esc(L(g.name))}</h2>${g.note ? `<p class="hint">${esc(L(g.note))}</p>` : ""}<div class="igrid">${gx.map(intCard).join("")}</div></section>` : "";
       }).join("");
-      $("#icount").textContent = rows.length + " " + I.count;
+      let html = "", shown = 0;
+      if (!s.i) {
+        const rows = INTEGRATIONS.filter(match);
+        html = byGroup(rows); shown = rows.length;
+      } else {
+        const ind = IND[s.i], iname = L(ind.name);
+        const spec = INTEGRATIONS.filter(x => (x.ind || []).includes(s.i));
+        const feat = (ind.fi || []).map(id => INTEGRATIONS.find(x => x.id === id)).filter(x => x && !spec.includes(x));
+        const other = INTEGRATIONS.filter(x => (x.ind || []).length && !x.ind.includes(s.i));
+        const rest = INTEGRATIONS.filter(x => !spec.includes(x) && !feat.includes(x) && !other.includes(x));
+        const sp = spec.filter(match), fe = feat.filter(match), re = rest.filter(match);
+        shown = sp.length + fe.length + re.length;
+        html = `<section class="box ind-focus" id="ifocus">
+            <h2>${esc(fmt(I.specific, { i: iname }))} <span class="muted num">(${sp.length})</span></h2>
+            ${spec.length ? (sp.length ? `<div class="igrid">${sp.map(intCard).join("")}</div>` : `<p class="muted">—</p>`) : `<p class="hint">${esc(fmt(I.noSpecific, { i: iname }))}</p>`}
+            <h2 style="margin-top:18px">${esc(fmt(I.featured, { i: iname }))} <span class="muted num">(${fe.length})</span> ${ext(ind.url, "↗")}</h2>
+            ${feat.length ? (fe.length ? `<div class="igrid">${fe.map(intCard).join("")}</div>` : `<p class="muted">—</p>`) : `<p class="hint">${esc(fmt(I.noFeatured, { i: iname }))}</p>`}
+          </section>
+          <h2 style="margin-top:22px">${esc(I.general)}</h2>
+          ${byGroup(re)}
+          <p class="hint">${esc(fmt(I.hidden, { n: other.length }))}</p>`;
+      }
+      $("#ilist").innerHTML = html;
+      $("#icount").textContent = shown + " " + I.count;
       document.querySelectorAll("[data-ig]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.ig === s.g)));
+      const il = $("#ilist"); il.classList.remove("updated"); void il.offsetWidth; il.classList.add("updated");
     };
     document.querySelectorAll("[data-ig]").forEach(b => b.addEventListener("click", () => { state.intg.g = state.intg.g === b.dataset.ig ? "" : b.dataset.ig; draw(); }));
     $("#iq").addEventListener("input", e => { state.intg.q = e.target.value; draw(); });

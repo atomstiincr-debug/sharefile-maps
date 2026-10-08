@@ -44,6 +44,7 @@ console.log("✓ data OK");
     for (const b of x.badges || []) if (!c2.BADGES[b]) { e2++; console.error("✗ " + x.id + " bad badge " + b); }
     for (const l of ["es", "en", "pt"]) { if (!x.d[l]) { e2++; console.error("✗ " + x.id + " desc " + l); } if (x.n && !x.n[l]) { e2++; console.error("✗ " + x.id + " note " + l); } }
   }
+  for (const i of c2.INDUSTRIES) for (const x of i.fi || []) if (!seen.has(x)) { e2++; console.error("✗ industry " + i.id + " featured unknown integration " + x); }
   console.log("integrations", c2.INTEGRATIONS.length);
   if (e2) process.exit(1);
 }

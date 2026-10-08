@@ -167,6 +167,26 @@ for (const lang of ["es", "en", "pt"]) {
   }
   const s = env.d.querySelector("#iq"); s.value = "salesforce"; s.dispatchEvent(new env.w.Event("input", { bubbles: true }));
   ok(env.d.querySelectorAll("#ilist .icard").length === 1, "integrations search salesforce -> 1");
+  s.value = ""; s.dispatchEvent(new env.w.Event("input", { bubbles: true }));
+  // Industry filter: each industry changes the view, shows its own + featured, hides other industries' specific ones
+  const iSel = env.d.querySelector("#ii"), views = new Set();
+  const names = () => [...env.d.querySelectorAll("#ilist .icard")].map(c => text(c));
+  for (const ind of ctx.IND) {
+    iSel.value = ind.id; change(env, iSel);
+    const focus = env.d.querySelector("#ifocus"); ok(!!focus, `integrations ${ind.id}: industry block shown`);
+    const ftxt = text(focus);
+    const spec = ctx.I.filter(x => (x.ind || []).includes(ind.id));
+    ok(spec.every(x => ftxt.includes(x.name)), `integrations ${ind.id}: its specific integrations at top (${spec.length})`);
+    ok((ind.fi || []).every(id => ftxt.includes(ctx.I.find(x => x.id === id).name)), `integrations ${ind.id}: featured from official page (${(ind.fi || []).length})`);
+    const all = names().join(" | ");
+    const foreign = ctx.I.filter(x => (x.ind || []).length && !x.ind.includes(ind.id));
+    ok(foreign.every(x => !all.includes(x.name)), `integrations ${ind.id}: other industries' specific ones hidden (${foreign.length})`);
+    ok(!spec.length ? /no publica|publishes no/.test(ftxt) : true, `integrations ${ind.id}: honest note when none specific`);
+    views.add(ftxt);
+  }
+  ok(views.size === ctx.IND.length, `integrations: every industry shows a different block (${views.size}/${ctx.IND.length})`);
+  iSel.value = ""; change(env, iSel);
+  ok(env.d.querySelectorAll("#ilist .icard").length === ctx.I.length && !env.d.querySelector("#ifocus"), "integrations: clearing industry shows all");
 }
 
 // 8. Detail panel opens and closes

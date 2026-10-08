@@ -577,14 +577,37 @@
       <p class="hint" style="margin-top:16px">${esc(I.third)} ${esc(I.source)}</p>`;
     const draw = () => {
       const s = state.intg, q = s.q.toLowerCase();
-      const rows = INTEGRATIONS.filter(x => (!s.g || x.g === s.g) && (!s.i || (x.ind || []).includes(s.i) || x.g !== "ind")
-        && (!q || x.name.toLowerCase().includes(q) || L(x.d).toLowerCase().includes(q)));
-      $("#ilist").innerHTML = INT_GROUPS.map(g => {
-        const xs = rows.filter(x => x.g === g.id);
-        return xs.length ? `<section class="igroup"><h2>${esc(L(g.name))}</h2>${g.note ? `<p class="hint">${esc(L(g.note))}</p>` : ""}<div class="igrid">${xs.map(intCard).join("")}</div></section>` : "";
+      const match = x => (!s.g || x.g === s.g) && (!q || x.name.toLowerCase().includes(q) || L(x.d).toLowerCase().includes(q));
+      const byGroup = xs => INT_GROUPS.map(g => {
+        const gx = xs.filter(x => x.g === g.id);
+        return gx.length ? `<section class="igroup"><h2>${esc(L(g.name))}</h2>${g.note ? `<p class="hint">${esc(L(g.note))}</p>` : ""}<div class="igrid">${gx.map(intCard).join("")}</div></section>` : "";
       }).join("");
-      $("#icount").textContent = rows.length + " " + I.count;
+      let html = "", shown = 0;
+      if (!s.i) {
+        const rows = INTEGRATIONS.filter(match);
+        html = byGroup(rows); shown = rows.length;
+      } else {
+        const ind = IND[s.i], iname = L(ind.name);
+        const spec = INTEGRATIONS.filter(x => (x.ind || []).includes(s.i));
+        const feat = (ind.fi || []).map(id => INTEGRATIONS.find(x => x.id === id)).filter(x => x && !spec.includes(x));
+        const other = INTEGRATIONS.filter(x => (x.ind || []).length && !x.ind.includes(s.i));
+        const rest = INTEGRATIONS.filter(x => !spec.includes(x) && !feat.includes(x) && !other.includes(x));
+        const sp = spec.filter(match), fe = feat.filter(match), re = rest.filter(match);
+        shown = sp.length + fe.length + re.length;
+        html = `<section class="box ind-focus" id="ifocus">
+            <h2>${esc(fmt(I.specific, { i: iname }))} <span class="muted num">(${sp.length})</span></h2>
+            ${spec.length ? (sp.length ? `<div class="igrid">${sp.map(intCard).join("")}</div>` : `<p class="muted">—</p>`) : `<p class="hint">${esc(fmt(I.noSpecific, { i: iname }))}</p>`}
+            <h2 style="margin-top:18px">${esc(fmt(I.featured, { i: iname }))} <span class="muted num">(${fe.length})</span> ${ext(ind.url, "↗")}</h2>
+            ${feat.length ? (fe.length ? `<div class="igrid">${fe.map(intCard).join("")}</div>` : `<p class="muted">—</p>`) : `<p class="hint">${esc(fmt(I.noFeatured, { i: iname }))}</p>`}
+          </section>
+          <h2 style="margin-top:22px">${esc(I.general)}</h2>
+          ${byGroup(re)}
+          <p class="hint">${esc(fmt(I.hidden, { n: other.length }))}</p>`;
+      }
+      $("#ilist").innerHTML = html;
+      $("#icount").textContent = shown + " " + I.count;
       document.querySelectorAll("[data-ig]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.ig === s.g)));
+      const il = $("#ilist"); il.classList.remove("updated"); void il.offsetWidth; il.classList.add("updated");
     };
     document.querySelectorAll("[data-ig]").forEach(b => b.addEventListener("click", () => { state.intg.g = state.intg.g === b.dataset.ig ? "" : b.dataset.ig; draw(); }));
     $("#iq").addEventListener("input", e => { state.intg.q = e.target.value; draw(); });
