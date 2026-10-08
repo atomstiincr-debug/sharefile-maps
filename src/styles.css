@@ -225,3 +225,10 @@ footer .wrap { padding-block: 22px calc(22px + env(safe-area-inset-bottom, 0px))
 .cookie { position: fixed; left: 16px; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); z-index: 50; max-width: 640px; margin: 0 auto; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow); border-radius: 8px; padding: 14px 16px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; font-size: .88rem; }
 .cookie p { flex: 1 1 260px; }
 .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 8px 14px; border-radius: var(--r); font-size: .86rem; z-index: 60; }
+
+/* Billing toggle */
+.seg.bill button { min-height: 34px; }
+.was { color: var(--muted); font-size: .62em; font-weight: 500; text-decoration-thickness: 1.5px; margin-right: 4px; }
+.save { color: var(--accent); font-weight: 700; }
+.price .amt { display: flex; align-items: baseline; gap: 2px; flex-wrap: wrap; }
+.result-plan .seg { margin-left: auto; }

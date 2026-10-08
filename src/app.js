@@ -61,8 +61,17 @@
     rec: store.get("rec", { ind: "accounting", sub: "", size: "mid", sig: [] }),
     cmp: store.get("cmp", { a: "P", b: "E", users: 25, bill: "annual", hl: "" }),
     calc: store.get("calc", { plan: "P", users: 25, bill: "annual" }),
-    mx: { q: "", g: "", i: "", diff: false }
+    mx: { q: "", g: "", i: "", diff: false },
+    bill: store.get("bill", "annual")
   };
+  const priceOf = p => state.bill === "annual" ? p.annual : p.monthly;
+  const savePct = p => Math.round((1 - p.annual / p.monthly) * 100);
+  const billLabel = () => state.bill === "annual" ? t().billing.annualNote : t().billing.monthlyNote;
+  const priceHTML = p => state.bill === "annual"
+    ? `<s class="was">${money(p.monthly)}</s> ${money(p.annual)}`
+    : money(p.monthly);
+  const billToggle = () => `<span class="seg bill" role="group" aria-label="${esc(t().billing.label)}">${["monthly", "annual"].map(b =>
+    `<button type="button" data-bill="${b}" aria-pressed="${state.bill === b}">${esc(t().billing[b])}</button>`).join("")}</span>`;
   try {
     const qs = new URLSearchParams(location.search);
     state.mx = { q: qs.get("q") || "", g: qs.get("g") || "", i: qs.get("i") || "", diff: qs.get("diff") === "1" };
@@ -129,12 +138,14 @@
         ${row(h.tools, ["recommend", "compare", "matrix", "calc"].map(k => a("#" + k, u.nav[k])).join(""))}
         ${row(h.resources, ["knowledge", "glossary", "changelog", "discrepancies"].map(k => a("#" + k, u.nav[k])).join(""))}
       </div>
-      <div class="price-row">
+      <div class="toolbar" style="margin-top:28px;margin-bottom:0">${billToggle()}<span class="hint">${esc(t().billing.explain)}</span></div>
+      <div class="price-row" style="margin-top:12px">
         ${PLANS.map(p => {
           const n = FEATURES.filter(f => f.plans.includes(p.id)).length;
           return `<a class="price" href="${p.id === "V" ? "#vdr" : "#map-" + p.id.toLowerCase()}" style="text-decoration:none;color:inherit">
             <span class="eyebrow">${esc(p.name)}</span>
-            <span class="amt">${money(p.annual)} <small>${esc(h.perUser)}</small></span>
+            <span class="amt">${priceHTML(p)}</span>
+            <span class="hint">${esc(t().billing.perUserMonth)} · ${esc(billLabel())}${state.bill === "annual" ? ` · <b class="save">${esc(fmt(t().billing.save, { n: savePct(p) }))}</b>` : ""}</span>
             <span class="muted" style="font-size:.85rem">${esc(L(p.tag))}</span>
             <span class="tier-bar" aria-hidden="true"><i style="width:${Math.round(n / FEATURES.length * 100)}%"></i></span>
             <span class="hint">${n} ${esc(u.map.count)} · ${h.min} ${p.min} ${h.users}</span>
@@ -174,11 +185,12 @@
             `<a href="#${h}" ${(h === "map" && view === "all") || h === "map-" + view.toLowerCase() ? 'aria-current="true"' : ""}>${esc(lbl)}</a>`).join("")}
         </span>
         <label>${esc(m.highlight)} ${industrySelect("hl", state.hl)}</label>
+        ${billToggle()}
       </div>
       <div class="map-frame">
         <div class="map-title"><h2>${esc(title)}</h2><p>${esc(SITE.updated)} · ShareFile Maps</p></div>
         <div class="map" style="--cols:${cols.length}">
-          <div class="map-head"><div></div>${cols.map((tr, i) => `<div class="th t-${tr}">${esc(names[tr])}<small>${esc(hints[tr])} · ${counts[i]} ${esc(m.count)} · ${money(P[tr].annual)}</small></div>`).join("")}</div>
+          <div class="map-head"><div></div>${cols.map((tr, i) => `<div class="th t-${tr}">${esc(names[tr])}<small>${esc(hints[tr])} · ${counts[i]} ${esc(m.count)} · ${money(priceOf(P[tr]))}</small></div>`).join("")}</div>
           ${bands}
         </div>
         <div class="map-foot">
@@ -202,7 +214,7 @@
     $("#view").innerHTML = `
       ${head(m.vdrTitle, m.vdrLead, updatedLine())}
       <div class="toolbar"><label>${esc(m.highlight)} ${industrySelect("hl", state.hl)}</label>
-        <span class="chip num">${money(P.V.annual)} · ${u.home.min} ${P.V.min} ${u.home.users}</span>
+        ${billToggle()}<span class="chip num">${money(priceOf(P.V))} · ${esc(billLabel())} · ${u.home.min} ${P.V.min} ${u.home.users}</span>
         ${ext(P.V.page, "sharefile.com/plans/sharefile-virtual-data-room")}</div>
       <div class="map-frame">
         <div class="map-title"><h2>Virtual Data Room</h2><p>${inV.length} ${esc(m.count)}</p></div>
@@ -311,11 +323,11 @@
     if (sigFeatures.includes("scim") || sigFeatures.includes("siem")) warns.push(L(F.scim.badges && BADGES.third) + ": SCIM / SIEM.");
     $("#recout").innerHTML = `
       <p class="eyebrow">${esc(R.result)}</p>
-      <div class="result-plan"><strong>${esc(p.name)}</strong><span class="num">${money(p.annual)}</span><span class="muted">${esc(u.home.perUser)}</span></div>
+      <div class="result-plan"><strong>${esc(p.name)}</strong><span class="num">${priceHTML(p)}</span><span class="muted">${esc(u.billing.perUserMonth)} · ${esc(billLabel())}</span>${billToggle()}</div>
       <div><h3>${esc(R.why)}</h3><ul>${reasons.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>
       ${res.ind ? `<div><h3>${esc(R.needs)}</h3>${fl(res.needs)}</div>` : ""}
       ${sigFeatures.length ? `<div><h3>${esc(R.sigAdds)}</h3>${fl(sigFeatures)}</div>` : ""}
-      ${res.vdr ? `<div class="note"><b>${esc(R.vdrToo)}.</b> ${esc(R.vdrWhy)} <span class="num">${money(P.V.annual)}</span> · <a href="#vdr">${esc(u.nav.vdr)}</a></div>` : ""}
+      ${res.vdr ? `<div class="note"><b>${esc(R.vdrToo)}.</b> ${esc(R.vdrWhy)} <span class="num">${money(priceOf(P.V))}</span> · <a href="#vdr">${esc(u.nav.vdr)}</a></div>` : ""}
       ${warns.length ? `<div><h3>${esc(R.warnings)}</h3><ul>${warns.map(w => `<li>${esc(w)}</li>`).join("")}</ul></div>` : ""}
       <p class="hint">${esc(R.sizeNote)}</p>
       <div class="actions">
@@ -340,17 +352,17 @@
           <label class="hint">${esc(C.planA)}<br>${planSel("ca", c.a)}</label>
           <label class="hint">${esc(C.planB)}<br>${planSel("cb", c.b)}</label>
           <label class="hint">${esc(C.users)}<br><input id="cu" type="number" min="1" max="100000" value="${c.users}"></label>
-          <label class="hint">${esc(C.billing)}<br><select id="cbill"><option value="annual" ${c.bill === "annual" ? "selected" : ""}>${esc(C.annual)}</option><option value="monthly" ${c.bill === "monthly" ? "selected" : ""}>${esc(C.monthly)}</option></select></label>
+          <div class="hint">${esc(C.billing)}<br>${billToggle()}</div>
           <label class="hint">${esc(C.highlight)}<br>${industrySelect("chl", c.hl)}</label>
         </div>
         <div id="cmpout"></div>
       </div>`;
     const upd = () => {
-      c.a = $("#ca").value; c.b = $("#cb").value; c.bill = $("#cbill").value; c.hl = $("#chl").value;
+      c.a = $("#ca").value; c.b = $("#cb").value; c.hl = $("#chl").value;
       c.users = Math.max(1, Math.min(100000, parseInt($("#cu").value, 10) || 1));
       store.set("cmp", c); renderCmpOut();
     };
-    ["#ca", "#cb", "#cbill", "#chl"].forEach(s => $(s).addEventListener("change", upd));
+    ["#ca", "#cb", "#chl"].forEach(s => $(s).addEventListener("change", upd));
     $("#cu").addEventListener("input", upd);
     renderCmpOut();
   }
@@ -362,7 +374,7 @@
     const onlyA = FEATURES.filter(f => f.plans.includes(c.a) && !f.plans.includes(c.b));
     const onlyB = FEATURES.filter(f => f.plans.includes(c.b) && !f.plans.includes(c.a));
     const both = FEATURES.filter(f => f.plans.includes(c.a) && f.plans.includes(c.b));
-    const price = p => c.bill === "annual" ? p.annual : p.monthly;
+    const price = priceOf;
     const seats = p => Math.max(c.users, p.min);
     const tot = p => price(p) * seats(p);
     const dU = price(B) - price(A), dM = tot(B) - tot(A);
@@ -395,9 +407,10 @@
         <label class="check" style="padding:0"><input id="md" type="checkbox" ${s.diff ? "checked" : ""}><span>${esc(M.onlyDiff)}</span></label>
         <button class="btn" type="button" id="mexp">${esc(M.export)}</button>
         <button class="btn" type="button" id="mcopy">${esc(M.copy)}</button>
+        ${billToggle()}
         <span class="mx-count" id="mcount"></span>
       </div>
-      <div class="tbl-wrap"><table><thead><tr><th>${esc(M.feature)}</th>${PLANS.map(p => `<th class="c">${esc(p.name)}<br><span class="num muted" style="font-weight:500">${money(p.annual)}</span></th>`).join("")}</tr></thead><tbody id="mbody"></tbody></table></div>`;
+      <div class="tbl-wrap"><table><thead><tr><th>${esc(M.feature)}</th>${PLANS.map(p => `<th class="c">${esc(p.name)}<br><span class="num muted" style="font-weight:500">${money(priceOf(p))}</span></th>`).join("")}</tr></thead><tbody id="mbody"></tbody></table></div>`;
     const upd = () => {
       s.q = $("#mq").value.trim(); s.g = $("#mg").value; s.i = $("#mi").value; s.diff = $("#md").checked;
       try {
@@ -465,9 +478,7 @@
             ${PLANS.map(p => `<label class="choice"><input type="radio" name="plan" value="${p.id}" ${c.plan === p.id ? "checked" : ""}><span>${esc(p.name)}</span></label>`).join("")}
           </div></fieldset>
           <label class="hint">${esc(K.users)}<br><input id="kusers" type="number" min="1" max="100000" value="${c.users}"></label>
-          <fieldset><legend>${esc(K.billing)}</legend><div class="choices">
-            ${["annual", "monthly"].map(b => `<label class="choice"><input type="radio" name="bill" value="${b}" ${c.bill === b ? "checked" : ""}><span>${esc(K[b])}</span></label>`).join("")}
-          </div></fieldset>
+          <fieldset><legend>${esc(K.billing)}</legend>${billToggle()}</fieldset>
           <p class="hint">${esc(K.storageNote)}</p>
           <p class="hint">${esc(K.priceNote)}</p>
         </form>
@@ -475,7 +486,6 @@
       </div>`;
     const upd = () => {
       c.plan = ($('input[name="plan"]:checked') || {}).value || "P";
-      c.bill = ($('input[name="bill"]:checked') || {}).value || "annual";
       c.users = Math.max(1, Math.min(100000, parseInt($("#kusers").value, 10) || 1));
       store.set("calc", c); renderCalcOut();
     };
@@ -489,9 +499,9 @@
   function renderCalcOut() {
     const u = t(), K = u.calc, c = state.calc, p = P[c.plan];
     const seats = Math.max(c.users, p.min);
-    const per = c.bill === "annual" ? p.annual : p.monthly;
+    const per = priceOf(p);
     $("#calcout").innerHTML = `
-      <p class="eyebrow">${esc(p.name)} · ${esc(K[c.bill])}</p>
+      <p class="eyebrow">${esc(p.name)} · ${esc(billLabel())}</p>
       <div class="kpis">
         <div class="kpi"><span>${esc(K.perUser)}</span><b>${money(per)}</b></div>
         <div class="kpi"><span>${esc(K.monthTotal)}</span><b>${money(per * seats)}</b></div>
@@ -501,7 +511,7 @@
       ${seats > c.users ? `<p class="note">${esc(fmt(K.minApplied, { n: p.min }))}</p>` : ""}
       <h3>${esc(K.allPlans)}</h3>
       <div class="tbl-wrap"><table><thead><tr><th></th><th class="c">${esc(K.perUser)}</th><th class="c">${esc(K.monthTotal)}</th><th class="c">${esc(K.yearTotal)}</th><th class="c">${esc(K.storage)}</th></tr></thead><tbody>
-        ${PLANS.map(q => { const s = Math.max(c.users, q.min), pr = c.bill === "annual" ? q.annual : q.monthly;
+        ${PLANS.map(q => { const s = Math.max(c.users, q.min), pr = priceOf(q);
           return `<tr ${q.id === p.id ? 'style="background:var(--accent-soft)"' : ""}><td><b>${esc(q.name)}</b></td><td class="c num">${money(pr)}</td><td class="c num">${money(pr * s)}</td><td class="c num">${money(pr * s * 12, 0)}</td><td class="c num">${storageFor(q, s)}</td></tr>`; }).join("")}
       </tbody></table></div>`;
   }
@@ -579,6 +589,8 @@
 
   // ── Boot
   document.addEventListener("click", e => {
+    const bt = e.target.closest("[data-bill]");
+    if (bt) { state.bill = bt.dataset.bill; store.set("bill", state.bill); const y = window.scrollY; route(); window.scrollTo(0, y); return; }
     const d = e.target.closest("[data-detail]");
     if (d) { e.preventDefault(); openDetail(d.dataset.detail); }
   });

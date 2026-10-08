@@ -6,7 +6,7 @@ const D = "https://docs.sharefile.com/en-us/sharefile/";
 const W = "https://www.sharefile.com/";
 
 const SITE = {
-  version: "1.0.0",
+  version: "1.1.0",
   updated: "2026-10-08",
   author: "Adrián Bonilla",
   pricingSource: W + "plans",
@@ -359,5 +359,6 @@ const DISCREPANCIES = [
 ];
 
 const CHANGELOG = [
+  { v: "1.1.0", date: "2026-10-08", d: { es: "Selector Mensual / Anual en todo el sitio, con precio mensual tachado y porcentaje de ahorro. Paleta de marca ShareFile.", en: "Monthly / Annual billing toggle across the site, with struck-through monthly price and savings percentage. ShareFile brand palette.", pt: "Seletor Mensal / Anual em todo o site, com preço mensal riscado e porcentagem de economia. Paleta da marca ShareFile." } },
   { v: "1.0.0", date: "2026-10-08", d: { es: "Primera versión: mapas de planes, VDR, recomendador, comparador, matriz, calculadora, conocimiento y glosario en ES, EN y PT.", en: "First release: plan maps, VDR, recommender, comparator, matrix, calculator, knowledge and glossary in ES, EN and PT.", pt: "Primeira versão: mapas de planos, VDR, recomendador, comparador, matriz, calculadora, conhecimento e glossário em ES, EN e PT." } }
 ];

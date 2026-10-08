@@ -1,6 +1,7 @@
 /* Interface text. Feature names stay in official English; everything else is translated. */
 const UI = {
   es: {
+    billing: { label: "Facturación", monthly: "Mensual", annual: "Anual", perUserMonth: "por usuario / mes", annualNote: "facturación anual", monthlyNote: "facturación mensual", save: "Ahorra {n}%", explain: "Precios MSRP en USD de sharefile.com/plans. Con facturación anual, el precio mensual por usuario baja." },
     lang: "Español", siteTag: "Mapa de planes ShareFile", unofficial: "Sitio no oficial",
     nav: { home: "Inicio", map: "Mapa de planes", vdr: "Data Room", recommend: "Recomendador", compare: "Comparador", matrix: "Matriz", calc: "Calculadora", knowledge: "Conocimiento", glossary: "Glosario", changelog: "Cambios", discrepancies: "Discrepancias" },
     by: "Por", updated: "Actualizado",
@@ -66,6 +67,7 @@ const UI = {
   },
 
   en: {
+    billing: { label: "Billing", monthly: "Monthly", annual: "Annual", perUserMonth: "per user / month", annualNote: "billed annually", monthlyNote: "billed monthly", save: "Save {n}%", explain: "MSRP in USD from sharefile.com/plans. Annual billing lowers the monthly price per user." },
     lang: "English", siteTag: "ShareFile plans map", unofficial: "Unofficial site",
     nav: { home: "Home", map: "Plans map", vdr: "Data Room", recommend: "Recommender", compare: "Comparator", matrix: "Matrix", calc: "Calculator", knowledge: "Knowledge", glossary: "Glossary", changelog: "Changes", discrepancies: "Discrepancies" },
     by: "By", updated: "Updated",
@@ -131,6 +133,7 @@ const UI = {
   },
 
   pt: {
+    billing: { label: "Cobrança", monthly: "Mensal", annual: "Anual", perUserMonth: "por usuário / mês", annualNote: "cobrança anual", monthlyNote: "cobrança mensal", save: "Economize {n}%", explain: "Preços MSRP em USD de sharefile.com/plans. Com cobrança anual, o preço mensal por usuário diminui." },
     lang: "Português", siteTag: "Mapa de planos ShareFile", unofficial: "Site não oficial",
     nav: { home: "Início", map: "Mapa de planos", vdr: "Data Room", recommend: "Recomendador", compare: "Comparador", matrix: "Matriz", calc: "Calculadora", knowledge: "Conhecimento", glossary: "Glossário", changelog: "Mudanças", discrepancies: "Discrepâncias" },
     by: "Por", updated: "Atualizado",
