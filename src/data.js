@@ -8,7 +8,8 @@ const W = "https://www.sharefile.com/";
 /* Official videos, verified with YouTube oEmbed (title + channel "Progress ShareFile").
    f: feature ids, i: integration ids. dur: "m:ss" when known. */
 const VIDEOS = [
-  { id: "MR-Me_hNW30", t: "Stream ShareFile Security Events to Your SIEM in Real Time", f: ["siem"], i: ["sentinel", "splunk"] }
+  { id: "MR-Me_hNW30", t: "Stream ShareFile Security Events to Your SIEM in Real Time", f: ["siem"], i: ["sentinel", "splunk"] },
+  { id: "8jr9qGIyBNo", t: "ShareFile Security Center and Threat Detection – From Diagnosis to Response", f: ["security_center", "ueba", "threat_alerts"] }
 ];
 
 const OVERVIEW_VIDEO = { id: "yQkpfDLkCk0", t: "Progress ShareFile - Built For The Way You Work Now—And Where You're Headed Next!" };
@@ -373,7 +374,7 @@ const DISCREPANCIES = [
 
 
 const CHANGELOG = [
-  { v: "1.4.0", date: "2026-10-08", d: { es: "Videos oficiales por función: ícono ▶ en el mapa, en el panel de detalle y en Integraciones. Primer video: SIEM.", en: "Official videos per feature: ▶ icon on the map, in the detail panel and in Integrations. First video: SIEM.", pt: "Vídeos oficiais por recurso: ícone ▶ no mapa, no painel de detalhes e em Integrações. Primeiro vídeo: SIEM." } },
+  { v: "1.4.0", date: "2026-10-08", d: { es: "Videos oficiales por función: ícono ▶ en el mapa, en el panel de detalle y en Integraciones. Videos: SIEM, Security Center y detección de amenazas.", en: "Official videos per feature: ▶ icon on the map, in the detail panel and in Integrations. Videos: SIEM, Security Center and threat detection.", pt: "Vídeos oficiais por recurso: ícone ▶ no mapa, no painel de detalhes e em Integrações. Vídeos: SIEM, Security Center e detecção de ameaças." } },
   { v: "1.3.2", date: "2026-10-08", d: { es: "Video oficial de presentación de ShareFile en el Inicio y lista oficial de demos en Conocimiento.", en: "Official ShareFile overview video on Home and official demos playlist in Knowledge.", pt: "Vídeo oficial de apresentação do ShareFile no Início e playlist oficial de demos em Conhecimento." } },
   { v: "1.3.1", date: "2026-10-08", d: { es: "Se agrega la lista oficial de tutoriales de ShareFile en YouTube.", en: "Adds the official ShareFile tutorials playlist on YouTube.", pt: "Adiciona a playlist oficial de tutoriais do ShareFile no YouTube." } },
   { v: "1.3.0", date: "2026-10-08", d: { es: "Revisión de coherencia: se eliminan repeticiones entre Inicio, Mapa y Conocimiento; Integraciones pasa a Recursos. Videos oficiales por industria en el recomendador y videos de soporte en Conocimiento.", en: "Coherence review: removes repetition between Home, Map and Knowledge; Integrations moves to Resources. Official industry videos in the recommender and support videos in Knowledge.", pt: "Revisão de coerência: remove repetições entre Início, Mapa e Conhecimento; Integrações passa para Recursos. Vídeos oficiais por setor no recomendador e vídeos de suporte em Conhecimento." } },
