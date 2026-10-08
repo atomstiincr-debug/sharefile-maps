@@ -8,8 +8,8 @@ const { chromium } = require("playwright");
 const FILE = "file://" + path.join(__dirname, "..", "index.html");
 const ctx = {}; vm.createContext(ctx);
 vm.runInContext(fs.readFileSync(path.join(__dirname, "..", "src", "data.js"), "utf8") +
-  ";this.F=FEATURES;this.P=PLANS;this.IND=INDUSTRIES;this.S=SIGNALS;this.I=INTEGRATIONS;this.IG=INT_GROUPS;this.G=GROUPS;this.SZ=SIZES;", ctx);
-const ROUTES = ["home", "map", "map-a", "map-p", "map-e", "vdr", "recommend", "compare", "matrix", "calc", "integrations", "knowledge", "glossary", "changelog", "discrepancies"];
+  ";this.F=FEATURES;this.P=PLANS;this.IND=INDUSTRIES;this.S=SIGNALS;this.I=INTEGRATIONS;this.IG=INT_GROUPS;this.G=GROUPS;this.SZ=SIZES;this.U=USECASES;", ctx);
+const ROUTES = ["home", "map", "map-a", "map-p", "map-e", "vdr", "recommend", "compare", "matrix", "calc", "integrations", "usecases", "knowledge", "glossary", "changelog", "discrepancies"];
 const LANGS = ["es", "en", "pt"];
 let pass = 0, fail = 0; const fails = [];
 const ok = (c, m) => { if (c) pass++; else { fail++; fails.push(m); console.error("✗ " + m); } };
@@ -250,6 +250,35 @@ const ok = (c, m) => { if (c) pass++; else { fail++; fails.push(m); console.erro
     await context.close();
   }
 
+  // 9b. Use cases: chips, deep links, plan labels, feature panels, customer links
+  {
+    const { page, context, errors } = await newPage("en");
+    await go(page, "usecases");
+    ok(await page.$$eval(".ucard", c => c.length) === ctx.U.length, `use cases: all ${ctx.U.length} cards`);
+    const TI = ["A", "P", "E"];
+    for (const ind of ctx.IND) {
+      await go(page, "usecases-" + ind.id);
+      const ids = await page.$$eval(".ucard", c => c.map(x => x.id.slice(3)));
+      ok(ids.length === 5 && ids.every(id => ctx.U.find(u => u.id === id).ind === ind.id), `use cases #usecases-${ind.id} shows its 5 cases`);
+      ok(await page.$eval(`[data-uc="${ind.id}"]`, b => b.getAttribute("aria-pressed")) === "true", `use cases chip ${ind.id} active`);
+      for (const id of ids) {
+        const u = ctx.U.find(x => x.id === id);
+        const vOnly = u.f.some(f => !ctx.F.find(x => x.id === f).plans.match(/[APE]/));
+        const want = vOnly ? "Virtual Data Room" : ["Advanced", "Premium", "Enterprise"][Math.max(...u.f.map(f => TI.findIndex(t => ctx.F.find(x => x.id === f).plans.includes(t))))];
+        ok((await page.$eval(`#uc-${id} header .pill`, p => p.textContent)).includes(want), `use case ${id} minimum plan ${want}`);
+        const links = await page.$$eval(`#uc-${id} a[href^="http"]`, as => as.map(a => a.href));
+        ok(links.every(h => h.startsWith("https://www.sharefile.com/")), `use case ${id} links only to sharefile.com`);
+      }
+      await page.click(`.ucard .fchip`); ok(!!(await page.$(".panel")), `use case feature chip opens panel (${ind.id})`); await page.keyboard.press("Escape");
+    }
+    await page.click('[data-uc=""]'); ok(await page.$$eval(".ucard", c => c.length) === ctx.U.length, "use cases: All chip shows everything");
+    await go(page, "recommend-legal");
+    await page.click('a[href="#usecases-legal"]'); await page.waitForTimeout(60);
+    ok(await page.$$eval(".ucard", c => c.length) === 5, "recommender links to its industry use cases");
+    ok(errors.length === 0, "use cases no JS errors: " + errors.slice(0, 3).join(" | "));
+    await context.close();
+  }
+
   // 10. Link hygiene on every route and language: internal routes resolve, externals safe and official
   {
     const { page, context } = await newPage("es");
@@ -261,7 +290,7 @@ const ok = (c, m) => { if (c) pass++; else { fail++; fails.push(m); console.erro
         const links = await page.$$eval("a[href]", as => as.map(a => ({ h: a.getAttribute("href"), t: a.target, rel: a.rel, txt: (a.textContent || a.getAttribute("aria-label") || "").trim() })));
         for (const l of links) {
           if (!l.h || l.h === "#" || /^javascript:/i.test(l.h)) bad.add(`${r}: empty href "${l.txt}"`);
-          else if (l.h.startsWith("#")) { const h = l.h.slice(1); if (!(ROUTES.includes(h) || h === "view" || /^recommend-(size-)?[a-z]+$/.test(h))) bad.add(`${r}: ${l.h}`); }
+          else if (l.h.startsWith("#")) { const h = l.h.slice(1); if (!(ROUTES.includes(h) || h === "view" || (/^recommend-(size-)?[a-z]+$/.test(h) || /^usecases-[a-z]+$/.test(h)))) bad.add(`${r}: ${l.h}`); }
           else if (/^https?:/.test(l.h)) { domains.add(new URL(l.h).hostname); if (l.t !== "_blank" || !/noopener/.test(l.rel)) unsafe.add(`${r}: ${l.h}`); if (!l.txt && !(await page.$(`a[href="${l.h}"][aria-label]`))) bad.add(`${r}: link without text ${l.h}`); }
         }
       }

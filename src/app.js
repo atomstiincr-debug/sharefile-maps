@@ -84,13 +84,14 @@
   const routes = {
     home: renderHome, map: () => renderMap("all"), "map-a": () => renderMap("A"), "map-p": () => renderMap("P"), "map-e": () => renderMap("E"),
     vdr: renderVdr, recommend: renderRec, compare: renderCompare, matrix: renderMatrix, calc: renderCalc,
-    integrations: renderIntegrations, knowledge: renderKnowledge, glossary: renderGlossary, changelog: renderChangelog, discrepancies: renderDisc
+    integrations: renderIntegrations, usecases: renderUseCases, knowledge: renderKnowledge, glossary: renderGlossary, changelog: renderChangelog, discrepancies: renderDisc
   };
-  const navKeys = ["home", "map", "vdr", "recommend", "compare", "matrix", "calc", "integrations", "knowledge", "glossary"];
+  const navKeys = ["home", "map", "vdr", "recommend", "usecases", "compare", "matrix", "calc", "integrations", "knowledge", "glossary"];
 
   function route() {
     let h = (location.hash || "#home").slice(1) || "home";
     if (h.startsWith("recommend-size-")) { state.rec.size = h.slice(15); h = "recommend"; }
+    else if (h.startsWith("usecases-")) { const id = h.slice(9); state.uc = IND[id] ? id : ""; h = "usecases"; }
     else if (h.startsWith("recommend-")) { const id = h.slice(10); if (IND[id] || id === "other") { state.rec.ind = id; state.rec.sub = ""; } h = "recommend"; }
     const fn = routes[h] || renderHome;
     const navKey = h.startsWith("map") ? "map" : (routes[h] ? h : "home");
@@ -115,7 +116,7 @@
     $("#theme").setAttribute("aria-label", u.theme);
     $("#foot").innerHTML = `
       <p>${esc(u.foot.disclaimer)}</p>
-      <p>${esc(u.foot.truth)} ${esc(u.foot.prices)}</p>
+      <p>${esc(u.foot.truth).replace("{links}", [["https://www.sharefile.com/", "sharefile.com"], ["https://docs.sharefile.com/en-us/sharefile/welcome", "docs.sharefile.com"], ["https://trust.sharefile.com/", "trust.sharefile.com"]].map(([h, l]) => ext(h, l)).join(", "))} ${esc(u.foot.prices)}</p>
       <p>${u.by} ${esc(SITE.author)} · ${u.updated} <span class="num">${SITE.updated}</span> · v<span class="num">${SITE.version}</span> ·
         <a href="#changelog">${u.nav.changelog}</a> · <a href="#discrepancies">${u.nav.discrepancies}</a></p>`;
   }
@@ -140,7 +141,7 @@
         ${row(h.plans, [a("#map", h.allPlans), a("#map-a", "Advanced"), a("#map-p", "Premium " + h.stepup), a("#map-e", "Enterprise " + h.stepup), a("#vdr", "Virtual Data Room")].join(""))}
         ${row(h.industries, INDUSTRIES.map(i => a("#recommend-" + i.id, L(i.name))).join(""))}
         ${row(h.sizes, SIZES.map(s => a("#recommend-size-" + s.id, L(s.name))).join(""))}
-        ${row(h.tools, ["recommend", "compare", "matrix", "calc"].map(k => a("#" + k, u.nav[k])).join(""))}
+        ${row(h.tools, ["recommend", "usecases", "compare", "matrix", "calc"].map(k => a("#" + k, u.nav[k])).join(""))}
         ${row(h.resources, ["integrations", "knowledge", "glossary", "changelog", "discrepancies"].map(k => a("#" + k, u.nav[k])).join(""))}
       </div>
       <div class="toolbar" style="margin-top:28px;margin-bottom:0">${billToggle()}<span class="hint">${esc(t().billing.explain)}</span></div>
@@ -340,7 +341,7 @@
           <ul class="sigs">${res.entSigs.map(sg => `<li>${esc(L(sg.t))} → ${sg.f.filter(entOnly).map(id => ext(F[id].url, esc(F[id].name))).join(", ")} <span class="muted">(${esc(R.entOnly)})</span></li>`).join("")}</ul></li>` : ""}
       </ol>
       ${res.ind && !res.entSigs.length ? `<p class="hint">${esc(R.samePlan)}</p>` : ""}
-      ${res.ind ? `<div><h3>${esc(fmt(R.needsFor, { ind: L(res.ind.name) }))}</h3>${fl(res.needs)}</div>` : ""}
+      ${res.ind ? `<div><h3>${esc(fmt(R.needsFor, { ind: L(res.ind.name) }))}</h3>${fl(res.needs)}<p style="margin-top:10px"><a href="#usecases-${res.ind.id}">${esc(fmt(u.uc.seeAll, { ind: L(res.ind.name) }))} →</a></p></div>` : ""}
       ${res.vdr ? `<div class="note"><b>${esc(R.vdrToo)}.</b> ${esc(R.vdrWhy)} <span class="num">${money(priceOf(P.V))}</span> · <a href="#vdr">${esc(u.nav.vdr)}</a></div>` : ""}
       ${res.ind && INTEGRATIONS.some(x => (x.ind || []).includes(res.ind.id)) ? `<div><h3>${esc(u.int.forIndustry)}</h3><ul class="flist">${INTEGRATIONS.filter(x => (x.ind || []).includes(res.ind.id)).map(x => `<li><span>${ext(x.url, esc(x.name))}</span><span>${esc(L(x.d).slice(0, 60))}…</span></li>`).join("")}</ul></div>` : ""}
       ${warns.length ? `<div><h3>${esc(R.warnings)}</h3><ul>${warns.map(w => `<li>${esc(w)}</li>`).join("")}</ul></div>` : ""}
@@ -662,6 +663,46 @@
     document.querySelectorAll("[data-ig]").forEach(b => b.addEventListener("click", () => { state.intg.g = state.intg.g === b.dataset.ig ? "" : b.dataset.ig; draw(); }));
     $("#iq").addEventListener("input", e => { state.intg.q = e.target.value; draw(); });
     $("#ii").addEventListener("change", e => { state.intg.i = e.target.value; draw(); });
+    draw();
+  }
+
+  // ── Use cases by industry
+  // Minimum plan for a set of features; a VDR-only feature means the Virtual Data Room plan.
+  const ucPlan = ids => ids.some(id => !tierOf(F[id])) ? P.V : P[minPlan(ids)];
+  function renderUseCases() {
+    const u = t(), U = u.uc;
+    if (state.uc === undefined) state.uc = "";
+    $("#view").innerHTML = `
+      ${head(u.nav.usecases, U.lead)}
+      <nav class="chips" aria-label="${esc(u.rec.stepInd || u.nav.usecases)}">
+        <button type="button" class="chipbtn" data-uc="" aria-pressed="${!state.uc}">${esc(U.all)} <span class="num">${USECASES.length}</span></button>
+        ${INDUSTRIES.map(i => `<button type="button" class="chipbtn" data-uc="${i.id}" aria-pressed="${state.uc === i.id}">${esc(L(i.name))} <span class="num">${USECASES.filter(x => x.ind === i.id).length}</span></button>`).join("")}
+      </nav>
+      <p class="note" style="margin-top:14px">${esc(U.signNote)}</p>
+      <div id="uclist"></div>
+      <p class="hint" style="margin-top:16px">${esc(U.verify)}</p>`;
+    const card = x => { const pl = ucPlan(x.f);
+      return `<article class="ucard" id="uc-${x.id}">
+        <header><h3>${esc(L(x.t))}</h3><span class="pill ok">${esc(fmt(U.from, { p: pl.name }))}</span></header>
+        <p><b>${esc(U.problem)}:</b> ${esc(L(x.p))}</p>
+        <p><b>${esc(U.how)}:</b> ${esc(L(x.s))}</p>
+        <p class="ufeat">${x.f.map(id => `<button type="button" class="fchip" data-detail="${id}"><i class="dot g-${F[id].g}"></i>${esc(F[id].name)}</button>`).join("")}</p>
+        ${(x.cust || []).length ? `<div class="ucust"><span class="eyebrow">${esc(U.customers)}</span>${x.cust.map(c => `<p>${ext(c.u, esc(c.n))}: ${esc(L(c.r))}</p>`).join("")}</div>` : ""}
+        <p class="hint">${esc(U.source)}: ${ext(x.src, esc(/customer-story\//.test(x.src) ? "sharefile.com · customer story" : x.src.replace(/^https:\/\/(www\.)?/, "").replace(/\/$/, "")))}</p>
+      </article>`; };
+    const draw = () => {
+      const inds = state.uc ? [IND[state.uc]] : INDUSTRIES;
+      $("#uclist").innerHTML = inds.map(i => { const xs = USECASES.filter(x => x.ind === i.id), hasCust = xs.some(x => (x.cust || []).length);
+        return `<section class="ucgroup" data-ind="${i.id}"><h2>${esc(L(i.name))} <span class="muted num">${esc(fmt(U.count, { n: xs.length }))}</span></h2>
+          ${hasCust ? "" : `<p class="hint">${esc(U.noCust)}</p>`}
+          <div class="ucgrid">${xs.map(card).join("")}</div></section>`; }).join("");
+      document.querySelectorAll("[data-uc]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.uc === state.uc)));
+    };
+    document.querySelectorAll("[data-uc]").forEach(b => b.addEventListener("click", () => {
+      state.uc = b.dataset.uc;
+      try { history.replaceState(null, "", "#usecases" + (state.uc ? "-" + state.uc : "")); } catch (e) { /* ignore */ }
+      draw();
+    }));
     draw();
   }
 

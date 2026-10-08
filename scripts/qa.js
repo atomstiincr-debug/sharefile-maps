@@ -26,7 +26,7 @@ const tierIdx = id => ["A", "P", "E"].findIndex(t => ctx.F.find(f => f.id === id
 const expectedBase = ind => ["Advanced", "Premium", "Enterprise"][Math.max(...ind.f.map(tierIdx))];
 
 // 1. Every route renders in every language without errors
-const routes = ["home", "map", "map-a", "map-p", "map-e", "vdr", "recommend", "compare", "matrix", "calc", "integrations", "knowledge", "glossary", "changelog", "discrepancies"];
+const routes = ["home", "map", "map-a", "map-p", "map-e", "vdr", "recommend", "compare", "matrix", "calc", "integrations", "usecases", "knowledge", "glossary", "changelog", "discrepancies"];
 for (const lang of ["es", "en", "pt"]) {
   const env = boot(lang);
   for (const r of routes) {
@@ -254,7 +254,7 @@ for (const lang of ["es", "en", "pt"]) {
     go(env, r);
     env.d.querySelectorAll('a[href^="#"]').forEach(a => {
       const h = a.getAttribute("href").slice(1);
-      const okRoute = routes.includes(h) || /^recommend-(size-)?[a-z]+$/.test(h) || h === "view";
+      const okRoute = routes.includes(h) || (/^recommend-(size-)?[a-z]+$/.test(h) || /^usecases-[a-z]+$/.test(h)) || h === "view";
       if (!okRoute) bad.add(h);
     });
   }

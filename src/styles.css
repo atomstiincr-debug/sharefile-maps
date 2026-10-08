@@ -295,3 +295,18 @@ ol.path ul.sigs { margin: 6px 0 0; padding-left: 18px; font-size: .9rem; }
 /* Skip link: hidden until focused */
 .skip { position: absolute; left: -9999px; top: 8px; z-index: 50; background: var(--surface); color: var(--ink); padding: 8px 12px; border: 2px solid var(--accent); border-radius: var(--r); }
 .skip:focus { left: 8px; }
+/* Use cases */
+.ucgroup { margin-top: 26px; }
+.ucgroup h2 { font-size: 1.25rem; margin: 0 0 6px; }
+.ucgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 14px; margin-top: 10px; }
+.ucard { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; }
+.ucard header { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.ucard h3 { margin: 0; font-size: 1.02rem; }
+.ucard header .pill { white-space: nowrap; }
+.ucard p { margin: 0; font-size: .92rem; }
+.ufeat { display: flex; flex-wrap: wrap; gap: 6px; }
+.fchip { display: inline-flex; align-items: center; gap: 2px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 999px; padding: 2px 10px; font-size: .8rem; cursor: pointer; }
+.fchip:hover { border-color: var(--accent); }
+.ucust { border-left: 3px solid var(--accent); background: var(--accent-soft); padding: 8px 10px; border-radius: 6px; display: grid; gap: 4px; }
+.ucust p { font-size: .88rem; }
+.ucard .hint { margin-top: auto; word-break: break-word; }

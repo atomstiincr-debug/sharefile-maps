@@ -67,3 +67,26 @@ console.log("✓ data OK");
   console.log("videos", c3.VIDEOS.length);
   if (e3) process.exit(1);
 }
+
+// Use cases
+{
+  const c4 = {}; vm.createContext(c4);
+  vm.runInContext(fs.readFileSync(path.join(__dirname, "..", "src", "data.js"), "utf8") + "\nthis.USECASES=USECASES;this.FEATURES=FEATURES;this.INDUSTRIES=INDUSTRIES;", c4);
+  const fids = new Set(c4.FEATURES.map(f => f.id)), seen = new Set();
+  let e4 = 0; const bad = m => { e4++; console.error("✗ usecase " + m); };
+  for (const x of c4.USECASES) {
+    if (seen.has(x.id)) bad("duplicate " + x.id); seen.add(x.id);
+    if (!c4.INDUSTRIES.some(i => i.id === x.ind)) bad(x.id + " bad industry");
+    if (!x.f.length) bad(x.id + " no features");
+    for (const f of x.f) if (!fids.has(f)) bad(x.id + " unknown feature " + f);
+    for (const k of ["t", "p", "s"]) for (const l of ["es", "en", "pt"]) if (!x[k] || !x[k][l]) bad(x.id + " missing " + k + "." + l);
+    if (!/^https:\/\/www\.sharefile\.com\//.test(x.src)) bad(x.id + " source must be www.sharefile.com");
+    for (const c of x.cust || []) {
+      if (!/^https:\/\/www\.sharefile\.com\/resource\/customer-story\//.test(c.u)) bad(x.id + " customer link must be an official story");
+      for (const l of ["es", "en", "pt"]) if (!c.r[l]) bad(x.id + " customer result missing " + l);
+    }
+  }
+  for (const i of c4.INDUSTRIES) { const n = c4.USECASES.filter(x => x.ind === i.id).length; if (n !== 5) bad(i.id + " has " + n + " cases (expected 5)"); }
+  console.log("use cases", c4.USECASES.length);
+  if (e4) process.exit(1);
+}

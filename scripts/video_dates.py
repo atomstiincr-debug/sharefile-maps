@@ -15,6 +15,8 @@ from pathlib import Path
 
 VIDEO_CUTOFF = "2024-10-01"   # Progress acquired ShareFile in 2024; older videos predate the Progress era
 CHANNEL = "Progress ShareFile"
+# Confirmed by hand when YouTube does not return data to the server (who, when, what)
+HAND = {v: "about 1 year old - confirmed by Adri 2026-10-08" for v in ["Y7nXmY5P5F8", "DNzmtMCnhWU", "BDohGSWVCWs", "MHB4IKcWtT0"]}
 HEAD = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36",
         "Accept-Language": "en-US,en;q=0.9", "Cookie": "SOCS=CAI; CONSENT=YES+cb"}
 
@@ -52,6 +54,8 @@ for v in ids:
         pass
     if date == "?" and v in feed:
         date, title, ch = feed[v]
+    if date == "?" and v in HAND:
+        line = f"hand        {v}  {HAND[v]}"; rows.append(line); print("OK   " + line); continue
     if date == "?":
         line = f"?           {v}  (YouTube did not return data to the server)"
         unverified.append(line); rows.append(line); print("UNVERIFIED " + line); continue
