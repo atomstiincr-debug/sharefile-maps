@@ -62,8 +62,8 @@
   const state = {
     hl: store.get("hl", ""),
     rec: store.get("rec", { ind: "accounting", sub: "", size: "mid", sig: [] }),
-    cmp: store.get("cmp", { a: "P", b: "E", users: 25, bill: "annual", hl: "" }),
-    calc: store.get("calc", { plan: "P", users: 25, bill: "annual" }),
+    cmp: store.get("cmp2", { a: "P", b: "E", users: 3, custom: false, hl: "" }),
+    calc: store.get("calc2", { plan: "P", users: 3, custom: false }),
     mx: { q: "", g: "", i: "", diff: false },
     bill: store.get("bill", "annual")
   };
@@ -357,6 +357,11 @@
     if (tc) tc.addEventListener("click", () => { Object.assign(state.cmp, { a: prev, b: res.plan, hl: res.ind ? res.ind.id : "" }); store.set("cmp", state.cmp); location.hash = "compare"; });
   }
 
+  // ── Users field helpers (calculator and comparator)
+  const PRESETS = [5, 10, 25, 50, 100, 250];
+  const presetsHTML = () => `<span class="presets">${PRESETS.map(n => `<button type="button" class="chipbtn" data-preset="${n}">${n}</button>`).join("")}</span>`;
+  const readUsers = el => { const v = parseInt(el.value, 10); return el.value.trim() === "" || !(v > 0) ? null : Math.min(100000, v); };
+
   // ── Compare
   function renderCompare() {
     const u = t(), C = u.cmp, c = state.cmp;
@@ -371,16 +376,20 @@
           <div class="hint">${esc(C.billing)}<br>${billToggle()}</div>
           <label class="hint">${esc(C.highlight)}<br>${industrySelect("chl", c.hl)}</label>
         </div>
+        <p class="hint" style="margin:8px 0 0">${esc(u.calc.usersHint)} ${presetsHTML()}</p>
         <div id="cmpout"></div>
       </div>`;
+    const floor = () => Math.max(P[c.a].min, P[c.b].min);
+    const sync = () => { if (!c.custom) { c.users = floor(); $("#cu").value = c.users; } };
     const upd = () => {
       c.a = $("#ca").value; c.b = $("#cb").value; c.hl = $("#chl").value;
-      c.users = Math.max(1, Math.min(100000, parseInt($("#cu").value, 10) || 1));
-      store.set("cmp", c); renderCmpOut();
+      sync(); store.set("cmp2", c); renderCmpOut();
     };
     ["#ca", "#cb", "#chl"].forEach(s => $(s).addEventListener("change", upd));
-    $("#cu").addEventListener("input", upd);
-    renderCmpOut();
+    $("#cu").addEventListener("input", () => { const v = readUsers($("#cu")); c.custom = v !== null; c.users = v !== null ? v : floor(); store.set("cmp2", c); renderCmpOut(); });
+    $("#cu").addEventListener("change", () => { if (!c.custom) $("#cu").value = c.users; });
+    document.querySelectorAll("[data-preset]").forEach(b => b.addEventListener("click", () => { $("#cu").value = b.dataset.preset; c.custom = true; c.users = +b.dataset.preset; store.set("cmp2", c); renderCmpOut(); }));
+    sync(); renderCmpOut();
   }
 
   function renderCmpOut() {
@@ -497,6 +506,7 @@
             ${PLANS.map(p => `<label class="choice"><input type="radio" name="plan" value="${p.id}" ${c.plan === p.id ? "checked" : ""}><span>${esc(p.name)} <small class="num" style="opacity:.75;color:inherit">${esc(u.home.min)} ${p.min}*</small></span></label>`).join("")}
           </div></fieldset>
           <label class="hint">${esc(K.users)}<br><input id="kusers" type="number" min="${P[c.plan].min}" max="100000" value="${c.users}"></label>
+          <p class="hint" style="margin:6px 0 0">${esc(K.usersHint)} ${presetsHTML()}</p>
           <fieldset><legend>${esc(K.billing)}</legend>${billToggle()}</fieldset>
           <p class="hint">${esc(K.storageNote)}</p>
           <p class="hint">${esc(K.priceNote)}</p>
@@ -509,14 +519,20 @@
       el.min = p.min;
       if (c.users < p.min) { calcAdj = { p: p.name, from: c.users, n: p.min }; c.users = p.min; el.value = p.min; }
     };
+    // Untouched field follows the plan minimum; a typed number is kept (raised to the minimum if lower).
     const read = () => {
       c.plan = ($('input[name="plan"]:checked') || {}).value || "P";
-      c.users = Math.max(1, Math.min(100000, parseInt($("#kusers").value, 10) || 1));
+      const v = readUsers($("#kusers")); c.custom = v !== null; c.users = v !== null ? v : P[c.plan].min;
     };
+    const follow = () => { if (!c.custom) { c.users = P[c.plan].min; $("#kusers").value = c.users; $("#kusers").min = c.users; } };
     // While typing: recompute without rewriting the field. On commit (change) or plan change: enforce minimum.
-    $("#kusers").addEventListener("input", () => { read(); calcAdj = null; store.set("calc", c); renderCalcOut(); });
-    $("#calcf").addEventListener("change", () => { read(); calcAdj = null; enforceMin(); store.set("calc", c); renderCalcOut(); });
-    calcAdj = null; enforceMin(); store.set("calc", c);
+    $("#kusers").addEventListener("input", () => { read(); calcAdj = null; store.set("calc2", c); renderCalcOut(); });
+    $("#calcf").addEventListener("change", e => {
+      if (e.target.id === "kusers") read(); else c.plan = ($('input[name="plan"]:checked') || {}).value || "P";
+      calcAdj = null; follow(); enforceMin(); store.set("calc2", c); renderCalcOut();
+    });
+    document.querySelectorAll("[data-preset]").forEach(b => b.addEventListener("click", () => { $("#kusers").value = b.dataset.preset; read(); calcAdj = null; enforceMin(); store.set("calc2", c); renderCalcOut(); }));
+    calcAdj = null; follow(); enforceMin(); store.set("calc2", c);
     renderCalcOut();
   }
 

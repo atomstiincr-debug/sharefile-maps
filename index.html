@@ -274,6 +274,8 @@ ol.path > li::before { content: counter(step); position: absolute; left: 12px; t
 ol.path .step { display: block; font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
 ol.path .why { display: block; color: var(--muted); font-size: .9rem; margin-top: 2px; }
 ol.path ul.sigs { margin: 6px 0 0; padding-left: 18px; font-size: .9rem; }
+.presets { display: inline-flex; flex-wrap: wrap; gap: 6px; vertical-align: middle; }
+.presets .chipbtn { padding: 2px 10px; min-height: 28px; }
 
 </style>
 </head>
@@ -325,7 +327,7 @@ const OVERVIEW_VIDEO = { id: "yQkpfDLkCk0", t: "Progress ShareFile - Built For T
 const TUTORIALS = "https://www.youtube.com/playlist?list=PLSKW9Jc-tCY9W-cB3G2OTYx00GXZrrzZB";
 
 const SITE = {
-  version: "1.5.2",
+  version: "1.5.3",
   updated: "2026-10-08",
   author: "Adrián Bonilla",
   pricingSource: W + "plans",
@@ -685,6 +687,7 @@ const DISCREPANCIES = [
 
 
 const CHANGELOG = [
+  { v: "1.5.3", date: "2026-10-08", d: { es: "Calculadora y comparador: el campo de usuarios empieza en el mínimo oficial del plan y lo sigue al cambiar de plan hasta que escribes tu cantidad; botones rápidos (5 a 250); nunca muestra 0.", en: "Calculator and comparator: the users field starts at the plan's official minimum and follows it when you switch plans until you type your number; quick picks (5 to 250); never shows 0.", pt: "Calculadora e comparador: o campo de usuários começa no mínimo oficial do plano e o acompanha ao trocar de plano até você digitar sua quantidade; botões rápidos (5 a 250); nunca mostra 0." } },
   { v: "1.5.2", date: "2026-10-08", d: { es: "Integraciones: el filtro por industria ahora reorganiza toda la página: arriba las específicas de la industria y las que destaca su página oficial en sharefile.com; abajo el resto por función; se ocultan las específicas de otras industrias.", en: "Integrations: the industry filter now reorganizes the whole page: the industry's specific integrations and those featured on its official sharefile.com page on top; the rest by function below; other industries' specific integrations are hidden.", pt: "Integrações: o filtro por setor agora reorganiza a página inteira: no topo as específicas do setor e as destacadas na sua página oficial em sharefile.com; abaixo as demais por função; as específicas de outros setores ficam ocultas." } },
   { v: "1.5.1", date: "2026-10-08", d: { es: "Calculadora y comparador muestran las licencias facturadas por plan y el mínimo de cada uno (VDR 5, resto 3); el campo de usuarios se ajusta al mínimo del plan. El recomendador muestra el camino de decisión: industria → plan base, necesidades → Enterprise.", en: "Calculator and comparator show billed licenses per plan and each plan's minimum (VDR 5, others 3); the users field adjusts to the plan minimum. The recommender shows its decision path: industry → base plan, needs → Enterprise.", pt: "Calculadora e comparador mostram as licenças faturadas por plano e o mínimo de cada um (VDR 5, demais 3); o campo de usuários se ajusta ao mínimo do plano. O recomendador mostra o caminho de decisão: setor → plano base, necessidades → Enterprise." } },
   { v: "1.5.0", date: "2026-10-08", d: { es: "Integraciones organizadas por función y no por proveedor, con buscador. Se elimina el bloque que daba a entender que solo Premium permite trabajar con externos.", en: "Integrations organized by function instead of vendor, with search. Removes the block that implied only Premium supports working with external people.", pt: "Integrações organizadas por função e não por fornecedor, com busca. Remove o bloco que dava a entender que só o Premium permite trabalhar com externos." } },
@@ -870,7 +873,7 @@ const UI = {
       plan: "Plan", users: "Usuarios con licencia", billing: "Facturación", annual: "Anual", monthly: "Mensual",
       perUser: "Precio por usuario / mes", monthTotal: "Total mensual", yearTotal: "Total anual", storage: "Almacenamiento incluido",
       minApplied: "Se aplica el mínimo de {n} licencias del plan.", allPlans: "Todos los planes con tus usuarios",
-      licenses: "Licencias facturadas", licCol: "Licencias", adjusted: "{p} requiere mínimo {n} licencias: se ajustó de {from} a {n}.",
+      usersHint: "Empieza en el mínimo del plan. Escribe tu cantidad o elige:", licenses: "Licencias facturadas", licCol: "Licencias", adjusted: "{p} requiere mínimo {n} licencias: se ajustó de {from} a {n}.",
       minFoot: "* Mínimo de licencias requeridas por plan: {list}. Si tienes menos usuarios, se factura el mínimo.",
       storageNote: "Advanced, Premium y Enterprise: 1 TB por licencia agregado, mínimo 3 TB. VDR: 1 GB por licencia. Se pueden sumar paquetes de 3 TB.",
       priceNote: "Precios MSRP de sharefile.com/plans. El precio final puede variar por canal, volumen o plazo."
@@ -943,7 +946,7 @@ const UI = {
       plan: "Plan", users: "Licensed users", billing: "Billing", annual: "Annual", monthly: "Monthly",
       perUser: "Price per user / month", monthTotal: "Monthly total", yearTotal: "Annual total", storage: "Included storage",
       minApplied: "The plan's {n}-license minimum applies.", allPlans: "Every plan with your users",
-      licenses: "Billed licenses", licCol: "Licenses", adjusted: "{p} requires at least {n} licenses: adjusted from {from} to {n}.",
+      usersHint: "Starts at the plan minimum. Type your number or pick one:", licenses: "Billed licenses", licCol: "Licenses", adjusted: "{p} requires at least {n} licenses: adjusted from {from} to {n}.",
       minFoot: "* Minimum licenses required per plan: {list}. With fewer users, the minimum is billed.",
       storageNote: "Advanced, Premium and Enterprise: 1 TB per license pooled, 3 TB minimum. VDR: 1 GB per license. 3 TB packs can be added.",
       priceNote: "MSRP from sharefile.com/plans. Final price may vary by channel, volume or term."
@@ -1016,7 +1019,7 @@ const UI = {
       plan: "Plano", users: "Usuários licenciados", billing: "Cobrança", annual: "Anual", monthly: "Mensal",
       perUser: "Preço por usuário / mês", monthTotal: "Total mensal", yearTotal: "Total anual", storage: "Armazenamento incluído",
       minApplied: "Aplica-se o mínimo de {n} licenças do plano.", allPlans: "Todos os planos com seus usuários",
-      licenses: "Licenças faturadas", licCol: "Licenças", adjusted: "{p} exige no mínimo {n} licenças: ajustado de {from} para {n}.",
+      usersHint: "Começa no mínimo do plano. Digite sua quantidade ou escolha:", licenses: "Licenças faturadas", licCol: "Licenças", adjusted: "{p} exige no mínimo {n} licenças: ajustado de {from} para {n}.",
       minFoot: "* Mínimo de licenças exigidas por plano: {list}. Com menos usuários, fatura-se o mínimo.",
       storageNote: "Advanced, Premium e Enterprise: 1 TB por licença agregado, mínimo de 3 TB. VDR: 1 GB por licença. É possível adicionar pacotes de 3 TB.",
       priceNote: "Preços MSRP de sharefile.com/plans. O preço final pode variar por canal, volume ou prazo."
@@ -1099,8 +1102,8 @@ const UI = {
   const state = {
     hl: store.get("hl", ""),
     rec: store.get("rec", { ind: "accounting", sub: "", size: "mid", sig: [] }),
-    cmp: store.get("cmp", { a: "P", b: "E", users: 25, bill: "annual", hl: "" }),
-    calc: store.get("calc", { plan: "P", users: 25, bill: "annual" }),
+    cmp: store.get("cmp2", { a: "P", b: "E", users: 3, custom: false, hl: "" }),
+    calc: store.get("calc2", { plan: "P", users: 3, custom: false }),
     mx: { q: "", g: "", i: "", diff: false },
     bill: store.get("bill", "annual")
   };
@@ -1394,6 +1397,11 @@ const UI = {
     if (tc) tc.addEventListener("click", () => { Object.assign(state.cmp, { a: prev, b: res.plan, hl: res.ind ? res.ind.id : "" }); store.set("cmp", state.cmp); location.hash = "compare"; });
   }
 
+  // ── Users field helpers (calculator and comparator)
+  const PRESETS = [5, 10, 25, 50, 100, 250];
+  const presetsHTML = () => `<span class="presets">${PRESETS.map(n => `<button type="button" class="chipbtn" data-preset="${n}">${n}</button>`).join("")}</span>`;
+  const readUsers = el => { const v = parseInt(el.value, 10); return el.value.trim() === "" || !(v > 0) ? null : Math.min(100000, v); };
+
   // ── Compare
   function renderCompare() {
     const u = t(), C = u.cmp, c = state.cmp;
@@ -1408,16 +1416,20 @@ const UI = {
           <div class="hint">${esc(C.billing)}<br>${billToggle()}</div>
           <label class="hint">${esc(C.highlight)}<br>${industrySelect("chl", c.hl)}</label>
         </div>
+        <p class="hint" style="margin:8px 0 0">${esc(u.calc.usersHint)} ${presetsHTML()}</p>
         <div id="cmpout"></div>
       </div>`;
+    const floor = () => Math.max(P[c.a].min, P[c.b].min);
+    const sync = () => { if (!c.custom) { c.users = floor(); $("#cu").value = c.users; } };
     const upd = () => {
       c.a = $("#ca").value; c.b = $("#cb").value; c.hl = $("#chl").value;
-      c.users = Math.max(1, Math.min(100000, parseInt($("#cu").value, 10) || 1));
-      store.set("cmp", c); renderCmpOut();
+      sync(); store.set("cmp2", c); renderCmpOut();
     };
     ["#ca", "#cb", "#chl"].forEach(s => $(s).addEventListener("change", upd));
-    $("#cu").addEventListener("input", upd);
-    renderCmpOut();
+    $("#cu").addEventListener("input", () => { const v = readUsers($("#cu")); c.custom = v !== null; c.users = v !== null ? v : floor(); store.set("cmp2", c); renderCmpOut(); });
+    $("#cu").addEventListener("change", () => { if (!c.custom) $("#cu").value = c.users; });
+    document.querySelectorAll("[data-preset]").forEach(b => b.addEventListener("click", () => { $("#cu").value = b.dataset.preset; c.custom = true; c.users = +b.dataset.preset; store.set("cmp2", c); renderCmpOut(); }));
+    sync(); renderCmpOut();
   }
 
   function renderCmpOut() {
@@ -1534,6 +1546,7 @@ const UI = {
             ${PLANS.map(p => `<label class="choice"><input type="radio" name="plan" value="${p.id}" ${c.plan === p.id ? "checked" : ""}><span>${esc(p.name)} <small class="num" style="opacity:.75;color:inherit">${esc(u.home.min)} ${p.min}*</small></span></label>`).join("")}
           </div></fieldset>
           <label class="hint">${esc(K.users)}<br><input id="kusers" type="number" min="${P[c.plan].min}" max="100000" value="${c.users}"></label>
+          <p class="hint" style="margin:6px 0 0">${esc(K.usersHint)} ${presetsHTML()}</p>
           <fieldset><legend>${esc(K.billing)}</legend>${billToggle()}</fieldset>
           <p class="hint">${esc(K.storageNote)}</p>
           <p class="hint">${esc(K.priceNote)}</p>
@@ -1546,14 +1559,20 @@ const UI = {
       el.min = p.min;
       if (c.users < p.min) { calcAdj = { p: p.name, from: c.users, n: p.min }; c.users = p.min; el.value = p.min; }
     };
+    // Untouched field follows the plan minimum; a typed number is kept (raised to the minimum if lower).
     const read = () => {
       c.plan = ($('input[name="plan"]:checked') || {}).value || "P";
-      c.users = Math.max(1, Math.min(100000, parseInt($("#kusers").value, 10) || 1));
+      const v = readUsers($("#kusers")); c.custom = v !== null; c.users = v !== null ? v : P[c.plan].min;
     };
+    const follow = () => { if (!c.custom) { c.users = P[c.plan].min; $("#kusers").value = c.users; $("#kusers").min = c.users; } };
     // While typing: recompute without rewriting the field. On commit (change) or plan change: enforce minimum.
-    $("#kusers").addEventListener("input", () => { read(); calcAdj = null; store.set("calc", c); renderCalcOut(); });
-    $("#calcf").addEventListener("change", () => { read(); calcAdj = null; enforceMin(); store.set("calc", c); renderCalcOut(); });
-    calcAdj = null; enforceMin(); store.set("calc", c);
+    $("#kusers").addEventListener("input", () => { read(); calcAdj = null; store.set("calc2", c); renderCalcOut(); });
+    $("#calcf").addEventListener("change", e => {
+      if (e.target.id === "kusers") read(); else c.plan = ($('input[name="plan"]:checked') || {}).value || "P";
+      calcAdj = null; follow(); enforceMin(); store.set("calc2", c); renderCalcOut();
+    });
+    document.querySelectorAll("[data-preset]").forEach(b => b.addEventListener("click", () => { $("#kusers").value = b.dataset.preset; read(); calcAdj = null; enforceMin(); store.set("calc2", c); renderCalcOut(); }));
+    calcAdj = null; follow(); enforceMin(); store.set("calc2", c);
     renderCalcOut();
   }
 

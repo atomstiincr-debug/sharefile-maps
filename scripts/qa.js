@@ -133,6 +133,32 @@ for (const lang of ["es", "en", "pt"]) {
   ok(text(env.d.querySelector("#calcout")).includes("$3,120"), "calc Premium 10 users annual = $3,120/yr");
 }
 
+// 4b. Users field defaults to the plan minimum and follows the plan until the user types
+{
+  const env = boot("es");
+  go(env, "calc");
+  const u = env.d.querySelector("#kusers"), pick = id => { const r = env.d.querySelector(`input[name="plan"][value="${id}"]`); r.checked = true; change(env, r); };
+  ok(u.value === "3", `calc fresh default = Premium minimum 3 (got ${u.value})`);
+  pick("V"); ok(u.value === "5", `calc untouched field follows VDR minimum 5 (got ${u.value})`);
+  pick("A"); ok(u.value === "3", `calc untouched field back to 3 on Advanced (got ${u.value})`);
+  env.d.querySelector('[data-preset="25"]').click();
+  ok(u.value === "25" && text(env.d.querySelector("#calcout .kpi b")) === "25", "calc preset 25 sets 25 licenses");
+  pick("V"); ok(u.value === "25", "calc typed/preset value kept on plan change");
+  u.value = ""; u.dispatchEvent(new env.w.Event("input", { bubbles: true }));
+  ok(text(env.d.querySelector("#calcout .kpi b")) === "5", "calc empty field -> plan minimum, never 0");
+  u.dispatchEvent(new env.w.Event("change", { bubbles: true }));
+  ok(u.value === "5", "calc empty field refilled with minimum on commit");
+  u.value = "0"; u.dispatchEvent(new env.w.Event("input", { bubbles: true }));
+  ok(!/\$0[.,]00|USD 0,00/.test(text(env.d.querySelector("#calcout"))), "calc 0 never shows a zero total");
+  go(env, "compare");
+  const cu = env.d.querySelector("#cu"), cb = env.d.querySelector("#cb");
+  ok(cu.value === "3", `compare fresh default 3 (got ${cu.value})`);
+  cb.value = "V"; change(env, cb); ok(cu.value === "5", `compare follows higher minimum 5 with VDR (got ${cu.value})`);
+  cu.value = "40"; cu.dispatchEvent(new env.w.Event("input", { bubbles: true }));
+  cb.value = "E"; change(env, cb); ok(cu.value === "40", "compare keeps typed users on plan change");
+  ok(env.errors.length === 0, "users field no script errors: " + env.errors.join(" | "));
+}
+
 // 5. Billing toggle changes prices everywhere
 {
   const env = boot("en");
