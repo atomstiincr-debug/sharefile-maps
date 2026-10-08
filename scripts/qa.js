@@ -155,6 +155,7 @@ for (const lang of ["es", "en", "pt"]) {
   ok(!/\$0[.,]00|USD 0,00/.test(text(env.d.querySelector("#calcout"))), "calc 0 never shows a zero total");
   go(env, "compare");
   const cu = env.d.querySelector("#cu"), cb = env.d.querySelector("#cb");
+  ok(env.d.querySelector("#ca").value === "A" && env.d.querySelector("#cb").value === "P", "compare default Advanced vs Premium");
   ok(cu.value === "3", `compare fresh default 3 (got ${cu.value})`);
   cb.value = "V"; change(env, cb); ok(cu.value === "5", `compare follows higher minimum 5 with VDR (got ${cu.value})`);
   cu.value = "40"; cu.dispatchEvent(new env.w.Event("input", { bubbles: true }));

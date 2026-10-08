@@ -62,7 +62,7 @@
   const state = {
     hl: store.get("hl", ""),
     rec: store.get("rec", { ind: "accounting", sub: "", size: "mid", sig: [] }),
-    cmp: store.get("cmp2", { a: "P", b: "E", users: 3, custom: false, hl: "" }),
+    cmp: store.get("cmp3", { a: "A", b: "P", users: 3, custom: false, hl: "" }),
     calc: store.get("calc2", { plan: "P", users: 3, custom: false }),
     mx: { q: "", g: "", i: "", diff: false },
     bill: store.get("bill", "annual")
@@ -383,12 +383,12 @@
     const sync = () => { if (!c.custom) { c.users = floor(); $("#cu").value = c.users; } };
     const upd = () => {
       c.a = $("#ca").value; c.b = $("#cb").value; c.hl = $("#chl").value;
-      sync(); store.set("cmp2", c); renderCmpOut();
+      sync(); store.set("cmp3", c); renderCmpOut();
     };
     ["#ca", "#cb", "#chl"].forEach(s => $(s).addEventListener("change", upd));
-    $("#cu").addEventListener("input", () => { const v = readUsers($("#cu")); c.custom = v !== null; c.users = v !== null ? v : floor(); store.set("cmp2", c); renderCmpOut(); });
+    $("#cu").addEventListener("input", () => { const v = readUsers($("#cu")); c.custom = v !== null; c.users = v !== null ? v : floor(); store.set("cmp3", c); renderCmpOut(); });
     $("#cu").addEventListener("change", () => { if (!c.custom) $("#cu").value = c.users; });
-    document.querySelectorAll("[data-preset]").forEach(b => b.addEventListener("click", () => { $("#cu").value = b.dataset.preset; c.custom = true; c.users = +b.dataset.preset; store.set("cmp2", c); renderCmpOut(); }));
+    document.querySelectorAll("[data-preset]").forEach(b => b.addEventListener("click", () => { $("#cu").value = b.dataset.preset; c.custom = true; c.users = +b.dataset.preset; store.set("cmp3", c); renderCmpOut(); }));
     sync(); renderCmpOut();
   }
 
