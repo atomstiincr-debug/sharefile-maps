@@ -6,7 +6,7 @@ const D = "https://docs.sharefile.com/en-us/sharefile/";
 const W = "https://www.sharefile.com/";
 
 const SITE = {
-  version: "1.2.1",
+  version: "1.3.0",
   updated: "2026-10-08",
   author: "Adrián Bonilla",
   pricingSource: W + "plans",
@@ -225,12 +225,12 @@ const FEATURES = [
 /* Industries: capabilities each official industry page highlights, mapped to features.
    Plan minimum is computed, never typed by hand. */
 const INDUSTRIES = [
-  { id: "accounting", url: W + "industry/accounting", name: { es: "Contabilidad", en: "Accounting", pt: "Contabilidade" },
+  { id: "accounting", url: W + "industry/accounting", video: { id: "Y7nXmY5P5F8", t: "See How ShareFile Makes Work Flow" }, name: { es: "Contabilidad", en: "Accounting", pt: "Contabilidade" },
     f: ["esign", "request_list", "ai_rl_gen", "rapid_onboarding", "enhanced_portal", "view_only", "reports", "threat_alerts", "auto_remediation"],
     warn: { es: "La solución de declaraciones de impuestos y el programa AICPA que menciona la página son de EE.UU.", en: "The tax return solution and AICPA program on this page are U.S.-specific.", pt: "A solução de declaração de impostos e o programa AICPA citados são dos EUA." } },
   { id: "construction", url: W + "industry/construction", name: { es: "Construcción", en: "Construction", pt: "Construção" },
     f: ["rapid_onboarding", "projects", "enhanced_portal", "encrypted_email", "view_only", "mfa", "sso"] },
-  { id: "finance", url: W + "industry/finance", name: { es: "Finanzas", en: "Finance", pt: "Finanças" },
+  { id: "finance", url: W + "industry/finance", video: { id: "DNzmtMCnhWU", t: "ShareFile for Banking, Wealth Management and Investment Services" }, name: { es: "Finanzas", en: "Finance", pt: "Finanças" },
     f: ["request_list", "rapid_onboarding", "esign", "enhanced_portal", "encrypted_email", "view_only", "sec_finra"],
     subs: [
       { id: "banking", name: { es: "Banca y crédito", en: "Banking & Lending", pt: "Bancos e crédito" } },
@@ -243,7 +243,7 @@ const INDUSTRIES = [
     warn: { es: "HIPAA es regulación de EE.UU. y requiere BAA firmado.", en: "HIPAA is a U.S. regulation and requires a signed BAA.", pt: "HIPAA é regulação dos EUA e requer BAA assinado." } },
   { id: "insurance", url: W + "industry/insurance", name: { es: "Seguros", en: "Insurance", pt: "Seguros" },
     f: ["enhanced_portal", "esign", "projects", "rapid_onboarding", "request_list", "encrypted_email"] },
-  { id: "legal", url: W + "industry/legal", name: { es: "Legal", en: "Legal", pt: "Jurídico" },
+  { id: "legal", url: W + "industry/legal", video: { id: "BDohGSWVCWs", t: "Legal document management with ShareFile" }, name: { es: "Legal", en: "Legal", pt: "Jurídico" },
     f: ["esign", "projects", "automated_workflows", "rapid_onboarding", "enhanced_portal", "request_list", "threat_alerts", "view_only"] },
   { id: "manufacturing", url: W + "industry/manufacturing", name: { es: "Manufactura", en: "Manufacturing", pt: "Manufatura" },
     f: ["esign", "projects", "automated_workflows", "enhanced_portal", "rapid_onboarding", "watermark", "reports", "view_only", "encrypted_email"] },
@@ -255,7 +255,7 @@ const INDUSTRIES = [
 ];
 
 const SIZES = [
-  { id: "small", url: W + "small-business", name: { es: "Pequeña", en: "Small", pt: "Pequena" },
+  { id: "small", url: W + "small-business", video: { id: "MHB4IKcWtT0", t: "Hear from small businesses that use ShareFile" }, name: { es: "Pequeña", en: "Small", pt: "Pequena" },
     hint: { es: "Hasta 350 empleados, según sharefile.com", en: "Up to 350 employees, per sharefile.com", pt: "Até 350 funcionários, segundo sharefile.com" } },
   { id: "mid", url: W + "mid-size-business", name: { es: "Mediana", en: "Mid-size", pt: "Média" },
     hint: { es: "De 100 a 10,000 clientes atendidos", en: "Serving 100 to 10,000 clients", pt: "De 100 a 10.000 clientes atendidos" } },
@@ -309,7 +309,6 @@ const KNOWLEDGE = [
     { t: "ShareFile Enterprise Plan", u: W + "plans/sharefile-enterprise" },
     { t: "Enterprise plan documentation", u: D + "learn-more/sf-enterprise-plan" },
     { t: "Virtual Data Room", u: W + "plans/sharefile-virtual-data-room" },
-    { t: "Apps & Integrations", u: W + "apps-integrations" },
     { t: "What's new", u: D + "whats-new" }
   ]},
   { g: { es: "Documentación", en: "Documentation", pt: "Documentação" }, links: [
@@ -336,6 +335,8 @@ const KNOWLEDGE = [
   { g: { es: "Soporte y estado", en: "Support and status", pt: "Suporte e status" }, links: [
     { t: "Help Center", u: "https://support.sharefile.com/" },
     { t: "Support offerings and coverage", u: "https://support.sharefile.com/s/article/ShareFile-Support-Offerings-and-Coverage" },
+    { t: "How to chat with Support", u: "https://www.youtube.com/watch?v=_Wj9R9hDpwU", v: 1 },
+    { t: "How to contact your Success Engineer", u: "https://www.youtube.com/watch?v=iDRSdUWDYRY", v: 1 },
     { t: "ShareFile status", u: "https://status.sharefile.com/" },
     { t: "Feature requests (Ideas portal)", u: "https://sharefile.ideas.aha.io/" }
   ]},
@@ -361,6 +362,7 @@ const DISCREPANCIES = [
 
 
 const CHANGELOG = [
+  { v: "1.3.0", date: "2026-10-08", d: { es: "Revisión de coherencia: se eliminan repeticiones entre Inicio, Mapa y Conocimiento; Integraciones pasa a Recursos. Videos oficiales por industria en el recomendador y videos de soporte en Conocimiento.", en: "Coherence review: removes repetition between Home, Map and Knowledge; Integrations moves to Resources. Official industry videos in the recommender and support videos in Knowledge.", pt: "Revisão de coerência: remove repetições entre Início, Mapa e Conhecimento; Integrações passa para Recursos. Vídeos oficiais por setor no recomendador e vídeos de suporte em Conhecimento." } },
   { v: "1.2.1", date: "2026-10-08", d: { es: "Integraciones: se agregan los conectores de OneDrive, Box y Dropbox y la ruta de activación para el administrador.", en: "Integrations: adds OneDrive, Box and Dropbox connectors and the admin path to enable them.", pt: "Integrações: adiciona os conectores OneDrive, Box e Dropbox e o caminho de ativação para o administrador." } },
   { v: "1.2.0", date: "2026-10-08", d: { es: "Nueva página de Integraciones: Microsoft 365, Google Workspace, seguridad, CRM y contabilidad, e integraciones por industria. Nueva discrepancia sobre el plugin de Outlook.", en: "New Integrations page: Microsoft 365, Google Workspace, security, CRM and accounting, and industry-specific integrations. New discrepancy on the Outlook plug-in.", pt: "Nova página de Integrações: Microsoft 365, Google Workspace, segurança, CRM e contabilidade, e integrações por setor. Nova discrepância sobre o plugin do Outlook." } },
   { v: "1.1.0", date: "2026-10-08", d: { es: "Selector Mensual / Anual en todo el sitio, con precio mensual tachado y porcentaje de ahorro. Paleta de marca ShareFile.", en: "Monthly / Annual billing toggle across the site, with struck-through monthly price and savings percentage. ShareFile brand palette.", pt: "Seletor Mensal / Anual em todo o site, com preço mensal riscado e porcentagem de economia. Paleta da marca ShareFile." } },

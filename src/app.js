@@ -135,8 +135,8 @@
         ${row(h.plans, [a("#map", h.allPlans), a("#map-a", "Advanced"), a("#map-p", "Premium " + h.stepup), a("#map-e", "Enterprise " + h.stepup), a("#vdr", "Virtual Data Room")].join(""))}
         ${row(h.industries, INDUSTRIES.map(i => a("#recommend-" + i.id, L(i.name))).join(""))}
         ${row(h.sizes, SIZES.map(s => a("#recommend-size-" + s.id, L(s.name))).join(""))}
-        ${row(h.tools, ["recommend", "compare", "matrix", "calc", "integrations"].map(k => a("#" + k, u.nav[k])).join(""))}
-        ${row(h.resources, ["knowledge", "glossary", "changelog", "discrepancies"].map(k => a("#" + k, u.nav[k])).join(""))}
+        ${row(h.tools, ["recommend", "compare", "matrix", "calc"].map(k => a("#" + k, u.nav[k])).join(""))}
+        ${row(h.resources, ["integrations", "knowledge", "glossary", "changelog", "discrepancies"].map(k => a("#" + k, u.nav[k])).join(""))}
       </div>
       <div class="toolbar" style="margin-top:28px;margin-bottom:0">${billToggle()}<span class="hint">${esc(t().billing.explain)}</span></div>
       <div class="price-row" style="margin-top:12px">
@@ -178,7 +178,7 @@
     }).join("");
     const counts = cols.map(tr => FEATURES.filter(f => tierOf(f) === tr).length);
     $("#view").innerHTML = `
-      ${head(title, view === "all" ? u.home.lead : "", updatedLine())}
+      ${head(title, view === "all" ? m.lead : "", updatedLine())}
       <div class="toolbar">
         <span class="seg" role="group" aria-label="${esc(m.views)}">
           ${[["map", m.viewAll], ["map-a", m.viewA], ["map-p", m.viewP], ["map-e", m.viewE]].map(([h, lbl]) =>
@@ -330,6 +330,7 @@
       ${res.vdr ? `<div class="note"><b>${esc(R.vdrToo)}.</b> ${esc(R.vdrWhy)} <span class="num">${money(priceOf(P.V))}</span> · <a href="#vdr">${esc(u.nav.vdr)}</a></div>` : ""}
       ${res.ind && INTEGRATIONS.some(x => (x.ind || []).includes(res.ind.id)) ? `<div><h3>${esc(u.int.forIndustry)}</h3><ul class="flist">${INTEGRATIONS.filter(x => (x.ind || []).includes(res.ind.id)).map(x => `<li><span>${ext(x.url, esc(x.name))}</span><span>${esc(L(x.d)).slice(0, 60)}…</span></li>`).join("")}</ul></div>` : ""}
       ${warns.length ? `<div><h3>${esc(R.warnings)}</h3><ul>${warns.map(w => `<li>${esc(w)}</li>`).join("")}</ul></div>` : ""}
+      ${(res.ind && res.ind.video) || (size && size.video) ? `<div><h3>${esc(u.video.title)}</h3><ul class="flist">${[res.ind && res.ind.video, size && size.video].filter(Boolean).map(v => `<li><span>▶ ${ext("https://www.youtube.com/watch?v=" + v.id, esc(v.t))}</span><span>YouTube · ${esc(u.video.lang)}</span></li>`).join("")}</ul></div>` : ""}
       <p class="hint">${esc(R.sizeNote)}</p>
       <div class="actions">
         ${res.ind ? ext(res.ind.url, esc(R.industryPage) + " ↗", "btn") : ""}
@@ -568,9 +569,7 @@
   function renderKnowledge() {
     const u = t();
     $("#view").innerHTML = `${head(u.kn.title, u.kn.lead)}
-      <div class="cols">${KNOWLEDGE.map(k => `<section class="box"><h3>${esc(L(k.g))}</h3><ul class="links">${k.links.map(l => `<li>${ext(l.u, esc(l.t))}</li>`).join("")}</ul></section>`).join("")}</div>
-      <div class="box" style="margin-top:16px"><h3>${esc(u.home.industries)} · ${esc(u.home.sizes)}</h3>
-        <ul class="links" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">${INDUSTRIES.map(i => `<li>${ext(i.url, esc(L(i.name)))}</li>`).join("")}${SIZES.map(s => `<li>${ext(s.url, esc(L(s.name)))}</li>`).join("")}</ul></div>`;
+      <div class="cols">${KNOWLEDGE.map(k => `<section class="box"><h3>${esc(L(k.g))}</h3><ul class="links">${k.links.map(l => `<li>${l.v ? "▶ " : ""}${ext(l.u, esc(l.t))}</li>`).join("")}</ul></section>`).join("")}</div>`;
   }
 
   function renderGlossary() {

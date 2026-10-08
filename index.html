@@ -291,7 +291,7 @@ const D = "https://docs.sharefile.com/en-us/sharefile/";
 const W = "https://www.sharefile.com/";
 
 const SITE = {
-  version: "1.2.1",
+  version: "1.3.0",
   updated: "2026-10-08",
   author: "Adrián Bonilla",
   pricingSource: W + "plans",
@@ -510,12 +510,12 @@ const FEATURES = [
 /* Industries: capabilities each official industry page highlights, mapped to features.
    Plan minimum is computed, never typed by hand. */
 const INDUSTRIES = [
-  { id: "accounting", url: W + "industry/accounting", name: { es: "Contabilidad", en: "Accounting", pt: "Contabilidade" },
+  { id: "accounting", url: W + "industry/accounting", video: { id: "Y7nXmY5P5F8", t: "See How ShareFile Makes Work Flow" }, name: { es: "Contabilidad", en: "Accounting", pt: "Contabilidade" },
     f: ["esign", "request_list", "ai_rl_gen", "rapid_onboarding", "enhanced_portal", "view_only", "reports", "threat_alerts", "auto_remediation"],
     warn: { es: "La solución de declaraciones de impuestos y el programa AICPA que menciona la página son de EE.UU.", en: "The tax return solution and AICPA program on this page are U.S.-specific.", pt: "A solução de declaração de impostos e o programa AICPA citados são dos EUA." } },
   { id: "construction", url: W + "industry/construction", name: { es: "Construcción", en: "Construction", pt: "Construção" },
     f: ["rapid_onboarding", "projects", "enhanced_portal", "encrypted_email", "view_only", "mfa", "sso"] },
-  { id: "finance", url: W + "industry/finance", name: { es: "Finanzas", en: "Finance", pt: "Finanças" },
+  { id: "finance", url: W + "industry/finance", video: { id: "DNzmtMCnhWU", t: "ShareFile for Banking, Wealth Management and Investment Services" }, name: { es: "Finanzas", en: "Finance", pt: "Finanças" },
     f: ["request_list", "rapid_onboarding", "esign", "enhanced_portal", "encrypted_email", "view_only", "sec_finra"],
     subs: [
       { id: "banking", name: { es: "Banca y crédito", en: "Banking & Lending", pt: "Bancos e crédito" } },
@@ -528,7 +528,7 @@ const INDUSTRIES = [
     warn: { es: "HIPAA es regulación de EE.UU. y requiere BAA firmado.", en: "HIPAA is a U.S. regulation and requires a signed BAA.", pt: "HIPAA é regulação dos EUA e requer BAA assinado." } },
   { id: "insurance", url: W + "industry/insurance", name: { es: "Seguros", en: "Insurance", pt: "Seguros" },
     f: ["enhanced_portal", "esign", "projects", "rapid_onboarding", "request_list", "encrypted_email"] },
-  { id: "legal", url: W + "industry/legal", name: { es: "Legal", en: "Legal", pt: "Jurídico" },
+  { id: "legal", url: W + "industry/legal", video: { id: "BDohGSWVCWs", t: "Legal document management with ShareFile" }, name: { es: "Legal", en: "Legal", pt: "Jurídico" },
     f: ["esign", "projects", "automated_workflows", "rapid_onboarding", "enhanced_portal", "request_list", "threat_alerts", "view_only"] },
   { id: "manufacturing", url: W + "industry/manufacturing", name: { es: "Manufactura", en: "Manufacturing", pt: "Manufatura" },
     f: ["esign", "projects", "automated_workflows", "enhanced_portal", "rapid_onboarding", "watermark", "reports", "view_only", "encrypted_email"] },
@@ -540,7 +540,7 @@ const INDUSTRIES = [
 ];
 
 const SIZES = [
-  { id: "small", url: W + "small-business", name: { es: "Pequeña", en: "Small", pt: "Pequena" },
+  { id: "small", url: W + "small-business", video: { id: "MHB4IKcWtT0", t: "Hear from small businesses that use ShareFile" }, name: { es: "Pequeña", en: "Small", pt: "Pequena" },
     hint: { es: "Hasta 350 empleados, según sharefile.com", en: "Up to 350 employees, per sharefile.com", pt: "Até 350 funcionários, segundo sharefile.com" } },
   { id: "mid", url: W + "mid-size-business", name: { es: "Mediana", en: "Mid-size", pt: "Média" },
     hint: { es: "De 100 a 10,000 clientes atendidos", en: "Serving 100 to 10,000 clients", pt: "De 100 a 10.000 clientes atendidos" } },
@@ -594,7 +594,6 @@ const KNOWLEDGE = [
     { t: "ShareFile Enterprise Plan", u: W + "plans/sharefile-enterprise" },
     { t: "Enterprise plan documentation", u: D + "learn-more/sf-enterprise-plan" },
     { t: "Virtual Data Room", u: W + "plans/sharefile-virtual-data-room" },
-    { t: "Apps & Integrations", u: W + "apps-integrations" },
     { t: "What's new", u: D + "whats-new" }
   ]},
   { g: { es: "Documentación", en: "Documentation", pt: "Documentação" }, links: [
@@ -621,6 +620,8 @@ const KNOWLEDGE = [
   { g: { es: "Soporte y estado", en: "Support and status", pt: "Suporte e status" }, links: [
     { t: "Help Center", u: "https://support.sharefile.com/" },
     { t: "Support offerings and coverage", u: "https://support.sharefile.com/s/article/ShareFile-Support-Offerings-and-Coverage" },
+    { t: "How to chat with Support", u: "https://www.youtube.com/watch?v=_Wj9R9hDpwU", v: 1 },
+    { t: "How to contact your Success Engineer", u: "https://www.youtube.com/watch?v=iDRSdUWDYRY", v: 1 },
     { t: "ShareFile status", u: "https://status.sharefile.com/" },
     { t: "Feature requests (Ideas portal)", u: "https://sharefile.ideas.aha.io/" }
   ]},
@@ -646,6 +647,7 @@ const DISCREPANCIES = [
 
 
 const CHANGELOG = [
+  { v: "1.3.0", date: "2026-10-08", d: { es: "Revisión de coherencia: se eliminan repeticiones entre Inicio, Mapa y Conocimiento; Integraciones pasa a Recursos. Videos oficiales por industria en el recomendador y videos de soporte en Conocimiento.", en: "Coherence review: removes repetition between Home, Map and Knowledge; Integrations moves to Resources. Official industry videos in the recommender and support videos in Knowledge.", pt: "Revisão de coerência: remove repetições entre Início, Mapa e Conhecimento; Integrações passa para Recursos. Vídeos oficiais por setor no recomendador e vídeos de suporte em Conhecimento." } },
   { v: "1.2.1", date: "2026-10-08", d: { es: "Integraciones: se agregan los conectores de OneDrive, Box y Dropbox y la ruta de activación para el administrador.", en: "Integrations: adds OneDrive, Box and Dropbox connectors and the admin path to enable them.", pt: "Integrações: adiciona os conectores OneDrive, Box e Dropbox e o caminho de ativação para o administrador." } },
   { v: "1.2.0", date: "2026-10-08", d: { es: "Nueva página de Integraciones: Microsoft 365, Google Workspace, seguridad, CRM y contabilidad, e integraciones por industria. Nueva discrepancia sobre el plugin de Outlook.", en: "New Integrations page: Microsoft 365, Google Workspace, security, CRM and accounting, and industry-specific integrations. New discrepancy on the Outlook plug-in.", pt: "Nova página de Integrações: Microsoft 365, Google Workspace, segurança, CRM e contabilidade, e integrações por setor. Nova discrepância sobre o plugin do Outlook." } },
   { v: "1.1.0", date: "2026-10-08", d: { es: "Selector Mensual / Anual en todo el sitio, con precio mensual tachado y porcentaje de ahorro. Paleta de marca ShareFile.", en: "Monthly / Annual billing toggle across the site, with struck-through monthly price and savings percentage. ShareFile brand palette.", pt: "Seletor Mensal / Anual em todo o site, com preço mensal riscado e porcentagem de economia. Paleta da marca ShareFile." } },
@@ -773,6 +775,7 @@ const INTEGRATIONS = [
 /* Interface text. Feature names stay in official English; everything else is translated. */
 const UI = {
   es: {
+    video: { title: "Video oficial", lang: "en inglés; activa los subtítulos en español" },
     int: { title: "Integraciones", lead: "ShareFile se conecta con las herramientas que tu organización ya usa. Cada integración enlaza a su documentación oficial.", m365Title: "ShareFile y Microsoft 365 se complementan", m365Msg: "ShareFile no reemplaza a Microsoft 365: se conecta a él. Los equipos siguen trabajando en Outlook, Word, OneDrive y SharePoint, y ShareFile suma lo necesario cuando los documentos salen de la organización y hay que trabajar con clientes, proveedores o socios.", m365Adds: "Lo que ShareFile agrega para trabajar con personas externas", plans: "Planes", planCheck: "Tabla de precios: desde Advanced. Documentación del plugin: Premium o superior.", group: "Categoría", industry: "Industria", all: "Todas", third: "Las integraciones de terceros requieren las licencias del proveedor correspondiente; algunas pueden estar limitadas o no disponibles.", source: "Fuentes: sharefile.com/apps-integrations y docs.sharefile.com.", forIndustry: "Integraciones para esta industria", count: "integraciones" },
     billing: { label: "Facturación", monthly: "Mensual", annual: "Anual", perUserMonth: "por usuario / mes", annualNote: "facturación anual", monthlyNote: "facturación mensual", save: "Ahorra {n}%", explain: "Precios MSRP en USD de sharefile.com/plans. Con facturación anual, el precio mensual por usuario baja." },
     lang: "Español", siteTag: "Mapa de planes ShareFile", unofficial: "Sitio no oficial",
@@ -791,6 +794,7 @@ const UI = {
       viewAll: "Completo", viewA: "Advanced", viewP: "Premium step-up", viewE: "Enterprise step-up",
       legend: "Clic en un recuadro abre la documentación oficial. El botón i muestra detalles.",
       vdrOnly: "Exclusivo de VDR", notInVdr: "Funciones de Advanced, Premium o Enterprise que no incluye VDR",
+      lead: "Cada columna suma funciones al plan anterior: Premium incluye todo Advanced y Enterprise incluye todo Premium. Usa las vistas step-up para ver solo lo que agrega cada plan.",
       vdrLead: "VDR es un plan aparte, no un nivel superior. Estas son las funciones que incluye.",
       count: "funciones"
     },
@@ -840,6 +844,7 @@ const UI = {
   },
 
   en: {
+    video: { title: "Official video", lang: "English" },
     int: { title: "Integrations", lead: "ShareFile connects with the tools your organization already uses. Each integration links to its official documentation.", m365Title: "ShareFile and Microsoft 365 work together", m365Msg: "ShareFile does not replace Microsoft 365; it connects to it. Teams keep working in Outlook, Word, OneDrive and SharePoint, and ShareFile adds what is needed when documents leave the organization and you work with clients, vendors or partners.", m365Adds: "What ShareFile adds for working with external people", plans: "Plans", planCheck: "Pricing table: from Advanced. Plug-in documentation: Premium or higher.", group: "Category", industry: "Industry", all: "All", third: "Third-party integrations require the vendor's licenses; some may be limited or unavailable.", source: "Sources: sharefile.com/apps-integrations and docs.sharefile.com.", forIndustry: "Integrations for this industry", count: "integrations" },
     billing: { label: "Billing", monthly: "Monthly", annual: "Annual", perUserMonth: "per user / month", annualNote: "billed annually", monthlyNote: "billed monthly", save: "Save {n}%", explain: "MSRP in USD from sharefile.com/plans. Annual billing lowers the monthly price per user." },
     lang: "English", siteTag: "ShareFile plans map", unofficial: "Unofficial site",
@@ -858,6 +863,7 @@ const UI = {
       viewAll: "Full", viewA: "Advanced", viewP: "Premium step-up", viewE: "Enterprise step-up",
       legend: "Click a tile to open the official documentation. The i button shows details.",
       vdrOnly: "VDR only", notInVdr: "Advanced, Premium or Enterprise features that VDR does not include",
+      lead: "Each column adds features to the plan before it: Premium includes all of Advanced and Enterprise includes all of Premium. Use the step-up views to see only what each plan adds.",
       vdrLead: "VDR is a separate plan, not a higher tier. These are the features it includes.",
       count: "features"
     },
@@ -907,6 +913,7 @@ const UI = {
   },
 
   pt: {
+    video: { title: "Vídeo oficial", lang: "em inglês; ative as legendas em português" },
     int: { title: "Integrações", lead: "O ShareFile se conecta às ferramentas que sua organização já usa. Cada integração leva à documentação oficial.", m365Title: "ShareFile e Microsoft 365 se complementam", m365Msg: "O ShareFile não substitui o Microsoft 365: ele se conecta a ele. As equipes continuam trabalhando no Outlook, Word, OneDrive e SharePoint, e o ShareFile adiciona o necessário quando os documentos saem da organização e é preciso trabalhar com clientes, fornecedores ou parceiros.", m365Adds: "O que o ShareFile adiciona para trabalhar com pessoas externas", plans: "Planos", planCheck: "Tabela de preços: desde o Advanced. Documentação do plugin: Premium ou superior.", group: "Categoria", industry: "Setor", all: "Todas", third: "Integrações de terceiros exigem as licenças do fornecedor; algumas podem estar limitadas ou indisponíveis.", source: "Fontes: sharefile.com/apps-integrations e docs.sharefile.com.", forIndustry: "Integrações para este setor", count: "integrações" },
     billing: { label: "Cobrança", monthly: "Mensal", annual: "Anual", perUserMonth: "por usuário / mês", annualNote: "cobrança anual", monthlyNote: "cobrança mensal", save: "Economize {n}%", explain: "Preços MSRP em USD de sharefile.com/plans. Com cobrança anual, o preço mensal por usuário diminui." },
     lang: "Português", siteTag: "Mapa de planos ShareFile", unofficial: "Site não oficial",
@@ -925,6 +932,7 @@ const UI = {
       viewAll: "Completo", viewA: "Advanced", viewP: "Premium step-up", viewE: "Enterprise step-up",
       legend: "Clique em um bloco para abrir a documentação oficial. O botão i mostra detalhes.",
       vdrOnly: "Exclusivo do VDR", notInVdr: "Recursos de Advanced, Premium ou Enterprise que o VDR não inclui",
+      lead: "Cada coluna soma recursos ao plano anterior: o Premium inclui todo o Advanced e o Enterprise inclui todo o Premium. Use as visões step-up para ver só o que cada plano adiciona.",
       vdrLead: "O VDR é um plano à parte, não um nível superior. Estes são os recursos que ele inclui.",
       count: "recursos"
     },
@@ -1111,8 +1119,8 @@ const UI = {
         ${row(h.plans, [a("#map", h.allPlans), a("#map-a", "Advanced"), a("#map-p", "Premium " + h.stepup), a("#map-e", "Enterprise " + h.stepup), a("#vdr", "Virtual Data Room")].join(""))}
         ${row(h.industries, INDUSTRIES.map(i => a("#recommend-" + i.id, L(i.name))).join(""))}
         ${row(h.sizes, SIZES.map(s => a("#recommend-size-" + s.id, L(s.name))).join(""))}
-        ${row(h.tools, ["recommend", "compare", "matrix", "calc", "integrations"].map(k => a("#" + k, u.nav[k])).join(""))}
-        ${row(h.resources, ["knowledge", "glossary", "changelog", "discrepancies"].map(k => a("#" + k, u.nav[k])).join(""))}
+        ${row(h.tools, ["recommend", "compare", "matrix", "calc"].map(k => a("#" + k, u.nav[k])).join(""))}
+        ${row(h.resources, ["integrations", "knowledge", "glossary", "changelog", "discrepancies"].map(k => a("#" + k, u.nav[k])).join(""))}
       </div>
       <div class="toolbar" style="margin-top:28px;margin-bottom:0">${billToggle()}<span class="hint">${esc(t().billing.explain)}</span></div>
       <div class="price-row" style="margin-top:12px">
@@ -1154,7 +1162,7 @@ const UI = {
     }).join("");
     const counts = cols.map(tr => FEATURES.filter(f => tierOf(f) === tr).length);
     $("#view").innerHTML = `
-      ${head(title, view === "all" ? u.home.lead : "", updatedLine())}
+      ${head(title, view === "all" ? m.lead : "", updatedLine())}
       <div class="toolbar">
         <span class="seg" role="group" aria-label="${esc(m.views)}">
           ${[["map", m.viewAll], ["map-a", m.viewA], ["map-p", m.viewP], ["map-e", m.viewE]].map(([h, lbl]) =>
@@ -1306,6 +1314,7 @@ const UI = {
       ${res.vdr ? `<div class="note"><b>${esc(R.vdrToo)}.</b> ${esc(R.vdrWhy)} <span class="num">${money(priceOf(P.V))}</span> · <a href="#vdr">${esc(u.nav.vdr)}</a></div>` : ""}
       ${res.ind && INTEGRATIONS.some(x => (x.ind || []).includes(res.ind.id)) ? `<div><h3>${esc(u.int.forIndustry)}</h3><ul class="flist">${INTEGRATIONS.filter(x => (x.ind || []).includes(res.ind.id)).map(x => `<li><span>${ext(x.url, esc(x.name))}</span><span>${esc(L(x.d)).slice(0, 60)}…</span></li>`).join("")}</ul></div>` : ""}
       ${warns.length ? `<div><h3>${esc(R.warnings)}</h3><ul>${warns.map(w => `<li>${esc(w)}</li>`).join("")}</ul></div>` : ""}
+      ${(res.ind && res.ind.video) || (size && size.video) ? `<div><h3>${esc(u.video.title)}</h3><ul class="flist">${[res.ind && res.ind.video, size && size.video].filter(Boolean).map(v => `<li><span>▶ ${ext("https://www.youtube.com/watch?v=" + v.id, esc(v.t))}</span><span>YouTube · ${esc(u.video.lang)}</span></li>`).join("")}</ul></div>` : ""}
       <p class="hint">${esc(R.sizeNote)}</p>
       <div class="actions">
         ${res.ind ? ext(res.ind.url, esc(R.industryPage) + " ↗", "btn") : ""}
@@ -1544,9 +1553,7 @@ const UI = {
   function renderKnowledge() {
     const u = t();
     $("#view").innerHTML = `${head(u.kn.title, u.kn.lead)}
-      <div class="cols">${KNOWLEDGE.map(k => `<section class="box"><h3>${esc(L(k.g))}</h3><ul class="links">${k.links.map(l => `<li>${ext(l.u, esc(l.t))}</li>`).join("")}</ul></section>`).join("")}</div>
-      <div class="box" style="margin-top:16px"><h3>${esc(u.home.industries)} · ${esc(u.home.sizes)}</h3>
-        <ul class="links" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">${INDUSTRIES.map(i => `<li>${ext(i.url, esc(L(i.name)))}</li>`).join("")}${SIZES.map(s => `<li>${ext(s.url, esc(L(s.name)))}</li>`).join("")}</ul></div>`;
+      <div class="cols">${KNOWLEDGE.map(k => `<section class="box"><h3>${esc(L(k.g))}</h3><ul class="links">${k.links.map(l => `<li>${l.v ? "▶ " : ""}${ext(l.u, esc(l.t))}</li>`).join("")}</ul></section>`).join("")}</div>`;
   }
 
   function renderGlossary() {

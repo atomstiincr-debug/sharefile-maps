@@ -1,6 +1,7 @@
 /* Interface text. Feature names stay in official English; everything else is translated. */
 const UI = {
   es: {
+    video: { title: "Video oficial", lang: "en inglés; activa los subtítulos en español" },
     int: { title: "Integraciones", lead: "ShareFile se conecta con las herramientas que tu organización ya usa. Cada integración enlaza a su documentación oficial.", m365Title: "ShareFile y Microsoft 365 se complementan", m365Msg: "ShareFile no reemplaza a Microsoft 365: se conecta a él. Los equipos siguen trabajando en Outlook, Word, OneDrive y SharePoint, y ShareFile suma lo necesario cuando los documentos salen de la organización y hay que trabajar con clientes, proveedores o socios.", m365Adds: "Lo que ShareFile agrega para trabajar con personas externas", plans: "Planes", planCheck: "Tabla de precios: desde Advanced. Documentación del plugin: Premium o superior.", group: "Categoría", industry: "Industria", all: "Todas", third: "Las integraciones de terceros requieren las licencias del proveedor correspondiente; algunas pueden estar limitadas o no disponibles.", source: "Fuentes: sharefile.com/apps-integrations y docs.sharefile.com.", forIndustry: "Integraciones para esta industria", count: "integraciones" },
     billing: { label: "Facturación", monthly: "Mensual", annual: "Anual", perUserMonth: "por usuario / mes", annualNote: "facturación anual", monthlyNote: "facturación mensual", save: "Ahorra {n}%", explain: "Precios MSRP en USD de sharefile.com/plans. Con facturación anual, el precio mensual por usuario baja." },
     lang: "Español", siteTag: "Mapa de planes ShareFile", unofficial: "Sitio no oficial",
@@ -19,6 +20,7 @@ const UI = {
       viewAll: "Completo", viewA: "Advanced", viewP: "Premium step-up", viewE: "Enterprise step-up",
       legend: "Clic en un recuadro abre la documentación oficial. El botón i muestra detalles.",
       vdrOnly: "Exclusivo de VDR", notInVdr: "Funciones de Advanced, Premium o Enterprise que no incluye VDR",
+      lead: "Cada columna suma funciones al plan anterior: Premium incluye todo Advanced y Enterprise incluye todo Premium. Usa las vistas step-up para ver solo lo que agrega cada plan.",
       vdrLead: "VDR es un plan aparte, no un nivel superior. Estas son las funciones que incluye.",
       count: "funciones"
     },
@@ -68,6 +70,7 @@ const UI = {
   },
 
   en: {
+    video: { title: "Official video", lang: "English" },
     int: { title: "Integrations", lead: "ShareFile connects with the tools your organization already uses. Each integration links to its official documentation.", m365Title: "ShareFile and Microsoft 365 work together", m365Msg: "ShareFile does not replace Microsoft 365; it connects to it. Teams keep working in Outlook, Word, OneDrive and SharePoint, and ShareFile adds what is needed when documents leave the organization and you work with clients, vendors or partners.", m365Adds: "What ShareFile adds for working with external people", plans: "Plans", planCheck: "Pricing table: from Advanced. Plug-in documentation: Premium or higher.", group: "Category", industry: "Industry", all: "All", third: "Third-party integrations require the vendor's licenses; some may be limited or unavailable.", source: "Sources: sharefile.com/apps-integrations and docs.sharefile.com.", forIndustry: "Integrations for this industry", count: "integrations" },
     billing: { label: "Billing", monthly: "Monthly", annual: "Annual", perUserMonth: "per user / month", annualNote: "billed annually", monthlyNote: "billed monthly", save: "Save {n}%", explain: "MSRP in USD from sharefile.com/plans. Annual billing lowers the monthly price per user." },
     lang: "English", siteTag: "ShareFile plans map", unofficial: "Unofficial site",
@@ -86,6 +89,7 @@ const UI = {
       viewAll: "Full", viewA: "Advanced", viewP: "Premium step-up", viewE: "Enterprise step-up",
       legend: "Click a tile to open the official documentation. The i button shows details.",
       vdrOnly: "VDR only", notInVdr: "Advanced, Premium or Enterprise features that VDR does not include",
+      lead: "Each column adds features to the plan before it: Premium includes all of Advanced and Enterprise includes all of Premium. Use the step-up views to see only what each plan adds.",
       vdrLead: "VDR is a separate plan, not a higher tier. These are the features it includes.",
       count: "features"
     },
@@ -135,6 +139,7 @@ const UI = {
   },
 
   pt: {
+    video: { title: "Vídeo oficial", lang: "em inglês; ative as legendas em português" },
     int: { title: "Integrações", lead: "O ShareFile se conecta às ferramentas que sua organização já usa. Cada integração leva à documentação oficial.", m365Title: "ShareFile e Microsoft 365 se complementam", m365Msg: "O ShareFile não substitui o Microsoft 365: ele se conecta a ele. As equipes continuam trabalhando no Outlook, Word, OneDrive e SharePoint, e o ShareFile adiciona o necessário quando os documentos saem da organização e é preciso trabalhar com clientes, fornecedores ou parceiros.", m365Adds: "O que o ShareFile adiciona para trabalhar com pessoas externas", plans: "Planos", planCheck: "Tabela de preços: desde o Advanced. Documentação do plugin: Premium ou superior.", group: "Categoria", industry: "Setor", all: "Todas", third: "Integrações de terceiros exigem as licenças do fornecedor; algumas podem estar limitadas ou indisponíveis.", source: "Fontes: sharefile.com/apps-integrations e docs.sharefile.com.", forIndustry: "Integrações para este setor", count: "integrações" },
     billing: { label: "Cobrança", monthly: "Mensal", annual: "Anual", perUserMonth: "por usuário / mês", annualNote: "cobrança anual", monthlyNote: "cobrança mensal", save: "Economize {n}%", explain: "Preços MSRP em USD de sharefile.com/plans. Com cobrança anual, o preço mensal por usuário diminui." },
     lang: "Português", siteTag: "Mapa de planos ShareFile", unofficial: "Site não oficial",
@@ -153,6 +158,7 @@ const UI = {
       viewAll: "Completo", viewA: "Advanced", viewP: "Premium step-up", viewE: "Enterprise step-up",
       legend: "Clique em um bloco para abrir a documentação oficial. O botão i mostra detalhes.",
       vdrOnly: "Exclusivo do VDR", notInVdr: "Recursos de Advanced, Premium ou Enterprise que o VDR não inclui",
+      lead: "Cada coluna soma recursos ao plano anterior: o Premium inclui todo o Advanced e o Enterprise inclui todo o Premium. Use as visões step-up para ver só o que cada plano adiciona.",
       vdrLead: "O VDR é um plano à parte, não um nível superior. Estes são os recursos que ele inclui.",
       count: "recursos"
     },
