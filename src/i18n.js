@@ -15,7 +15,7 @@ const UI = {
     map: {
       title: "Mapa de planes ShareFile", vdrTitle: "Virtual Data Room",
       tierA: "Advanced", tierP: "Premium step-up", tierE: "Enterprise step-up",
-      tierAHint: "Base", tierPHint: "Agrega a Advanced", tierEHint: "Agrega a Premium",
+      tierAHint: "Base", tierPHint: "Agrega a Advanced", tierEHint: "Agrega a Premium", total: "{n} en total",
       highlight: "Resaltar por industria", none: "Ninguna", views: "Vista",
       viewAll: "Completo", viewA: "Advanced", viewP: "Premium step-up", viewE: "Enterprise step-up",
       legend: "Clic en un recuadro abre la documentación oficial. El botón i muestra detalles.",
@@ -89,7 +89,7 @@ const UI = {
     map: {
       title: "ShareFile plans map", vdrTitle: "Virtual Data Room",
       tierA: "Advanced", tierP: "Premium step-up", tierE: "Enterprise step-up",
-      tierAHint: "Base", tierPHint: "Adds to Advanced", tierEHint: "Adds to Premium",
+      tierAHint: "Base", tierPHint: "Adds to Advanced", tierEHint: "Adds to Premium", total: "{n} in total",
       highlight: "Highlight by industry", none: "None", views: "View",
       viewAll: "Full", viewA: "Advanced", viewP: "Premium step-up", viewE: "Enterprise step-up",
       legend: "Click a tile to open the official documentation. The i button shows details.",
@@ -163,7 +163,7 @@ const UI = {
     map: {
       title: "Mapa de planos ShareFile", vdrTitle: "Virtual Data Room",
       tierA: "Advanced", tierP: "Premium step-up", tierE: "Enterprise step-up",
-      tierAHint: "Base", tierPHint: "Adiciona ao Advanced", tierEHint: "Adiciona ao Premium",
+      tierAHint: "Base", tierPHint: "Adiciona ao Advanced", tierEHint: "Adiciona ao Premium", total: "{n} no total",
       highlight: "Destacar por setor", none: "Nenhum", views: "Visão",
       viewAll: "Completo", viewA: "Advanced", viewP: "Premium step-up", viewE: "Enterprise step-up",
       legend: "Clique em um bloco para abrir a documentação oficial. O botão i mostra detalhes.",

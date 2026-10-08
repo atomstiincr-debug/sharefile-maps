@@ -322,6 +322,10 @@ ol.path ul.sigs { margin: 6px 0 0; padding-left: 18px; font-size: .9rem; }
 .ucust { border-left: 3px solid var(--accent); background: var(--accent-soft); padding: 8px 10px; border-radius: 6px; display: grid; gap: 4px; }
 .ucust p { font-size: .88rem; }
 .ucard .hint { margin-top: auto; word-break: break-word; }
+.th small { display: block; }
+.th .th-price { margin-top: 2px; opacity: .9; }
+.map-prices { display: none; list-style: none; margin: 0 0 10px; padding: 0; font-size: .85rem; }
+@media (max-width: 760px) { .map-prices { display: grid; gap: 4px; } }
 
 </style>
 </head>
@@ -373,7 +377,7 @@ const OVERVIEW_VIDEO = { id: "yQkpfDLkCk0", t: "Progress ShareFile - Built For T
 const TUTORIALS = "https://www.youtube.com/playlist?list=PLSKW9Jc-tCY9W-cB3G2OTYx00GXZrrzZB";
 
 const SITE = {
-  version: "1.6.0",
+  version: "1.6.1",
   updated: "2026-10-08",
   author: "Adrián Bonilla",
   pricingSource: W + "plans",
@@ -956,6 +960,7 @@ const DISCREPANCIES = [
 
 
 const CHANGELOG = [
+  { v: "1.6.1", date: "2026-10-08", d: { es: "Mapa, Data Room y Matriz: cada precio indica «por usuario / mes», el tipo de facturación y el mínimo de usuarios del plan. Las columnas Premium y Enterprise del mapa muestran lo que agregan y el total del plan (ej. +28 funciones, 62 en total). En celulares, el mapa muestra el precio y el mínimo que antes quedaban ocultos.", en: "Map, Data Room and Matrix: every price states “per user / month”, the billing type and the plan's minimum users. The Premium and Enterprise map columns show what they add and the plan total (e.g. +28 features, 62 in total). On phones the map now shows the price and minimum that were hidden.", pt: "Mapa, Data Room e Matriz: cada preço indica «por usuário / mês», o tipo de faturamento e o mínimo de usuários do plano. As colunas Premium e Enterprise do mapa mostram o que adicionam e o total do plano (ex. +28 recursos, 62 no total). Em celulares, o mapa mostra o preço e o mínimo que antes ficavam ocultos." } },
   { v: "1.6.0", date: "2026-10-08", d: { es: "Nueva página «Casos de uso»: 5 procesos por cada una de las 9 industrias, con funciones enlazadas, plan mínimo calculado, clientes publicados por ShareFile (cifras tal como las publica cada historia) y fuente oficial. El Recomendador enlaza a los casos de su industria. El pie de página invita a verificar en sharefile.com, docs.sharefile.com y trust.sharefile.com y a contactar al representante de ShareFile de cada región.", en: "New “Use cases” page: 5 processes for each of the 9 industries, with linked features, computed minimum plan, customers published by ShareFile (figures as each story states them) and official source. The Recommender links to its industry's cases. The footer invites readers to verify on sharefile.com, docs.sharefile.com and trust.sharefile.com and to contact their regional ShareFile representative.", pt: "Nova página «Casos de uso»: 5 processos para cada um dos 9 setores, com recursos vinculados, plano mínimo calculado, clientes publicados pelo ShareFile (números como cada história os publica) e fonte oficial. O Recomendador leva aos casos do seu setor. O rodapé convida a verificar em sharefile.com, docs.sharefile.com e trust.sharefile.com e a falar com o representante ShareFile da região." } },
   { v: "1.5.9", date: "2026-10-08", d: { es: "Conocimiento: se agregan los webinars oficiales de ShareFile (en vivo y bajo demanda, en inglés).", en: "Knowledge: adds the official ShareFile webinars (live and on demand, in English).", pt: "Conhecimento: adiciona os webinars oficiais do ShareFile (ao vivo e sob demanda, em inglês)." } },
   { v: "1.5.8", date: "2026-10-08", d: { es: "Auditoría completa: corrige el desborde horizontal del Recomendador en celulares y el enlace «Saltar al contenido» (ahora traducido y sin cambiar de página). Enlaces actualizados a su dirección final (AI Document Assistant, Client Hub, Storage Zones, Help Center, Training). El chequeo semanal de enlaces ahora sí alerta cuando algo falla y detecta páginas redirigidas al inicio.", en: "Full audit: fixes the Recommender's horizontal overflow on phones and the “Skip to content” link (now translated and no longer changes page). Links updated to their final address (AI Document Assistant, Client Hub, Storage Zones, Help Center, Training). The weekly link check now actually alerts on failures and detects pages redirected to a home page.", pt: "Auditoria completa: corrige o transbordamento horizontal do Recomendador em celulares e o link «Pular para o conteúdo» (agora traduzido e sem trocar de página). Links atualizados para o endereço final (AI Document Assistant, Client Hub, Storage Zones, Help Center, Training). A verificação semanal de links agora alerta de fato quando algo falha e detecta páginas redirecionadas para a página inicial." } },
@@ -1109,7 +1114,7 @@ const UI = {
     map: {
       title: "Mapa de planes ShareFile", vdrTitle: "Virtual Data Room",
       tierA: "Advanced", tierP: "Premium step-up", tierE: "Enterprise step-up",
-      tierAHint: "Base", tierPHint: "Agrega a Advanced", tierEHint: "Agrega a Premium",
+      tierAHint: "Base", tierPHint: "Agrega a Advanced", tierEHint: "Agrega a Premium", total: "{n} en total",
       highlight: "Resaltar por industria", none: "Ninguna", views: "Vista",
       viewAll: "Completo", viewA: "Advanced", viewP: "Premium step-up", viewE: "Enterprise step-up",
       legend: "Clic en un recuadro abre la documentación oficial. El botón i muestra detalles.",
@@ -1183,7 +1188,7 @@ const UI = {
     map: {
       title: "ShareFile plans map", vdrTitle: "Virtual Data Room",
       tierA: "Advanced", tierP: "Premium step-up", tierE: "Enterprise step-up",
-      tierAHint: "Base", tierPHint: "Adds to Advanced", tierEHint: "Adds to Premium",
+      tierAHint: "Base", tierPHint: "Adds to Advanced", tierEHint: "Adds to Premium", total: "{n} in total",
       highlight: "Highlight by industry", none: "None", views: "View",
       viewAll: "Full", viewA: "Advanced", viewP: "Premium step-up", viewE: "Enterprise step-up",
       legend: "Click a tile to open the official documentation. The i button shows details.",
@@ -1257,7 +1262,7 @@ const UI = {
     map: {
       title: "Mapa de planos ShareFile", vdrTitle: "Virtual Data Room",
       tierA: "Advanced", tierP: "Premium step-up", tierE: "Enterprise step-up",
-      tierAHint: "Base", tierPHint: "Adiciona ao Advanced", tierEHint: "Adiciona ao Premium",
+      tierAHint: "Base", tierPHint: "Adiciona ao Advanced", tierEHint: "Adiciona ao Premium", total: "{n} no total",
       highlight: "Destacar por setor", none: "Nenhum", views: "Visão",
       viewAll: "Completo", viewA: "Advanced", viewP: "Premium step-up", viewE: "Enterprise step-up",
       legend: "Clique em um bloco para abrir a documentação oficial. O botão i mostra detalhes.",
@@ -1514,8 +1519,9 @@ const UI = {
       </div>
       <div class="map-frame">
         <div class="map-title"><h2>${esc(title)}</h2><p>${esc(SITE.updated)} · ShareFile Maps</p></div>
+        <ul class="map-prices">${cols.map(tr => `<li><b>${esc(P[tr].name)}</b>: <span class="num">${money(priceOf(P[tr]))}</span> ${esc(u.billing.perUserMonth)} · ${esc(billLabel())} · ${esc(u.home.min)} ${P[tr].min} ${esc(u.home.users)}</li>`).join("")}</ul>
         <div class="map" style="--cols:${cols.length}">
-          <div class="map-head"><div></div>${cols.map((tr, i) => `<div class="th t-${tr}">${esc(names[tr])}<small>${esc(hints[tr])} · ${counts[i]} ${esc(m.count)} · ${money(priceOf(P[tr]))}</small></div>`).join("")}</div>
+          <div class="map-head"><div></div>${cols.map((tr, i) => `<div class="th t-${tr}">${esc(names[tr])}<small>${esc(hints[tr])} · ${tr === "A" ? `${counts[i]} ${esc(m.count)}` : `+${counts[i]} ${esc(m.count)} (${esc(fmt(m.total, { n: FEATURES.filter(f => f.plans.includes(tr)).length }))})`}</small><small class="th-price"><b class="num">${money(priceOf(P[tr]))}</b> ${esc(u.billing.perUserMonth)} · ${esc(billLabel())} · ${esc(u.home.min)} ${P[tr].min} ${esc(u.home.users)}</small></div>`).join("")}</div>
           ${bands}
         </div>
         <div class="map-foot">
@@ -1540,7 +1546,7 @@ const UI = {
     $("#view").innerHTML = `
       ${head(m.vdrTitle, m.vdrLead, updatedLine())}
       <div class="toolbar"><label>${esc(m.highlight)} ${industrySelect("hl", state.hl)}</label>
-        ${billToggle()}<span class="chip num">${money(priceOf(P.V))} · ${esc(billLabel())} · ${u.home.min} ${P.V.min} ${u.home.users}</span>
+        ${billToggle()}<span class="chip"><b class="num">${money(priceOf(P.V))}</b> ${esc(u.billing.perUserMonth)} · ${esc(billLabel())} · ${esc(u.home.min)} ${P.V.min} ${esc(u.home.users)}</span>
         ${ext(P.V.page, "sharefile.com/plans/sharefile-virtual-data-room")}</div>
       <div class="map-frame">
         <div class="map-title"><h2>Virtual Data Room</h2><p>${inV.length} ${esc(m.count)}</p></div>
@@ -1790,7 +1796,7 @@ const UI = {
         ${billToggle()}
         <span class="mx-count" id="mcount"></span>
       </div>
-      <div class="tbl-wrap"><table><thead><tr><th>${esc(M.feature)}</th>${PLANS.map(p => `<th class="c">${esc(p.name)}<br><span class="num muted" style="font-weight:500">${money(priceOf(p))}</span></th>`).join("")}</tr></thead><tbody id="mbody"></tbody></table></div>`;
+      <div class="tbl-wrap"><table><thead><tr><th>${esc(M.feature)}</th>${PLANS.map(p => `<th class="c">${esc(p.name)}<br><span class="num muted" style="font-weight:500">${money(priceOf(p))}</span><br><span class="muted" style="font-weight:400;font-size:.72rem">${esc(u.billing.perUserMonth)} · ${esc(u.home.min)} ${p.min}</span></th>`).join("")}</tr></thead><tbody id="mbody"></tbody></table></div>`;
     const upd = () => {
       s.q = $("#mq").value.trim(); s.g = $("#mg").value; s.i = $("#mi").value; s.diff = $("#md").checked;
       try {

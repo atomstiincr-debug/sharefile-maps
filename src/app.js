@@ -195,8 +195,9 @@
       </div>
       <div class="map-frame">
         <div class="map-title"><h2>${esc(title)}</h2><p>${esc(SITE.updated)} · ShareFile Maps</p></div>
+        <ul class="map-prices">${cols.map(tr => `<li><b>${esc(P[tr].name)}</b>: <span class="num">${money(priceOf(P[tr]))}</span> ${esc(u.billing.perUserMonth)} · ${esc(billLabel())} · ${esc(u.home.min)} ${P[tr].min} ${esc(u.home.users)}</li>`).join("")}</ul>
         <div class="map" style="--cols:${cols.length}">
-          <div class="map-head"><div></div>${cols.map((tr, i) => `<div class="th t-${tr}">${esc(names[tr])}<small>${esc(hints[tr])} · ${counts[i]} ${esc(m.count)} · ${money(priceOf(P[tr]))}</small></div>`).join("")}</div>
+          <div class="map-head"><div></div>${cols.map((tr, i) => `<div class="th t-${tr}">${esc(names[tr])}<small>${esc(hints[tr])} · ${tr === "A" ? `${counts[i]} ${esc(m.count)}` : `+${counts[i]} ${esc(m.count)} (${esc(fmt(m.total, { n: FEATURES.filter(f => f.plans.includes(tr)).length }))})`}</small><small class="th-price"><b class="num">${money(priceOf(P[tr]))}</b> ${esc(u.billing.perUserMonth)} · ${esc(billLabel())} · ${esc(u.home.min)} ${P[tr].min} ${esc(u.home.users)}</small></div>`).join("")}</div>
           ${bands}
         </div>
         <div class="map-foot">
@@ -221,7 +222,7 @@
     $("#view").innerHTML = `
       ${head(m.vdrTitle, m.vdrLead, updatedLine())}
       <div class="toolbar"><label>${esc(m.highlight)} ${industrySelect("hl", state.hl)}</label>
-        ${billToggle()}<span class="chip num">${money(priceOf(P.V))} · ${esc(billLabel())} · ${u.home.min} ${P.V.min} ${u.home.users}</span>
+        ${billToggle()}<span class="chip"><b class="num">${money(priceOf(P.V))}</b> ${esc(u.billing.perUserMonth)} · ${esc(billLabel())} · ${esc(u.home.min)} ${P.V.min} ${esc(u.home.users)}</span>
         ${ext(P.V.page, "sharefile.com/plans/sharefile-virtual-data-room")}</div>
       <div class="map-frame">
         <div class="map-title"><h2>Virtual Data Room</h2><p>${inV.length} ${esc(m.count)}</p></div>
@@ -471,7 +472,7 @@
         ${billToggle()}
         <span class="mx-count" id="mcount"></span>
       </div>
-      <div class="tbl-wrap"><table><thead><tr><th>${esc(M.feature)}</th>${PLANS.map(p => `<th class="c">${esc(p.name)}<br><span class="num muted" style="font-weight:500">${money(priceOf(p))}</span></th>`).join("")}</tr></thead><tbody id="mbody"></tbody></table></div>`;
+      <div class="tbl-wrap"><table><thead><tr><th>${esc(M.feature)}</th>${PLANS.map(p => `<th class="c">${esc(p.name)}<br><span class="num muted" style="font-weight:500">${money(priceOf(p))}</span><br><span class="muted" style="font-weight:400;font-size:.72rem">${esc(u.billing.perUserMonth)} · ${esc(u.home.min)} ${p.min}</span></th>`).join("")}</tr></thead><tbody id="mbody"></tbody></table></div>`;
     const upd = () => {
       s.q = $("#mq").value.trim(); s.g = $("#mg").value; s.i = $("#mi").value; s.diff = $("#md").checked;
       try {

@@ -118,6 +118,17 @@ const ok = (c, m) => { if (c) pass++; else { fail++; fails.push(m); console.erro
       const want = ctx.F.filter(f => f.plans.includes(id) && (!prev || !f.plans.includes(prev))).length;
       ok(n === want, `#${r} shows ${want} features (got ${n})`);
     }
+    // Every plan header states price per user / month and the plan minimum
+    for (const [r, id] of [["map-a", "A"], ["map-p", "P"], ["map-e", "E"]]) {
+      await go(page, r);
+      const th = await page.$eval(".map-head .th", e => e.innerText);
+      ok(/per user \/ month/.test(th) && th.includes(`min. ${ctx.P.find(p => p.id === id).min} users`), `#${r} header shows per-user price and minimum`);
+      if (id !== "A") ok(new RegExp(`\\(${ctx.F.filter(f => f.plans.includes(id)).length} in total\\)`).test(th), `#${r} header shows total features`);
+    }
+    await go(page, "vdr");
+    ok(/per user \/ month/.test(await viewText(page)) && /min\. 5 users/.test(await viewText(page)), "#vdr shows per-user price and 5-user minimum");
+    await go(page, "matrix");
+    ok((await page.$eval("thead", e => e.innerText)).match(/per user \/ month/g).length === 4, "matrix headers state per user / month for 4 plans");
     await go(page, "map");
     const ids = await page.$$eval("[data-detail]", els => [...new Set(els.map(e => e.dataset.detail))]);
     ok(ids.length >= ctx.F.filter(f => f.plans !== "V").length - 1, `#map has a tile for every feature (${ids.length})`);

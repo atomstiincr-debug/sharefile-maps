@@ -310,3 +310,7 @@ ol.path ul.sigs { margin: 6px 0 0; padding-left: 18px; font-size: .9rem; }
 .ucust { border-left: 3px solid var(--accent); background: var(--accent-soft); padding: 8px 10px; border-radius: 6px; display: grid; gap: 4px; }
 .ucust p { font-size: .88rem; }
 .ucard .hint { margin-top: auto; word-break: break-word; }
+.th small { display: block; }
+.th .th-price { margin-top: 2px; opacity: .9; }
+.map-prices { display: none; list-style: none; margin: 0 0 10px; padding: 0; font-size: .85rem; }
+@media (max-width: 760px) { .map-prices { display: grid; gap: 4px; } }
