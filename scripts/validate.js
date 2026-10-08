@@ -29,3 +29,21 @@ for (const p of PLANS) console.log(p.name.padEnd(18), FEATURES.filter(f => f.pla
 console.log("total features", FEATURES.length);
 if (errors) { console.error(errors + " error(s)"); process.exit(1); }
 console.log("✓ data OK");
+
+// Integrations
+{
+  const c2 = {}; vm.createContext(c2);
+  vm.runInContext(fs.readFileSync(path.join(__dirname, "..", "src", "data.js"), "utf8") + "\nthis.INTEGRATIONS=INTEGRATIONS;this.INT_GROUPS=INT_GROUPS;this.INDUSTRIES=INDUSTRIES;this.BADGES=BADGES;", c2);
+  const gs = new Set(c2.INT_GROUPS.map(g => g.id)), inds = new Set(c2.INDUSTRIES.map(i => i.id)), seen = new Set();
+  let e2 = 0;
+  for (const x of c2.INTEGRATIONS) {
+    if (seen.has(x.id)) { e2++; console.error("✗ dup integration " + x.id); } seen.add(x.id);
+    if (!gs.has(x.g)) { e2++; console.error("✗ " + x.id + " bad group"); }
+    if (x.plan && x.plan !== "check" && !/^A?P?E?V?$/.test(x.plan)) { e2++; console.error("✗ " + x.id + " bad plan"); }
+    for (const i of x.ind || []) if (!inds.has(i)) { e2++; console.error("✗ " + x.id + " bad industry " + i); }
+    for (const b of x.badges || []) if (!c2.BADGES[b]) { e2++; console.error("✗ " + x.id + " bad badge " + b); }
+    for (const l of ["es", "en", "pt"]) { if (!x.d[l]) { e2++; console.error("✗ " + x.id + " desc " + l); } if (x.n && !x.n[l]) { e2++; console.error("✗ " + x.id + " note " + l); } }
+  }
+  console.log("integrations", c2.INTEGRATIONS.length);
+  if (e2) process.exit(1);
+}

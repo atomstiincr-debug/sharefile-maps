@@ -245,6 +245,16 @@ footer .wrap { padding-block: 22px calc(22px + env(safe-area-inset-bottom, 0px))
 .price .amt { display: flex; align-items: baseline; gap: 2px; flex-wrap: wrap; }
 .result-plan .seg { margin-left: auto; }
 
+/* Integrations */
+.m365 { border-left: 4px solid var(--brand); }
+.m365 > p { max-width: 75ch; }
+.igroup { margin-top: 26px; display: grid; gap: 12px; }
+.igrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr)); gap: 12px; }
+.icard { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.icard h3 a { text-decoration: none; }
+.icard h3 a:hover { text-decoration: underline; }
+.icard p { font-size: .9rem; }
+
 </style>
 </head>
 <body>
@@ -281,7 +291,7 @@ const D = "https://docs.sharefile.com/en-us/sharefile/";
 const W = "https://www.sharefile.com/";
 
 const SITE = {
-  version: "1.1.0",
+  version: "1.2.0",
   updated: "2026-10-08",
   author: "Adrián Bonilla",
   pricingSource: W + "plans",
@@ -630,20 +640,129 @@ const DISCREPANCIES = [
   { where: W + "plans", d: { es: "HIPAA Eligible dice \"Available only in ShareFile Premium\", pero la tabla lo marca también en Enterprise y VDR.", en: "HIPAA Eligible says \"Available only in ShareFile Premium\", yet the table also marks Enterprise and VDR.", pt: "HIPAA Eligible diz \"Available only in ShareFile Premium\", mas a tabela também marca Enterprise e VDR." } },
   { where: D + "signatures/eidas-signature", d: { es: "Las firmas eIDAS están documentadas para Premium y superiores, pero no aparecen en la tabla de precios.", en: "eIDAS signatures are documented for Premium and higher but are missing from the pricing table.", pt: "As assinaturas eIDAS estão documentadas para Premium e superiores, mas não aparecem na tabela de preços." } },
   { where: W + "enterprise", d: { es: "La página de tamaño \"Large\" (/enterprise) no menciona las funciones del plan Enterprise, y el menú la llama a veces \"Large\" y a veces \"Enterprise\".", en: "The \"Large\" company-size page (/enterprise) does not mention Enterprise plan features, and the menu labels it \"Large\" or \"Enterprise\" inconsistently.", pt: "A página de porte \"Large\" (/enterprise) não cita os recursos do plano Enterprise, e o menu a chama ora de \"Large\", ora de \"Enterprise\"." } },
-  { where: W + "industry/finance", d: { es: "Algunas páginas (Finance, Healthcare, Real Estate, Small Business, /enterprise) todavía muestran \"Industry Advantage\" en el menú, aunque ya no aparece en /plans.", en: "Some pages (Finance, Healthcare, Real Estate, Small Business, /enterprise) still list \"Industry Advantage\" in the menu, though it is gone from /plans.", pt: "Algumas páginas (Finance, Healthcare, Real Estate, Small Business, /enterprise) ainda mostram \"Industry Advantage\" no menu, embora não esteja mais em /plans." } }
+  { where: W + "industry/finance", d: { es: "Algunas páginas (Finance, Healthcare, Real Estate, Small Business, /enterprise) todavía muestran \"Industry Advantage\" en el menú, aunque ya no aparece en /plans.", en: "Some pages (Finance, Healthcare, Real Estate, Small Business, /enterprise) still list \"Industry Advantage\" in the menu, though it is gone from /plans.", pt: "Algumas páginas (Finance, Healthcare, Real Estate, Small Business, /enterprise) ainda mostram \"Industry Advantage\" no menu, embora não esteja mais em /plans." } },
+  { where: D + "sharefile-app/sharefile-for-outlook", d: { es: "La tabla de precios incluye los plugins de correo desde Advanced, pero la documentación del plugin de Outlook pide ShareFile Premium o superior.", en: "The pricing table includes email plug-ins from Advanced, but the Outlook plug-in documentation requires ShareFile Premium or higher.", pt: "A tabela de preços inclui os plugins de e-mail desde o Advanced, mas a documentação do plugin do Outlook exige ShareFile Premium ou superior." } }
 ];
 
+
 const CHANGELOG = [
+  { v: "1.2.0", date: "2026-10-08", d: { es: "Nueva página de Integraciones: Microsoft 365, Google Workspace, seguridad, CRM y contabilidad, e integraciones por industria. Nueva discrepancia sobre el plugin de Outlook.", en: "New Integrations page: Microsoft 365, Google Workspace, security, CRM and accounting, and industry-specific integrations. New discrepancy on the Outlook plug-in.", pt: "Nova página de Integrações: Microsoft 365, Google Workspace, segurança, CRM e contabilidade, e integrações por setor. Nova discrepância sobre o plugin do Outlook." } },
   { v: "1.1.0", date: "2026-10-08", d: { es: "Selector Mensual / Anual en todo el sitio, con precio mensual tachado y porcentaje de ahorro. Paleta de marca ShareFile.", en: "Monthly / Annual billing toggle across the site, with struck-through monthly price and savings percentage. ShareFile brand palette.", pt: "Seletor Mensal / Anual em todo o site, com preço mensal riscado e porcentagem de economia. Paleta da marca ShareFile." } },
   { v: "1.0.0", date: "2026-10-08", d: { es: "Primera versión: mapas de planes, VDR, recomendador, comparador, matriz, calculadora, conocimiento y glosario en ES, EN y PT.", en: "First release: plan maps, VDR, recommender, comparator, matrix, calculator, knowledge and glossary in ES, EN and PT.", pt: "Primeira versão: mapas de planos, VDR, recomendador, comparador, matriz, calculadora, conhecimento e glossário em ES, EN e PT." } }
+];
+
+/* Integrations: catalog from sharefile.com/apps-integrations and docs.sharefile.com/catalog/integrations (2026-10-08).
+   plan: only when official documentation states it. ind: industries the integration is built for. */
+const INT_GROUPS = [
+  { id: "m365",   name: { es: "Microsoft 365", en: "Microsoft 365", pt: "Microsoft 365" } },
+  { id: "google", name: { es: "Google Workspace", en: "Google Workspace", pt: "Google Workspace" } },
+  { id: "secit",  name: { es: "Seguridad, identidad y TI", en: "Security, identity and IT", pt: "Segurança, identidade e TI" } },
+  { id: "biz",    name: { es: "CRM, contabilidad y automatización", en: "CRM, accounting and automation", pt: "CRM, contabilidade e automação" } },
+  { id: "ind",    name: { es: "Especializadas por industria", en: "Industry-specific", pt: "Especializadas por setor" } },
+  { id: "apps",   name: { es: "Apps de ShareFile", en: "ShareFile apps", pt: "Apps do ShareFile" } }
+];
+
+const INTEGRATIONS = [
+  // Microsoft 365
+  { id: "outlook", g: "m365", name: "ShareFile for Microsoft Outlook", url: D + "sharefile-app/sharefile-for-outlook", plan: "check",
+    d: { es: "Reemplaza adjuntos por enlaces seguros, salta el límite de tamaño de Outlook, solicita archivos y avisa cuando alguien abre un archivo.", en: "Replaces attachments with secure links, bypasses Outlook's size limit, requests files and alerts you when a file is opened.", pt: "Substitui anexos por links seguros, contorna o limite de tamanho do Outlook, solicita arquivos e avisa quando alguém abre um arquivo." },
+    n: { es: "Outlook clásico para Windows. No es compatible con el nuevo Outlook para Windows: para ese caso existe la versión en línea.", en: "Classic Outlook for Windows. Not compatible with the new Outlook for Windows; use the online version instead.", pt: "Outlook clássico para Windows. Não é compatível com o novo Outlook para Windows; nesse caso, use a versão online." } },
+  { id: "outlook_online", g: "m365", name: "ShareFile for Microsoft Outlook Online", url: D + "sharefile-app/sharefile-for-outlook-online",
+    also: [{ label: "Microsoft AppSource", url: "https://appsource.microsoft.com/en-us/product/office/wa200007922?tab=overview" }],
+    d: { es: "Complemento para Outlook en la web: adjuntos seguros sin límite de tamaño y solicitudes de archivos.", en: "Add-in for Outlook on the web: secure attachments without size limits and file requests.", pt: "Suplemento para o Outlook na web: anexos seguros sem limite de tamanho e solicitações de arquivos." } },
+  { id: "outlook_encrypt", g: "m365", name: "Encrypted email from Outlook", url: D + "sharefile-app/sharefile-for-outlook/encrypt-emails", plan: "APE",
+    d: { es: "Envía correos cifrados directamente desde Outlook; el destinatario no necesita cuenta de ShareFile.", en: "Send encrypted email straight from Outlook; recipients don't need a ShareFile account.", pt: "Envie e-mails criptografados direto do Outlook; o destinatário não precisa de conta ShareFile." } },
+  { id: "coedit", g: "m365", name: "Co-editing with Microsoft 365", url: D + "sharefile-app/sharefile-web/co-editing", plan: "APE",
+    d: { es: "Varias personas editan al mismo tiempo documentos de Word, Excel y PowerPoint guardados en ShareFile.", en: "Several people edit Word, Excel and PowerPoint files stored in ShareFile at the same time.", pt: "Várias pessoas editam ao mesmo tempo arquivos de Word, Excel e PowerPoint guardados no ShareFile." },
+    n: { es: "Requiere licencia comercial de Microsoft 365 (Business Standard o superior, E3, E5, entre otras). No disponible con los planes de archivado FINRA o Enterprise.", en: "Requires a commercial Microsoft 365 license (Business Standard or higher, E3, E5 and others). Not available with FINRA or Enterprise Archiving plans.", pt: "Requer licença comercial do Microsoft 365 (Business Standard ou superior, E3, E5, entre outras). Indisponível com os planos de arquivamento FINRA ou Enterprise." } },
+  { id: "sharepoint", g: "m365", name: "SharePoint Online connector", url: D + "account_settings/connectors/enable_sharepoint_online", plan: "APEV",
+    d: { es: "Conecta una biblioteca de SharePoint Online para ver, descargar y compartir sus archivos desde ShareFile.", en: "Connects a SharePoint Online library to preview, download and share its files from ShareFile.", pt: "Conecta uma biblioteca do SharePoint Online para visualizar, baixar e compartilhar seus arquivos pelo ShareFile." },
+    n: { es: "El administrador da su consentimiento una sola vez para todos los usuarios.", en: "An admin grants consent once for all users.", pt: "O administrador dá consentimento uma única vez para todos os usuários." } },
+  { id: "onedrive", g: "m365", name: "OneDrive for Business connector", url: D + "account_settings/connectors/one_drive_for_business_recommendations", plan: "APEV",
+    d: { es: "Accede a OneDrive for Business desde la app ShareFile para Windows y comparte esos archivos de forma segura.", en: "Access OneDrive for Business from the ShareFile for Windows app and share those files securely.", pt: "Acesse o OneDrive for Business pelo app ShareFile para Windows e compartilhe esses arquivos com segurança." },
+    n: { es: "La carpeta personal del usuario debe estar en almacenamiento administrado por ShareFile.", en: "The user's personal folder must be on ShareFile-managed storage.", pt: "A pasta pessoal do usuário deve estar em armazenamento gerenciado pelo ShareFile." } },
+  { id: "word_addin", g: "m365", name: "Microsoft Word add-in", url: D + "templates/microsoft_word_add_in", plan: "PE",
+    d: { es: "Diseña plantillas de documentos en Word, con campos de firma y variables, listas para enviar a firma electrónica.", en: "Design document templates in Word, with signature fields and variables, ready to send for e-signature.", pt: "Crie modelos de documentos no Word, com campos de assinatura e variáveis, prontos para assinatura eletrônica." } },
+  { id: "entra_sso", g: "m365", name: "Microsoft Entra ID · SSO", url: D + "account_settings/security/single_sign_on", plan: "APEV",
+    d: { es: "Inicio de sesión único con las credenciales corporativas.", en: "Single sign-on with corporate credentials.", pt: "Login único com as credenciais corporativas." } },
+  { id: "entra_scim", g: "m365", name: "Microsoft Entra ID · SCIM provisioning", url: D + "account_settings/user_provisioning/entra_id_scim", plan: "E", badges: ["third"],
+    d: { es: "Crea, actualiza y desactiva usuarios de ShareFile automáticamente desde Entra ID.", en: "Creates, updates and deactivates ShareFile users automatically from Entra ID.", pt: "Cria, atualiza e desativa usuários do ShareFile automaticamente a partir do Entra ID." } },
+  { id: "sentinel", g: "m365", name: "Microsoft Sentinel", url: D + "account_settings/security/sentinel-integration", plan: "E", badges: ["third"],
+    d: { es: "Envía bitácoras y alertas de seguridad de ShareFile al SIEM de Microsoft.", en: "Sends ShareFile activity logs and security alerts to Microsoft's SIEM.", pt: "Envia logs e alertas de segurança do ShareFile ao SIEM da Microsoft." } },
+
+  // Google Workspace
+  { id: "gmail", g: "google", name: "ShareFile for Gmail / Google Workspace", url: D + "sharefile-app/sharefile-for-google-workspace", plan: "APEV",
+    also: [{ label: "Google Workspace Marketplace", url: "https://workspace.google.com/marketplace/app/sharefile/578628970478" }],
+    d: { es: "Envía enlaces seguros a carpetas y documentos de ShareFile, y solicita archivos, desde Gmail.", en: "Send secure links to ShareFile folders and documents, and request files, from Gmail.", pt: "Envie links seguros para pastas e documentos do ShareFile, e solicite arquivos, pelo Gmail." } },
+  { id: "gdrive", g: "google", name: "Google Drive connector", url: D + "account_settings/connectors/connectors_overview", plan: "APEV",
+    d: { es: "Conecta Google Drive para acceder y compartir sus archivos desde ShareFile.", en: "Connect Google Drive to access and share its files from ShareFile.", pt: "Conecte o Google Drive para acessar e compartilhar seus arquivos pelo ShareFile." } },
+
+  // Security, identity and IT
+  { id: "splunk", g: "secit", name: "Splunk", url: D + "account_settings/security/splunk-integration", plan: "E", badges: ["third"],
+    d: { es: "Envía bitácoras y alertas de ShareFile a Splunk para monitoreo e investigación.", en: "Sends ShareFile logs and alerts to Splunk for monitoring and investigation.", pt: "Envia logs e alertas do ShareFile ao Splunk para monitoramento e investigação." } },
+  { id: "casb", g: "secit", name: "CASB and on-premises DLP", url: D + "storage-zones-controller/6-0/data-loss-prevention", plan: "APEV", badges: ["third"],
+    d: { es: "Integra DLP on-premises y herramientas CASB líderes para entornos híbridos.", en: "Integrates on-premises DLP and leading CASB tools for hybrid environments.", pt: "Integra DLP on-premises e ferramentas CASB líderes para ambientes híbridos." } },
+  { id: "aws_kms", g: "secit", name: "Amazon KMS", url: D + "configure/customer-managed-encryption-keys", plan: "APEV",
+    d: { es: "Cifra los archivos con llaves que el cliente administra en Amazon KMS.", en: "Encrypts files with keys the customer manages in Amazon KMS.", pt: "Criptografa os arquivos com chaves que o cliente gerencia no Amazon KMS." } },
+  { id: "api", g: "secit", name: "ShareFile API", url: "https://api.sharefile.com", plan: "APEV",
+    d: { es: "API para integrar ShareFile con sistemas propios o de terceros.", en: "API to integrate ShareFile with in-house or third-party systems.", pt: "API para integrar o ShareFile com sistemas próprios ou de terceiros." } },
+  { id: "powershell", g: "secit", name: "ShareFile PowerShell", url: D + "configure/sharefile-powershell",
+    d: { es: "Automatiza tareas de administración de ShareFile con scripts de PowerShell.", en: "Automates ShareFile administration tasks with PowerShell scripts.", pt: "Automatiza tarefas de administração do ShareFile com scripts PowerShell." } },
+
+  // CRM, accounting and automation
+  { id: "salesforce", g: "biz", name: "Salesforce", url: D + "sharefile-app/sharefile-web/integrations#integrating-salesforce", badges: ["us"],
+    d: { es: "Importa leads de Salesforce, exporta archivos y genera documentos con datos de Salesforce.", en: "Imports Salesforce leads, exports files and generates documents from Salesforce data.", pt: "Importa leads do Salesforce, exporta arquivos e gera documentos com dados do Salesforce." },
+    n: { es: "La generación de documentos y la exportación funcionan solo en control plane de EE.UU.", en: "Document generation and export work only on U.S. control planes.", pt: "A geração de documentos e a exportação funcionam só em control plane dos EUA." } },
+  { id: "quickbooks_int", g: "biz", name: "QuickBooks", url: D + "sharefile-app/sharefile-web/integrations#integrating-quickbooks", badges: ["us"],
+    d: { es: "Importa clientes de QuickBooks, exporta archivos y firma acuerdos integrados.", en: "Imports QuickBooks customers, exports files and supports integrated agreement signing.", pt: "Importa clientes do QuickBooks, exporta arquivos e permite assinatura de acordos integrada." } },
+  { id: "xero", g: "biz", name: "Xero", url: D + "catalog/integrations/export", badges: ["us"],
+    d: { es: "Exporta archivos de carpetas de ShareFile a Xero.", en: "Exports files from ShareFile folders to Xero.", pt: "Exporta arquivos de pastas do ShareFile para o Xero." } },
+  { id: "freshbooks", g: "biz", name: "FreshBooks", url: D + "catalog/integrations/export", badges: ["us"],
+    d: { es: "Exporta archivos de proyectos y carpetas a FreshBooks.", en: "Exports project and folder files to FreshBooks.", pt: "Exporta arquivos de projetos e pastas para o FreshBooks." } },
+  { id: "pipedrive", g: "biz", name: "Pipedrive", url: D + "catalog/integrations/export", badges: ["us"],
+    d: { es: "Exporta y sincroniza archivos de proyectos con Pipedrive.", en: "Exports and syncs project files to Pipedrive.", pt: "Exporta e sincroniza arquivos de projetos com o Pipedrive." } },
+  { id: "zapier", g: "biz", name: "Zapier", url: D + "catalog/integrations/sf-zapier-integration", badges: ["third"],
+    d: { es: "Conecta ShareFile con más de 4,000 aplicaciones sin programar.", en: "Connects ShareFile with 4,000+ apps without code.", pt: "Conecta o ShareFile a mais de 4.000 aplicativos sem programar." } },
+
+  // Industry-specific
+  { id: "redtail", g: "ind", ind: ["finance"], name: "Redtail CRM", url: D + "catalog/integrations/redtail-crm", badges: ["third"],
+    d: { es: "Vincula carpetas de ShareFile con contactos del CRM de asesores financieros.", en: "Links ShareFile folders to contacts in the financial-advisor CRM.", pt: "Vincula pastas do ShareFile a contatos do CRM de assessores financeiros." } },
+  { id: "orion", g: "ind", ind: ["finance"], name: "Orion", url: W + "apps-integrations", badges: ["third"],
+    d: { es: "Genera reportes y los guarda en carpetas específicas de ShareFile.", en: "Generates reports and stores them in specific ShareFile folders.", pt: "Gera relatórios e os guarda em pastas específicas do ShareFile." } },
+  { id: "trumpet", g: "ind", ind: ["finance", "legal"], name: "Trumpet Publisher", url: D + "catalog/integrations/trumpet-publisher", badges: ["third"],
+    d: { es: "Publica directorios de documentos de clientes en carpetas de ShareFile, para firmas financieras y legales.", en: "Publishes client document directories to ShareFile folders, for financial and law firms.", pt: "Publica diretórios de documentos de clientes em pastas do ShareFile, para firmas financeiras e jurídicas." } },
+  { id: "hubdoc", g: "ind", ind: ["accounting"], name: "Hubdoc", url: D + "catalog/integrations/hubdoc", badges: ["third"],
+    d: { es: "Sincroniza estados de cuenta, cheques y comprobantes de Hubdoc a ShareFile.", en: "Syncs bank statements, check images and deposit slips from Hubdoc to ShareFile.", pt: "Sincroniza extratos, cheques e comprovantes do Hubdoc para o ShareFile." } },
+  { id: "smartbid", g: "ind", ind: ["construction"], name: "SmartBid", url: D + "catalog/integrations/smartbid", badges: ["third"],
+    d: { es: "Comparte archivos de proyectos con subcontratistas mediante el plan room de SmartBid.", en: "Shares project files with subcontractors through the SmartBid plan room.", pt: "Compartilha arquivos de projetos com subcontratados pelo plan room do SmartBid." } },
+  { id: "bidplanroom", g: "ind", ind: ["construction"], name: "BidPlanroom", url: W + "apps-integrations", badges: ["third"],
+    d: { es: "Comparte documentos de ShareFile en un plan room con contratistas.", en: "Shares ShareFile documents in a plan room with contractors.", pt: "Compartilha documentos do ShareFile em um plan room com empreiteiros." } },
+  { id: "applied", g: "ind", ind: ["insurance"], name: "Applied Systems", url: W + "apps-integrations", badges: ["third"],
+    d: { es: "Firma electrónica dentro de Applied Epic.", en: "E-signature inside Applied Epic.", pt: "Assinatura eletrônica dentro do Applied Epic." } },
+  { id: "sfax", g: "ind", ind: ["healthcare"], name: "Scrypt Sfax", url: W + "apps-integrations", badges: ["third"],
+    d: { es: "Envío seguro de faxes de salud protegiendo información del paciente.", en: "Secure healthcare faxing that protects patient information.", pt: "Envio seguro de fax na saúde, protegendo informações do paciente." } },
+  { id: "trialpad", g: "ind", ind: ["legal"], name: "TrialPad", url: W + "apps-integrations", badges: ["third"],
+    d: { es: "Accede a declaraciones, audiencias y transcripciones de juicios desde ShareFile.", en: "Access depositions, hearings and trial transcripts from ShareFile.", pt: "Acesse depoimentos, audiências e transcrições de julgamentos pelo ShareFile." } },
+  { id: "prontoforms", g: "ind", ind: ["construction", "manufacturing", "insurance"], name: "ProntoForms", url: W + "apps-integrations", badges: ["third"],
+    d: { es: "Sincroniza datos de ShareFile para completar formularios de campo más rápido.", en: "Syncs ShareFile data to complete field forms faster.", pt: "Sincroniza dados do ShareFile para preencher formulários de campo mais rápido." } },
+
+  // ShareFile apps
+  { id: "app_win", g: "apps", name: "ShareFile for Windows", url: D + "sharefile-app/sharefile-for-windows", plan: "APEV",
+    d: { es: "Accede a ShareFile como una unidad en el Explorador de archivos.", en: "Access ShareFile as a drive in File Explorer.", pt: "Acesse o ShareFile como uma unidade no Explorador de Arquivos." } },
+  { id: "app_mac", g: "apps", name: "ShareFile for Mac", url: D + "sharefile-app/sharefile-for-mac", plan: "APEV",
+    d: { es: "Accede a ShareFile desde Finder en Mac.", en: "Access ShareFile from Finder on Mac.", pt: "Acesse o ShareFile pelo Finder no Mac." } },
+  { id: "app_mobile", g: "apps", name: "ShareFile for iOS and Android", url: D + "sharefile-app/sharefile-for-ios", plan: "APEV",
+    also: [{ label: "Android", url: D + "sharefile-app/sharefile-for-android" }],
+    d: { es: "Archivos, solicitudes y firmas desde el teléfono.", en: "Files, requests and signatures from your phone.", pt: "Arquivos, solicitações e assinaturas pelo celular." } }
 ];
 
 /* Interface text. Feature names stay in official English; everything else is translated. */
 const UI = {
   es: {
+    int: { title: "Integraciones", lead: "ShareFile se conecta con las herramientas que tu organización ya usa. Cada integración enlaza a su documentación oficial.", m365Title: "ShareFile y Microsoft 365 se complementan", m365Msg: "ShareFile no reemplaza a Microsoft 365: se conecta a él. Los equipos siguen trabajando en Outlook, Word, OneDrive y SharePoint, y ShareFile suma lo necesario cuando los documentos salen de la organización y hay que trabajar con clientes, proveedores o socios.", m365Adds: "Lo que ShareFile agrega para trabajar con personas externas", plans: "Planes", planCheck: "Tabla de precios: desde Advanced. Documentación del plugin: Premium o superior.", group: "Categoría", industry: "Industria", all: "Todas", third: "Las integraciones de terceros requieren las licencias del proveedor correspondiente; algunas pueden estar limitadas o no disponibles.", source: "Fuentes: sharefile.com/apps-integrations y docs.sharefile.com.", forIndustry: "Integraciones para esta industria", count: "integraciones" },
     billing: { label: "Facturación", monthly: "Mensual", annual: "Anual", perUserMonth: "por usuario / mes", annualNote: "facturación anual", monthlyNote: "facturación mensual", save: "Ahorra {n}%", explain: "Precios MSRP en USD de sharefile.com/plans. Con facturación anual, el precio mensual por usuario baja." },
     lang: "Español", siteTag: "Mapa de planes ShareFile", unofficial: "Sitio no oficial",
-    nav: { home: "Inicio", map: "Mapa de planes", vdr: "Data Room", recommend: "Recomendador", compare: "Comparador", matrix: "Matriz", calc: "Calculadora", knowledge: "Conocimiento", glossary: "Glosario", changelog: "Cambios", discrepancies: "Discrepancias" },
+    nav: { home: "Inicio", map: "Mapa de planes", vdr: "Data Room", recommend: "Recomendador", compare: "Comparador", matrix: "Matriz", calc: "Calculadora", knowledge: "Conocimiento", glossary: "Glosario", changelog: "Cambios", discrepancies: "Discrepancias", integrations: "Integraciones" },
     by: "Por", updated: "Actualizado",
     home: {
       plans: "Planes", industries: "Industrias", sizes: "Tamaño de empresa", tools: "Herramientas", resources: "Recursos",
@@ -707,9 +826,10 @@ const UI = {
   },
 
   en: {
+    int: { title: "Integrations", lead: "ShareFile connects with the tools your organization already uses. Each integration links to its official documentation.", m365Title: "ShareFile and Microsoft 365 work together", m365Msg: "ShareFile does not replace Microsoft 365; it connects to it. Teams keep working in Outlook, Word, OneDrive and SharePoint, and ShareFile adds what is needed when documents leave the organization and you work with clients, vendors or partners.", m365Adds: "What ShareFile adds for working with external people", plans: "Plans", planCheck: "Pricing table: from Advanced. Plug-in documentation: Premium or higher.", group: "Category", industry: "Industry", all: "All", third: "Third-party integrations require the vendor's licenses; some may be limited or unavailable.", source: "Sources: sharefile.com/apps-integrations and docs.sharefile.com.", forIndustry: "Integrations for this industry", count: "integrations" },
     billing: { label: "Billing", monthly: "Monthly", annual: "Annual", perUserMonth: "per user / month", annualNote: "billed annually", monthlyNote: "billed monthly", save: "Save {n}%", explain: "MSRP in USD from sharefile.com/plans. Annual billing lowers the monthly price per user." },
     lang: "English", siteTag: "ShareFile plans map", unofficial: "Unofficial site",
-    nav: { home: "Home", map: "Plans map", vdr: "Data Room", recommend: "Recommender", compare: "Comparator", matrix: "Matrix", calc: "Calculator", knowledge: "Knowledge", glossary: "Glossary", changelog: "Changes", discrepancies: "Discrepancies" },
+    nav: { home: "Home", map: "Plans map", vdr: "Data Room", recommend: "Recommender", compare: "Comparator", matrix: "Matrix", calc: "Calculator", knowledge: "Knowledge", glossary: "Glossary", changelog: "Changes", discrepancies: "Discrepancies", integrations: "Integrations" },
     by: "By", updated: "Updated",
     home: {
       plans: "Plans", industries: "Industries", sizes: "Company size", tools: "Tools", resources: "Resources",
@@ -773,9 +893,10 @@ const UI = {
   },
 
   pt: {
+    int: { title: "Integrações", lead: "O ShareFile se conecta às ferramentas que sua organização já usa. Cada integração leva à documentação oficial.", m365Title: "ShareFile e Microsoft 365 se complementam", m365Msg: "O ShareFile não substitui o Microsoft 365: ele se conecta a ele. As equipes continuam trabalhando no Outlook, Word, OneDrive e SharePoint, e o ShareFile adiciona o necessário quando os documentos saem da organização e é preciso trabalhar com clientes, fornecedores ou parceiros.", m365Adds: "O que o ShareFile adiciona para trabalhar com pessoas externas", plans: "Planos", planCheck: "Tabela de preços: desde o Advanced. Documentação do plugin: Premium ou superior.", group: "Categoria", industry: "Setor", all: "Todas", third: "Integrações de terceiros exigem as licenças do fornecedor; algumas podem estar limitadas ou indisponíveis.", source: "Fontes: sharefile.com/apps-integrations e docs.sharefile.com.", forIndustry: "Integrações para este setor", count: "integrações" },
     billing: { label: "Cobrança", monthly: "Mensal", annual: "Anual", perUserMonth: "por usuário / mês", annualNote: "cobrança anual", monthlyNote: "cobrança mensal", save: "Economize {n}%", explain: "Preços MSRP em USD de sharefile.com/plans. Com cobrança anual, o preço mensal por usuário diminui." },
     lang: "Português", siteTag: "Mapa de planos ShareFile", unofficial: "Site não oficial",
-    nav: { home: "Início", map: "Mapa de planos", vdr: "Data Room", recommend: "Recomendador", compare: "Comparador", matrix: "Matriz", calc: "Calculadora", knowledge: "Conhecimento", glossary: "Glossário", changelog: "Mudanças", discrepancies: "Discrepâncias" },
+    nav: { home: "Início", map: "Mapa de planos", vdr: "Data Room", recommend: "Recomendador", compare: "Comparador", matrix: "Matriz", calc: "Calculadora", knowledge: "Conhecimento", glossary: "Glossário", changelog: "Mudanças", discrepancies: "Discrepâncias", integrations: "Integrações" },
     by: "Por", updated: "Atualizado",
     home: {
       plans: "Planos", industries: "Setores", sizes: "Porte da empresa", tools: "Ferramentas", resources: "Recursos",
@@ -922,9 +1043,9 @@ const UI = {
   const routes = {
     home: renderHome, map: () => renderMap("all"), "map-a": () => renderMap("A"), "map-p": () => renderMap("P"), "map-e": () => renderMap("E"),
     vdr: renderVdr, recommend: renderRec, compare: renderCompare, matrix: renderMatrix, calc: renderCalc,
-    knowledge: renderKnowledge, glossary: renderGlossary, changelog: renderChangelog, discrepancies: renderDisc
+    integrations: renderIntegrations, knowledge: renderKnowledge, glossary: renderGlossary, changelog: renderChangelog, discrepancies: renderDisc
   };
-  const navKeys = ["home", "map", "vdr", "recommend", "compare", "matrix", "calc", "knowledge", "glossary"];
+  const navKeys = ["home", "map", "vdr", "recommend", "compare", "matrix", "calc", "integrations", "knowledge", "glossary"];
 
   function route() {
     let h = (location.hash || "#home").slice(1) || "home";
@@ -976,7 +1097,7 @@ const UI = {
         ${row(h.plans, [a("#map", h.allPlans), a("#map-a", "Advanced"), a("#map-p", "Premium " + h.stepup), a("#map-e", "Enterprise " + h.stepup), a("#vdr", "Virtual Data Room")].join(""))}
         ${row(h.industries, INDUSTRIES.map(i => a("#recommend-" + i.id, L(i.name))).join(""))}
         ${row(h.sizes, SIZES.map(s => a("#recommend-size-" + s.id, L(s.name))).join(""))}
-        ${row(h.tools, ["recommend", "compare", "matrix", "calc"].map(k => a("#" + k, u.nav[k])).join(""))}
+        ${row(h.tools, ["recommend", "compare", "matrix", "calc", "integrations"].map(k => a("#" + k, u.nav[k])).join(""))}
         ${row(h.resources, ["knowledge", "glossary", "changelog", "discrepancies"].map(k => a("#" + k, u.nav[k])).join(""))}
       </div>
       <div class="toolbar" style="margin-top:28px;margin-bottom:0">${billToggle()}<span class="hint">${esc(t().billing.explain)}</span></div>
@@ -1169,6 +1290,7 @@ const UI = {
       ${res.ind ? `<div><h3>${esc(R.needs)}</h3>${fl(res.needs)}</div>` : ""}
       ${sigFeatures.length ? `<div><h3>${esc(R.sigAdds)}</h3>${fl(sigFeatures)}</div>` : ""}
       ${res.vdr ? `<div class="note"><b>${esc(R.vdrToo)}.</b> ${esc(R.vdrWhy)} <span class="num">${money(priceOf(P.V))}</span> · <a href="#vdr">${esc(u.nav.vdr)}</a></div>` : ""}
+      ${res.ind && INTEGRATIONS.some(x => (x.ind || []).includes(res.ind.id)) ? `<div><h3>${esc(u.int.forIndustry)}</h3><ul class="flist">${INTEGRATIONS.filter(x => (x.ind || []).includes(res.ind.id)).map(x => `<li><span>${ext(x.url, esc(x.name))}</span><span>${esc(L(x.d)).slice(0, 60)}…</span></li>`).join("")}</ul></div>` : ""}
       ${warns.length ? `<div><h3>${esc(R.warnings)}</h3><ul>${warns.map(w => `<li>${esc(w)}</li>`).join("")}</ul></div>` : ""}
       <p class="hint">${esc(R.sizeNote)}</p>
       <div class="actions">
@@ -1355,6 +1477,53 @@ const UI = {
         ${PLANS.map(q => { const s = Math.max(c.users, q.min), pr = priceOf(q);
           return `<tr ${q.id === p.id ? 'style="background:var(--accent-soft)"' : ""}><td><b>${esc(q.name)}</b></td><td class="c num">${money(pr)}</td><td class="c num">${money(pr * s)}</td><td class="c num">${money(pr * s * 12, 0)}</td><td class="c num">${storageFor(q, s)}</td></tr>`; }).join("")}
       </tbody></table></div>`;
+  }
+
+  // ── Integrations
+  const planPills = x => {
+    if (x.plan === "check") return `<span class="pill warn">${esc(t().int.planCheck)}</span>`;
+    if (!x.plan) return "";
+    return PLANS.filter(p => x.plan.includes(p.id)).map(p => `<span class="pill">${esc(p.name)}</span>`).join("");
+  };
+  const intCard = x => `<article class="icard">
+      <h3>${ext(x.url, esc(x.name))}</h3>
+      <p>${esc(L(x.d))}</p>
+      ${x.n ? `<p class="hint">${esc(L(x.n))}</p>` : ""}
+      <div class="pills">${planPills(x)}${(x.badges || []).map(b => `<span class="pill warn">${esc(L(BADGES[b]))}</span>`).join("")}${(x.ind || []).map(i => `<span class="pill ok">${esc(L(IND[i].name))}</span>`).join("")}</div>
+      ${x.also ? `<p class="hint">${x.also.map(a => ext(a.url, esc(a.label) + " ↗")).join(" · ")}</p>` : ""}
+    </article>`;
+
+  function renderIntegrations() {
+    const u = t(), I = u.int;
+    state.intg = state.intg || { g: "", i: "" };
+    const adds = ["enhanced_portal", "request_list", "esign", "projects", "watermark", "view_only"];
+    $("#view").innerHTML = `
+      ${head(I.title, I.lead)}
+      <section class="box m365">
+        <h2>${esc(I.m365Title)}</h2>
+        <p>${esc(I.m365Msg)}</p>
+        <h3>${esc(I.m365Adds)}</h3>
+        <ul class="flist">${adds.map(id => { const f = F[id]; return `<li><span><i class="dot g-${f.g}"></i>${ext(f.url, esc(f.name))}</span><span>${esc(u.rec.from)} ${esc(P[tierOf(f)].name)}</span></li>`; }).join("")}</ul>
+      </section>
+      <div class="toolbar" style="margin-top:20px">
+        <label>${esc(I.group)} <select id="ig"><option value="">${esc(I.all)}</option>${INT_GROUPS.map(g => `<option value="${g.id}" ${state.intg.g === g.id ? "selected" : ""}>${esc(L(g.name))}</option>`).join("")}</select></label>
+        <label>${esc(I.industry)} ${industrySelect("ii", state.intg.i)}</label>
+        <span class="mx-count" id="icount"></span>
+      </div>
+      <div id="ilist"></div>
+      <p class="hint" style="margin-top:16px">${esc(I.third)} ${esc(I.source)}</p>`;
+    const draw = () => {
+      const s = state.intg;
+      const rows = INTEGRATIONS.filter(x => (!s.g || x.g === s.g) && (!s.i || (x.ind || []).includes(s.i) || x.g !== "ind"));
+      $("#ilist").innerHTML = INT_GROUPS.map(g => {
+        const xs = rows.filter(x => x.g === g.id);
+        return xs.length ? `<section class="igroup"><h2>${esc(L(g.name))}</h2><div class="igrid">${xs.map(intCard).join("")}</div></section>` : "";
+      }).join("");
+      $("#icount").textContent = rows.length + " " + I.count;
+    };
+    $("#ig").addEventListener("change", e => { state.intg.g = e.target.value; draw(); });
+    $("#ii").addEventListener("change", e => { state.intg.i = e.target.value; draw(); });
+    draw();
   }
 
   // ── Knowledge, glossary, logs

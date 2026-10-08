@@ -232,3 +232,13 @@ footer .wrap { padding-block: 22px calc(22px + env(safe-area-inset-bottom, 0px))
 .save { color: var(--accent); font-weight: 700; }
 .price .amt { display: flex; align-items: baseline; gap: 2px; flex-wrap: wrap; }
 .result-plan .seg { margin-left: auto; }
+
+/* Integrations */
+.m365 { border-left: 4px solid var(--brand); }
+.m365 > p { max-width: 75ch; }
+.igroup { margin-top: 26px; display: grid; gap: 12px; }
+.igrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr)); gap: 12px; }
+.icard { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.icard h3 a { text-decoration: none; }
+.icard h3 a:hover { text-decoration: underline; }
+.icard p { font-size: .9rem; }

@@ -81,9 +81,9 @@
   const routes = {
     home: renderHome, map: () => renderMap("all"), "map-a": () => renderMap("A"), "map-p": () => renderMap("P"), "map-e": () => renderMap("E"),
     vdr: renderVdr, recommend: renderRec, compare: renderCompare, matrix: renderMatrix, calc: renderCalc,
-    knowledge: renderKnowledge, glossary: renderGlossary, changelog: renderChangelog, discrepancies: renderDisc
+    integrations: renderIntegrations, knowledge: renderKnowledge, glossary: renderGlossary, changelog: renderChangelog, discrepancies: renderDisc
   };
-  const navKeys = ["home", "map", "vdr", "recommend", "compare", "matrix", "calc", "knowledge", "glossary"];
+  const navKeys = ["home", "map", "vdr", "recommend", "compare", "matrix", "calc", "integrations", "knowledge", "glossary"];
 
   function route() {
     let h = (location.hash || "#home").slice(1) || "home";
@@ -135,7 +135,7 @@
         ${row(h.plans, [a("#map", h.allPlans), a("#map-a", "Advanced"), a("#map-p", "Premium " + h.stepup), a("#map-e", "Enterprise " + h.stepup), a("#vdr", "Virtual Data Room")].join(""))}
         ${row(h.industries, INDUSTRIES.map(i => a("#recommend-" + i.id, L(i.name))).join(""))}
         ${row(h.sizes, SIZES.map(s => a("#recommend-size-" + s.id, L(s.name))).join(""))}
-        ${row(h.tools, ["recommend", "compare", "matrix", "calc"].map(k => a("#" + k, u.nav[k])).join(""))}
+        ${row(h.tools, ["recommend", "compare", "matrix", "calc", "integrations"].map(k => a("#" + k, u.nav[k])).join(""))}
         ${row(h.resources, ["knowledge", "glossary", "changelog", "discrepancies"].map(k => a("#" + k, u.nav[k])).join(""))}
       </div>
       <div class="toolbar" style="margin-top:28px;margin-bottom:0">${billToggle()}<span class="hint">${esc(t().billing.explain)}</span></div>
@@ -328,6 +328,7 @@
       ${res.ind ? `<div><h3>${esc(R.needs)}</h3>${fl(res.needs)}</div>` : ""}
       ${sigFeatures.length ? `<div><h3>${esc(R.sigAdds)}</h3>${fl(sigFeatures)}</div>` : ""}
       ${res.vdr ? `<div class="note"><b>${esc(R.vdrToo)}.</b> ${esc(R.vdrWhy)} <span class="num">${money(priceOf(P.V))}</span> · <a href="#vdr">${esc(u.nav.vdr)}</a></div>` : ""}
+      ${res.ind && INTEGRATIONS.some(x => (x.ind || []).includes(res.ind.id)) ? `<div><h3>${esc(u.int.forIndustry)}</h3><ul class="flist">${INTEGRATIONS.filter(x => (x.ind || []).includes(res.ind.id)).map(x => `<li><span>${ext(x.url, esc(x.name))}</span><span>${esc(L(x.d)).slice(0, 60)}…</span></li>`).join("")}</ul></div>` : ""}
       ${warns.length ? `<div><h3>${esc(R.warnings)}</h3><ul>${warns.map(w => `<li>${esc(w)}</li>`).join("")}</ul></div>` : ""}
       <p class="hint">${esc(R.sizeNote)}</p>
       <div class="actions">
@@ -514,6 +515,53 @@
         ${PLANS.map(q => { const s = Math.max(c.users, q.min), pr = priceOf(q);
           return `<tr ${q.id === p.id ? 'style="background:var(--accent-soft)"' : ""}><td><b>${esc(q.name)}</b></td><td class="c num">${money(pr)}</td><td class="c num">${money(pr * s)}</td><td class="c num">${money(pr * s * 12, 0)}</td><td class="c num">${storageFor(q, s)}</td></tr>`; }).join("")}
       </tbody></table></div>`;
+  }
+
+  // ── Integrations
+  const planPills = x => {
+    if (x.plan === "check") return `<span class="pill warn">${esc(t().int.planCheck)}</span>`;
+    if (!x.plan) return "";
+    return PLANS.filter(p => x.plan.includes(p.id)).map(p => `<span class="pill">${esc(p.name)}</span>`).join("");
+  };
+  const intCard = x => `<article class="icard">
+      <h3>${ext(x.url, esc(x.name))}</h3>
+      <p>${esc(L(x.d))}</p>
+      ${x.n ? `<p class="hint">${esc(L(x.n))}</p>` : ""}
+      <div class="pills">${planPills(x)}${(x.badges || []).map(b => `<span class="pill warn">${esc(L(BADGES[b]))}</span>`).join("")}${(x.ind || []).map(i => `<span class="pill ok">${esc(L(IND[i].name))}</span>`).join("")}</div>
+      ${x.also ? `<p class="hint">${x.also.map(a => ext(a.url, esc(a.label) + " ↗")).join(" · ")}</p>` : ""}
+    </article>`;
+
+  function renderIntegrations() {
+    const u = t(), I = u.int;
+    state.intg = state.intg || { g: "", i: "" };
+    const adds = ["enhanced_portal", "request_list", "esign", "projects", "watermark", "view_only"];
+    $("#view").innerHTML = `
+      ${head(I.title, I.lead)}
+      <section class="box m365">
+        <h2>${esc(I.m365Title)}</h2>
+        <p>${esc(I.m365Msg)}</p>
+        <h3>${esc(I.m365Adds)}</h3>
+        <ul class="flist">${adds.map(id => { const f = F[id]; return `<li><span><i class="dot g-${f.g}"></i>${ext(f.url, esc(f.name))}</span><span>${esc(u.rec.from)} ${esc(P[tierOf(f)].name)}</span></li>`; }).join("")}</ul>
+      </section>
+      <div class="toolbar" style="margin-top:20px">
+        <label>${esc(I.group)} <select id="ig"><option value="">${esc(I.all)}</option>${INT_GROUPS.map(g => `<option value="${g.id}" ${state.intg.g === g.id ? "selected" : ""}>${esc(L(g.name))}</option>`).join("")}</select></label>
+        <label>${esc(I.industry)} ${industrySelect("ii", state.intg.i)}</label>
+        <span class="mx-count" id="icount"></span>
+      </div>
+      <div id="ilist"></div>
+      <p class="hint" style="margin-top:16px">${esc(I.third)} ${esc(I.source)}</p>`;
+    const draw = () => {
+      const s = state.intg;
+      const rows = INTEGRATIONS.filter(x => (!s.g || x.g === s.g) && (!s.i || (x.ind || []).includes(s.i) || x.g !== "ind"));
+      $("#ilist").innerHTML = INT_GROUPS.map(g => {
+        const xs = rows.filter(x => x.g === g.id);
+        return xs.length ? `<section class="igroup"><h2>${esc(L(g.name))}</h2><div class="igrid">${xs.map(intCard).join("")}</div></section>` : "";
+      }).join("");
+      $("#icount").textContent = rows.length + " " + I.count;
+    };
+    $("#ig").addEventListener("change", e => { state.intg.g = e.target.value; draw(); });
+    $("#ii").addEventListener("change", e => { state.intg.i = e.target.value; draw(); });
+    draw();
   }
 
   // ── Knowledge, glossary, logs
