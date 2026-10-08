@@ -8,9 +8,10 @@
 <meta name="description" content="Unofficial map of ShareFile plans: features, industries, comparator, matrix and price calculator, linked to official documentation.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
 <style>
-/* Layout: licensing blueprint — a dense index on top, maps as banded grids (feature group × plan tier), tools as quiet panels. */
+/* Brand: Progress ShareFile green #5CE500 + charcoal #4B4E52, sampled from the official logo.
+   Layout: licensing blueprint — a dense index on top, maps as banded grids (feature group × plan tier), tools as quiet panels. */
 :root {
   --bg: #F2F4F7;
   --surface: #FFFFFF;
@@ -18,8 +19,11 @@
   --ink: #142030;
   --muted: #586678;
   --line: #D3DAE3;
-  --accent: #0A5BB0;
-  --accent-soft: #E3EEFA;
+  --brand: #5CE500;
+  --brand-ink: #15210B;
+  --charcoal: #4B4E52;
+  --accent: #2B7A0B;
+  --accent-soft: #E9F9DD;
   --good: #1E7A4C;
   --warn: #9A5B00;
   --warn-soft: #FFF3DD;
@@ -33,7 +37,7 @@
   --g-integ: #685822;
   --vdr: #B8860B;
   --shadow: 0 1px 2px rgba(20, 32, 48, .06), 0 4px 16px rgba(20, 32, 48, .06);
-  --f-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-display: "Montserrat", "Segoe UI", system-ui, sans-serif;
   --f-body: "IBM Plex Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
   --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
   --r: 6px;
@@ -41,13 +45,13 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #0D131A; --surface: #151E28; --sunk: #1B2632; --ink: #E4EBF3; --muted: #94A4B6; --line: #283646;
-    --accent: #72B4FF; --accent-soft: #16304D; --good: #5BC98E; --warn: #F0B45A; --warn-soft: #3A2A10;
+    --accent: #7FEA45; --accent-soft: #1C2E12; --good: #5BC98E; --warn: #F0B45A; --warn-soft: #3A2A10;
     --shadow: 0 1px 2px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.25); color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #0D131A; --surface: #151E28; --sunk: #1B2632; --ink: #E4EBF3; --muted: #94A4B6; --line: #283646;
-  --accent: #72B4FF; --accent-soft: #16304D; --good: #5BC98E; --warn: #F0B45A; --warn-soft: #3A2A10;
+  --accent: #7FEA45; --accent-soft: #1C2E12; --good: #5BC98E; --warn: #F0B45A; --warn-soft: #3A2A10;
   --shadow: 0 1px 2px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.25); color-scheme: dark;
 }
 
@@ -70,7 +74,7 @@ p { margin: 0; }
 
 /* ── Shell */
 .wrap { max-width: 1240px; margin: 0 auto; padding-inline: 16px; }
-header.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--surface); border-bottom: 1px solid var(--line); }
+header.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--surface); border-bottom: 1px solid var(--line); box-shadow: inset 0 3px 0 var(--brand); }
 .top-row { display: flex; align-items: center; gap: 14px; padding-block: 10px; flex-wrap: wrap; }
 .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); }
 .brand svg { flex: none; }
@@ -84,7 +88,8 @@ select, input[type="number"], input[type="search"], input[type="text"] {
 button { font: inherit; cursor: pointer; }
 .btn { border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: var(--r); padding: 6px 12px; min-height: 36px; font-weight: 550; }
 .btn:hover { border-color: var(--accent); }
-.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+.btn.primary { background: var(--brand); border-color: var(--brand); color: var(--brand-ink); }
+.btn.primary:hover { border-color: var(--charcoal); }
 nav.main { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: thin; padding-bottom: 6px; }
 nav.main a { white-space: nowrap; text-decoration: none; color: var(--muted); font-weight: 550; font-size: .88rem; padding: 6px 10px; border-radius: var(--r); }
 nav.main a:hover { color: var(--ink); background: var(--sunk); }
@@ -106,7 +111,7 @@ main { padding-block: 28px 56px; min-height: 60vh; }
 .price .amt { font: 600 1.6rem/1 var(--f-mono); }
 .price .amt small { font: 500 .78rem var(--f-body); color: var(--muted); }
 .price .tier-bar { height: 4px; border-radius: 2px; background: var(--line); overflow: hidden; }
-.price .tier-bar i { display: block; height: 100%; background: var(--accent); }
+.price .tier-bar i { display: block; height: 100%; background: var(--brand); }
 
 /* ── Map */
 .toolbar { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; margin-bottom: 14px; }
@@ -114,17 +119,17 @@ main { padding-block: 28px 56px; min-height: 60vh; }
 .seg { display: inline-flex; border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; flex-wrap: wrap; }
 .seg a, .seg button { text-decoration: none; border: 0; background: var(--surface); color: var(--muted); padding: 6px 11px; font-size: .84rem; font-weight: 550; border-right: 1px solid var(--line); }
 .seg > :last-child { border-right: 0; }
-.seg [aria-current="true"], .seg [aria-pressed="true"] { background: var(--accent); color: var(--surface); }
+.seg [aria-current="true"], .seg [aria-pressed="true"] { background: var(--charcoal); color: #FFFFFF; box-shadow: inset 0 -3px 0 var(--brand); }
 .map-frame { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow); overflow-x: auto; }
 .map-title { text-align: center; padding: 18px 12px 6px; }
-.map-title h2 { color: var(--accent); font-size: 1.5rem; }
+.map-title h2 { color: var(--ink); font-size: 1.5rem; }
 .map-title p { color: var(--muted); font-size: .82rem; }
 .map { display: grid; gap: 10px; padding: 14px; min-width: 0; }
 .map-head, .band { display: grid; grid-template-columns: 140px repeat(var(--cols), minmax(0, 1fr)); gap: 10px; }
-.map-head .th { border-radius: var(--r); padding: 8px 10px; text-align: center; font: 650 .86rem/1.2 var(--f-display); color: var(--surface); background: var(--ink); }
+.map-head .th { border-radius: var(--r); padding: 8px 10px; text-align: center; font: 700 .86rem/1.2 var(--f-display); color: #FFFFFF; background: var(--charcoal); box-shadow: inset 0 -3px 0 var(--brand); }
 .map-head .th small { display: block; font: 500 .7rem var(--f-body); opacity: .8; margin-top: 2px; }
-.map-head .th.t-P { background: #2B4C6E; } .map-head .th.t-E { background: #4A2E6E; }
-.band-label { display: flex; align-items: center; font: 650 .8rem/1.2 var(--f-display); color: var(--surface); border-radius: var(--r); padding: 8px 10px; }
+.map-head .th.t-P { background: #3A3D41; } .map-head .th.t-E { background: #2A2C2F; }
+.band-label { display: flex; align-items: center; font: 700 .8rem/1.2 var(--f-display); color: var(--surface); border-radius: var(--r); padding: 8px 10px; }
 .cell { border: 1.5px dashed var(--line); border-radius: var(--r); padding: 8px; display: flex; flex-wrap: wrap; gap: 6px; align-content: flex-start; min-height: 56px; min-width: 0; background: var(--sunk); }
 .cell .cell-tier { display: none; }
 .cell:empty::after { content: "—"; color: var(--muted); font-size: .8rem; margin: auto; }
@@ -176,7 +181,7 @@ legend { font: 650 .95rem var(--f-display); margin-bottom: 6px; padding: 0; }
 .choice { position: relative; }
 .choice input { position: absolute; opacity: 0; pointer-events: none; }
 .choice span { display: block; padding: 7px 11px; border: 1px solid var(--line); border-radius: var(--r); font-size: .86rem; font-weight: 550; cursor: pointer; background: var(--surface); }
-.choice input:checked + span { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+.choice input:checked + span { background: var(--charcoal); border-color: var(--charcoal); color: #FFFFFF; box-shadow: inset 0 -3px 0 var(--brand); }
 .choice input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
 .check { display: flex; gap: 10px; align-items: flex-start; font-size: .9rem; padding: 6px 0; cursor: pointer; }
 .check input { margin-top: 4px; width: 16px; height: 16px; accent-color: var(--accent); flex: none; }
@@ -242,10 +247,10 @@ footer .wrap { padding-block: 22px calc(22px + env(safe-area-inset-bottom, 0px))
     <div class="top-row">
       <a class="brand" href="#home" aria-label="ShareFile Maps">
         <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true">
-          <rect x="1" y="1" width="13" height="13" rx="2.5" fill="#3B5876"/>
-          <rect x="16" y="1" width="13" height="13" rx="2.5" fill="#1C5EA2"/>
-          <rect x="1" y="16" width="13" height="13" rx="2.5" fill="#1E6A5B"/>
-          <rect x="16" y="16" width="13" height="13" rx="2.5" fill="#9A2C3B"/>
+          <rect x="1" y="1" width="13" height="13" rx="2.5" fill="#5CE500"/>
+          <rect x="16" y="1" width="13" height="13" rx="2.5" fill="#4B4E52"/>
+          <rect x="1" y="16" width="13" height="13" rx="2.5" fill="#4B4E52"/>
+          <rect x="16" y="16" width="13" height="13" rx="2.5" fill="#5CE500"/>
         </svg>
         <span><b>ShareFile Maps</b><small id="brand-tag"></small></span>
       </a>
