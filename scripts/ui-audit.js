@@ -27,6 +27,9 @@ const ok = (c, m) => { if (c) pass++; else { fail++; fails.push(m); console.erro
     await page.goto(FILE + "#home");
     return { page, context, errors };
   };
+  // Chromium commits localStorage to the browser process in batches; reloading milliseconds after a write can read
+  // stale data (a test artifact: people don't reload that fast). Wait for the commit before a persistence check.
+  const reload = async page => { await page.waitForTimeout(1200); await page.reload(); await page.waitForLoadState("load"); };
   const go = async (page, r) => { await page.evaluate(h => { location.hash = h; }, r); await page.waitForTimeout(40); };
   const viewText = page => page.$eval("#view", v => v.innerText);
 
@@ -64,7 +67,7 @@ const ok = (c, m) => { if (c) pass++; else { fail++; fails.push(m); console.erro
     await page.selectOption("#lang", "en"); await page.waitForTimeout(50);
     ok(/Storage calculator/.test(await viewText(page)), "lang switch re-renders current page in EN");
     ok(await page.evaluate(() => location.hash) === "#calc", "lang switch keeps the current page");
-    await page.reload(); await page.waitForTimeout(50);
+    await reload(page); await page.waitForTimeout(50);
     ok(await page.$eval("#lang", s => s.value) === "en", "language persists after reload");
     const seen = new Set();
     for (let i = 0; i < 3; i++) { await page.click("#theme"); seen.add(await page.evaluate(() => document.documentElement.getAttribute("data-theme") || "system")); }
@@ -242,8 +245,10 @@ const ok = (c, m) => { if (c) pass++; else { fail++; fails.push(m); console.erro
       const want = ["V", "A", "E", "V", "P", "A"].map(id => Math.max(n, ctx.P.find(p => p.id === id).min));
       ok(seq.join() === want.join(), `calc round trip from ${n}: ${seq.join(",")} (want ${want.join(",")})`);
     }
-    await page.reload(); await page.waitForTimeout(80);
-    ok(await page.$eval("#kusers", i => +i.value) === Math.max(presets[presets.length - 1], 3), "calc keeps the reader's number after reload");
+    const before = await page.evaluate(() => [location.href, localStorage.getItem("sfm.calc3")].join(" "));
+    await reload(page); await page.waitForSelector("#kusers"); await page.waitForTimeout(80);
+    const kept = await page.$eval("#kusers", i => +i.value);
+    ok(kept === presets[presets.length - 1], `calc keeps the reader's number after reload (got ${kept}; ${before})`);
     const t = await page.$eval("#calcout", e => e.innerText);
     ok(/Storage is pooled/.test(t) && /not a per-user quota/.test(t), "calc explains pooled storage");
     ok(errors.length === 0, "calc no JS errors: " + errors.slice(0, 3).join(" | "));
@@ -323,7 +328,7 @@ const ok = (c, m) => { if (c) pass++; else { fail++; fails.push(m); console.erro
     const picksLegal = await page.$$eval(".apick li [data-detail]", b => b.map(x => x.dataset.detail));
     const legalFeats = new Set(ctx.U.filter(u => u.ind === "legal").flatMap(u => u.f));
     ok(picksLegal.length > 0 && picksLegal.every(id => legalFeats.has(id)), "adopt industry priorities come from that industry's use cases");
-    await page.reload(); await page.waitForSelector("#alist .arow"); await page.waitForTimeout(50);
+    await reload(page); await page.waitForSelector("#alist .arow"); await page.waitForTimeout(50);
     ok(await page.$eval('#aind', s => s.value) === "legal" && (await page.$$eval('#alist [aria-pressed="true"][data-v="y"]', b => b.length)) === 10, "adopt answers persist in this browser");
     await page.click("#acopy"); await page.waitForTimeout(50); ok(!!(await page.$(".toast")), "adopt copy summary confirms");
     await page.click("#areset"); ok((await page.$$eval("#adout .kpi b", b => b.map(x => x.textContent)))[0] === "0%", "adopt reset clears answers");
