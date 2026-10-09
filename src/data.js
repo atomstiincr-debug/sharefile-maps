@@ -1039,7 +1039,7 @@ const KNOWLEDGE = [
     { t: "Progress ShareFile: Tutorials (playlist)", u: "https://www.youtube.com/playlist?list=PLSKW9Jc-tCY9W-cB3G2OTYx00GXZrrzZB", v: 1 },
     { t: "Progress ShareFile: Demos (playlist)", u: "https://www.youtube.com/playlist?list=PLSKW9Jc-tCY8wmEjjJxq5I-0SIPjlI3oi", v: 1 },
     { t: "ShareFile YouTube", u: "https://www.youtube.com/@progresssharefile" },
-    { t: "Customer stories", u: W + "resource/customer-story/" },
+    { t: "Customer stories", u: W + "customer-stories" },
     { t: "ROI calculator", u: W + "client-coordination-cost-calculator" },
     { t: "Partner overview", u: W + "partners" },
     { t: "Partner login", u: "https://partnercommunity.sharefile.com/s/login/" }
