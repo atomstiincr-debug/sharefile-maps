@@ -35,7 +35,9 @@ HOMES = {"", "/en-us", "/en-us/sharefile", "/en-us/sharefile/welcome"}
 #  - appsource.microsoft.com blocks bots with 403; listing WA200007922 is linked from docs.sharefile.com (Outlook Online).
 #  - partnercommunity.sharefile.com is the "Partner Login" link on www.sharefile.com/partners.
 #  - sharefile.ideas.aha.io redirects to ShareFile sign-in (auth2.sharefile.io) via Progress identity: official, login required.
-MANUAL = {"appsource.microsoft.com", "partnercommunity.sharefile.com", "sharefile.ideas.aha.io"}
+#  - www.congreso.gob.pe and portal.ingemmet.gob.pe (Peru, official mirrors of Ley 29733, D.S. 016-2024-JUS and D.S. 052-2008-PCM)
+#    answer 404 to automated servers but open in a browser (verified by hand 2026-10-09).
+MANUAL = {"appsource.microsoft.com", "partnercommunity.sharefile.com", "sharefile.ideas.aha.io", "www.congreso.gob.pe", "portal.ingemmet.gob.pe"}
 manual = []
 bad, warn, ok = [], [], 0
 for u in sorted(urls | oembed):

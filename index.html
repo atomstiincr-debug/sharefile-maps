@@ -990,8 +990,8 @@ const USECASES = [
 // facts only from sharefile.com, docs.sharefile.com or trust.sharefile.com; never "ShareFile complies with";
 // the obligation stays with the customer. Verified 2026-10-08; items that could not be verified are omitted.
 const TRUST = "https://trust.sharefile.com/";
-const ZONES = D + "learn-more/sharefile-managed-storage-zones";
-const SZC = "https://docs.sharefile.com/en-us/storage-zones-controller/6-0/about";
+const ZONES = D + "account_settings/storage/sharefile-managed-storage-zones";
+const SZC = D + "storage-zones-controller/6-0/about";
 // ── Reusable building blocks for the remaining countries (same rules as the Costa Rica pilot)
 const T3 = (es, en, pt) => ({ es, en, pt });
 const TOP = {
@@ -1119,7 +1119,7 @@ const COMPLIANCE = [
   { id: "co", name: T3("Colombia", "Colombia", "Colômbia"), verified: "2026-10-09", residency: "none",
     norms: [
       { id: "co-1581", name: "Ley 1581 de 2012", title: T3("Protección de datos personales (reglamentada por el Decreto 1074 de 2015)", "Personal data protection (regulated by Decree 1074 of 2015)", "Proteção de dados pessoais (regulamentada pelo Decreto 1074 de 2015)"),
-        authority: "SIC · Delegatura para la Protección de Datos Personales", url: "https://www.secretariasenado.gov.co/senado/basedoc/ley_1581_2012.html",
+        authority: "SIC · Delegatura para la Protección de Datos Personales", url: "https://normograma.mintic.gov.co/mintic/compilacion/docs/ley_1581_2012.htm",
         applies: T3("Responsables y encargados del tratamiento de datos personales en Colombia.", "Controllers and processors of personal data in Colombia.", "Responsáveis e encarregados do tratamento de dados pessoais na Colômbia."),
         points: [
           PT("Art. 4 lit. g", "…se deberá manejar con las medidas técnicas, humanas y administrativas que sean necesarias para otorgar seguridad a los registros evitando su adulteración, pérdida, consulta, uso o acceso no autorizado o fraudulento;", "sec", "sec", YOU.sec),
@@ -1129,7 +1129,7 @@ const COMPLIANCE = [
             T3("Informar a la SIC cuando haya violaciones a los códigos de seguridad y riesgos para los titulares (los plazos se consultan en la normativa de la SIC).", "Inform the SIC of security-code violations that put data subjects at risk (check deadlines in SIC rules).", "Informar a SIC quando houver violações dos códigos de segurança e riscos aos titulares (os prazos estão na normativa da SIC)."))
         ] },
       { id: "co-sfc", name: "SFC · Circular Básica Jurídica", title: T3("Computación en la nube (CE 005 de 2019) y ciberseguridad (CE 007 de 2018)", "Cloud computing (CE 005 of 2019) and cybersecurity (CE 007 of 2018)", "Computação em nuvem (CE 005 de 2019) e cibersegurança (CE 007 de 2018)"),
-        authority: "Superintendencia Financiera de Colombia", url: "https://www.superfinanciera.gov.co/publicacion/10099659",
+        authority: "Superintendencia Financiera de Colombia", url: "https://www.superfinanciera.gov.co/publicaciones/10099659/normativanormativa-generalcirculares-externas-cartas-circulares-y-resoluciones-desde-el-ano-circulares-externascirculares-externas-10099659/",
         applies: T3("Entidades vigiladas por la Superintendencia Financiera.", "Entities supervised by the Financial Superintendency.", "Entidades supervisionadas pela Superintendência Financeira."),
         points: [
           PT("CE 005/2019 · num. 3.10", "Mantener cifrada la información clasificada como confidencial en tránsito o en reposo", "enc", "enc",
@@ -1137,7 +1137,7 @@ const COMPLIANCE = [
           PT("CE 005/2019 · num. 6", "Dentro de los 15 días anteriores al inicio del procesamiento de información en la nube…", "third", "third",
             T3("Enviar a la SFC la información requerida dentro de los 15 días anteriores a empezar a procesar en la nube, e incluir el riesgo en su SARO.", "Send the SFC the required information within the 15 days before starting cloud processing, and include the risk in its operational risk system (SARO).", "Enviar à SFC as informações exigidas nos 15 dias anteriores ao início do processamento na nuvem, e incluir o risco no seu SARO.")),
           Object.assign(PT("CE 007/2018 · num. 3.7.1", "…haciendo una breve descripción del incidente, su impacto y las medidas adoptadas para gestionarlo.", "incident", "incident",
-            T3("Reportar a la SFC los incidentes de ciberseguridad significativos e informar a los consumidores afectados.", "Report significant cybersecurity incidents to the SFC and inform affected consumers.", "Reportar à SFC os incidentes de cibersegurança significativos e informar os consumidores afetados.")), { links: [["https://www.superfinanciera.gov.co/publicacion/10096745", "SFC · CE 007 de 2018"]] })
+            T3("Reportar a la SFC los incidentes de ciberseguridad significativos e informar a los consumidores afectados.", "Report significant cybersecurity incidents to the SFC and inform affected consumers.", "Reportar à SFC os incidentes de cibersegurança significativos e informar os consumidores afetados.")), { links: [["https://www.superfinanciera.gov.co/publicaciones/10096745/normativanormativa-generalcirculares-externas-cartas-circulares-y-resoluciones-desde-el-ano-circulares-externascirculares-externas-10096745/", "SFC · CE 007 de 2018"]] })
         ] },
       { id: "co-527", name: "Ley 527 de 1999", title: T3("Mensajes de datos y firma digital", "Data messages and digital signature", "Mensagens de dados e assinatura digital"),
         authority: "ONAC (entidades de certificación digital)", url: "https://normograma.mintic.gov.co/mintic/compilacion/docs/ley_0527_1999.htm",
@@ -1434,7 +1434,7 @@ const KNOWLEDGE = [
     { t: "Progress ShareFile: Tutorials (playlist)", u: "https://www.youtube.com/playlist?list=PLSKW9Jc-tCY9W-cB3G2OTYx00GXZrrzZB", v: 1 },
     { t: "Progress ShareFile: Demos (playlist)", u: "https://www.youtube.com/playlist?list=PLSKW9Jc-tCY8wmEjjJxq5I-0SIPjlI3oi", v: 1 },
     { t: "ShareFile YouTube", u: "https://www.youtube.com/@progresssharefile" },
-    { t: "Customer stories", u: W + "customer-stories" },
+    { t: "Customer stories", u: W + "resource/customer-story/" },
     { t: "ROI calculator", u: W + "client-coordination-cost-calculator" },
     { t: "Partner overview", u: W + "partners" },
     { t: "Partner login", u: "https://partnercommunity.sharefile.com/s/login/" }
