@@ -91,7 +91,7 @@
   function route() {
     let h = (location.hash || "#home").slice(1) || "home";
     if (h.startsWith("recommend-size-")) { state.rec.size = h.slice(15); h = "recommend"; }
-    else if (h.startsWith("usecases-")) { const id = h.slice(9); state.uc = IND[id] ? id : ""; h = "usecases"; }
+    else if (h.startsWith("usecases-")) { const [id, cid] = h.slice(9).split("~"); state.uc = IND[id] ? id : ""; state.ucFocus = cid || ""; h = "usecases"; }
     else if (h.startsWith("recommend-")) { const id = h.slice(10); if (IND[id] || id === "other") { state.rec.ind = id; state.rec.sub = ""; } h = "recommend"; }
     const fn = routes[h] || renderHome;
     const navKey = h.startsWith("map") ? "map" : (routes[h] ? h : "home");
@@ -698,6 +698,10 @@
           ${hasCust ? "" : `<p class="hint">${esc(U.noCust)}</p>`}
           <div class="ucgrid">${xs.map(card).join("")}</div></section>`; }).join("");
       document.querySelectorAll("[data-uc]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.uc === state.uc)));
+      // Deep link to one case (#usecases-legal~leg-sign): scroll to it and highlight it
+      const fc = state.ucFocus && document.getElementById("uc-" + state.ucFocus);
+      if (fc) { fc.classList.add("focus"); setTimeout(() => { try { fc.scrollIntoView({ block: "center" }); } catch (e) { /* ignore */ } }, 0); }
+      state.ucFocus = "";
     };
     document.querySelectorAll("[data-uc]").forEach(b => b.addEventListener("click", () => {
       state.uc = b.dataset.uc;
@@ -759,7 +763,7 @@
           return `<li><b>${ext(f.url, esc(f.name))}</b> <button class="i" type="button" data-detail="${f.id}" aria-label="${esc(u.info + ": " + f.name)}">i</button>
             <span class="sub">${esc(L(f.d))}</span>
             ${vs.length ? `<span class="sub">${vs.map(v => "▶ " + ext(YT(v.id), esc(v.t))).join(" · ")}</span>` : ""}
-            ${ucs.length ? `<span class="sub">${esc(A.enables)}: ${ucs.slice(0, 4).map(x => `<a href="#usecases-${x.ind}">${esc(L(x.t))}</a>`).join(" · ")}${ucs.length > 4 ? " …" : ""}</span>` : ""}</li>`; }).join("")}</ol>
+            ${ucs.length ? `<span class="sub">${esc(A.enables)}: ${ucs.slice(0, 4).map(x => `<a href="#usecases-${x.ind}~${x.id}">${esc(L(x.t))}</a>`).join(" · ")}${ucs.length > 4 ? " …" : ""}</span>` : ""}</li>`; }).join("")}</ol>
         <button type="button" class="btn" id="acopy">${esc(A.copy)}</button>` : `<p class="note" style="margin-top:12px">${esc(A.allUsed)}</p>`}`;
       const c = $("#acopy");
       if (c) c.addEventListener("click", () => {

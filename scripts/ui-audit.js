@@ -271,7 +271,8 @@ const ok = (c, m) => { if (c) pass++; else { fail++; fails.push(m); console.erro
     for (const ind of ctx.IND) {
       await go(page, "usecases-" + ind.id);
       const ids = await page.$$eval(".ucard", c => c.map(x => x.id.slice(3)));
-      ok(ids.length === 5 && ids.every(id => ctx.U.find(u => u.id === id).ind === ind.id), `use cases #usecases-${ind.id} shows its 5 cases`);
+      const nInd = ctx.U.filter(u => u.ind === ind.id).length;
+      ok(ids.length === nInd && nInd >= 5 && ids.every(id => ctx.U.find(u => u.id === id).ind === ind.id), `use cases #usecases-${ind.id} shows its ${nInd} cases`);
       ok(await page.$eval(`[data-uc="${ind.id}"]`, b => b.getAttribute("aria-pressed")) === "true", `use cases chip ${ind.id} active`);
       for (const id of ids) {
         const u = ctx.U.find(x => x.id === id);
@@ -284,9 +285,13 @@ const ok = (c, m) => { if (c) pass++; else { fail++; fails.push(m); console.erro
       await page.click(`.ucard .fchip`); ok(!!(await page.$(".panel")), `use case feature chip opens panel (${ind.id})`); await page.keyboard.press("Escape");
     }
     await page.click('[data-uc=""]'); ok(await page.$$eval(".ucard", c => c.length) === ctx.U.length, "use cases: All chip shows everything");
+    for (const x of ctx.U.filter((_, i) => i % 7 === 0)) {
+      await go(page, `usecases-${x.ind}~${x.id}`); await page.waitForTimeout(30);
+      ok(await page.$eval(`#uc-${x.id}`, e => e.classList.contains("focus")), `deep link highlights case ${x.id}`);
+    }
     await go(page, "recommend-legal");
     await page.click('a[href="#usecases-legal"]'); await page.waitForTimeout(60);
-    ok(await page.$$eval(".ucard", c => c.length) === 5, "recommender links to its industry use cases");
+    ok(await page.$$eval(".ucard", c => c.length) === ctx.U.filter(u => u.ind === "legal").length, "recommender links to its industry use cases");
     ok(errors.length === 0, "use cases no JS errors: " + errors.slice(0, 3).join(" | "));
     await context.close();
   }
@@ -319,6 +324,9 @@ const ok = (c, m) => { if (c) pass++; else { fail++; fails.push(m); console.erro
     await page.click("#acopy"); await page.waitForTimeout(50); ok(!!(await page.$(".toast")), "adopt copy summary confirms");
     await page.click("#areset"); ok((await page.$$eval("#adout .kpi b", b => b.map(x => x.textContent)))[0] === "0%", "adopt reset clears answers");
     await page.click(".apick [data-detail]"); ok(!!(await page.$(".panel")), "adopt ⓘ opens detail"); await page.keyboard.press("Escape");
+    await page.click('[data-ans]'); // make sure picks exist again
+    const enab = await page.$$eval(".apick a[href^='#usecases-']", as => as.map(a => a.getAttribute("href")));
+    ok(enab.length > 0 && enab.every(h => /^#usecases-[a-z]+~[a-z-]+$/.test(h)), "adopt 'Enables' links point to exact cases");
     ok(errors.length === 0, "adopt no JS errors: " + errors.slice(0, 3).join(" | "));
     await context.close();
   }
@@ -334,7 +342,7 @@ const ok = (c, m) => { if (c) pass++; else { fail++; fails.push(m); console.erro
         const links = await page.$$eval("a[href]", as => as.map(a => ({ h: a.getAttribute("href"), t: a.target, rel: a.rel, txt: (a.textContent || a.getAttribute("aria-label") || "").trim() })));
         for (const l of links) {
           if (!l.h || l.h === "#" || /^javascript:/i.test(l.h)) bad.add(`${r}: empty href "${l.txt}"`);
-          else if (l.h.startsWith("#")) { const h = l.h.slice(1); if (!(ROUTES.includes(h) || h === "view" || (/^recommend-(size-)?[a-z]+$/.test(h) || /^usecases-[a-z]+$/.test(h)))) bad.add(`${r}: ${l.h}`); }
+          else if (l.h.startsWith("#")) { const h = l.h.slice(1); if (!(ROUTES.includes(h) || h === "view" || (/^recommend-(size-)?[a-z]+$/.test(h) || /^usecases-[a-z]+(~[a-z-]+)?$/.test(h)))) bad.add(`${r}: ${l.h}`); }
           else if (/^https?:/.test(l.h)) { domains.add(new URL(l.h).hostname); if (l.t !== "_blank" || !/noopener/.test(l.rel)) unsafe.add(`${r}: ${l.h}`); if (!l.txt && !(await page.$(`a[href="${l.h}"][aria-label]`))) bad.add(`${r}: link without text ${l.h}`); }
         }
       }

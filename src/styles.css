@@ -330,3 +330,4 @@ ol.path ul.sigs { margin: 6px 0 0; padding-left: 18px; font-size: .9rem; }
 .apick { padding-left: 20px; display: grid; gap: 10px; margin: 8px 0 14px; }
 @media (max-width: 600px) { .arow { flex-direction: column; align-items: stretch; } .arow .seg.ans { align-self: flex-start; } }
 @media (min-width: 901px) { nav.main { flex-wrap: wrap; overflow-x: visible; row-gap: 2px; } }
+.ucard.focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }

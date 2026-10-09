@@ -254,7 +254,7 @@ for (const lang of ["es", "en", "pt"]) {
     go(env, r);
     env.d.querySelectorAll('a[href^="#"]').forEach(a => {
       const h = a.getAttribute("href").slice(1);
-      const okRoute = routes.includes(h) || (/^recommend-(size-)?[a-z]+$/.test(h) || /^usecases-[a-z]+$/.test(h)) || h === "view";
+      const okRoute = routes.includes(h) || (/^recommend-(size-)?[a-z]+$/.test(h) || /^usecases-[a-z]+(~[a-z-]+)?$/.test(h)) || h === "view";
       if (!okRoute) bad.add(h);
     });
   }

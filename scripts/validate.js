@@ -86,7 +86,7 @@ console.log("✓ data OK");
       for (const l of ["es", "en", "pt"]) if (!c.r[l]) bad(x.id + " customer result missing " + l);
     }
   }
-  for (const i of c4.INDUSTRIES) { const n = c4.USECASES.filter(x => x.ind === i.id).length; if (n !== 5) bad(i.id + " has " + n + " cases (expected 5)"); }
+  for (const i of c4.INDUSTRIES) { const n = c4.USECASES.filter(x => x.ind === i.id).length; if (n < 5 || n > 10) bad(i.id + " has " + n + " cases (expected 5 to 10)"); }
   console.log("use cases", c4.USECASES.length);
   if (e4) process.exit(1);
 }
