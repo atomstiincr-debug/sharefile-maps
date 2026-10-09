@@ -328,6 +328,20 @@ ol.path ul.sigs { margin: 6px 0 0; padding-left: 18px; font-size: .9rem; }
 @media (max-width: 760px) { .map-prices { display: grid; gap: 4px; } }
 /* Chips with long text (e.g. VDR price) wrap instead of pushing the page sideways */
 .toolbar .chip { white-space: normal; max-width: 100%; }
+/* Get more from your plan */
+.adopt-out { margin-top: 16px; }
+.adopt-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.adopt-head h2 { margin: 0; font-size: 1.15rem; }
+.agrp h3 { display: flex; align-items: center; gap: 4px; font-size: .95rem; margin: 18px 0 6px; }
+.arow { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px dotted var(--line); }
+.arow .sub, .apick .sub { display: block; color: var(--muted); font-size: .84rem; margin-top: 2px; }
+.arow .seg.ans { flex: none; }
+.seg.ans button[aria-pressed="true"][data-v="y"] { background: var(--accent); color: var(--surface); }
+.seg.ans button[aria-pressed="true"][data-v="n"] { background: var(--charcoal); color: #fff; }
+.seg.ans button[aria-pressed="true"][data-v="u"] { background: var(--sunk, var(--line)); color: var(--ink); }
+.apick { padding-left: 20px; display: grid; gap: 10px; margin: 8px 0 14px; }
+@media (max-width: 600px) { .arow { flex-direction: column; align-items: stretch; } .arow .seg.ans { align-self: flex-start; } }
+@media (min-width: 901px) { nav.main { flex-wrap: wrap; overflow-x: visible; row-gap: 2px; } }
 
 </style>
 </head>
@@ -379,7 +393,7 @@ const OVERVIEW_VIDEO = { id: "yQkpfDLkCk0", t: "Progress ShareFile - Built For T
 const TUTORIALS = "https://www.youtube.com/playlist?list=PLSKW9Jc-tCY9W-cB3G2OTYx00GXZrrzZB";
 
 const SITE = {
-  version: "1.6.2",
+  version: "1.7.0",
   updated: "2026-10-08",
   author: "Adrián Bonilla",
   pricingSource: W + "plans",
@@ -962,6 +976,7 @@ const DISCREPANCIES = [
 
 
 const CHANGELOG = [
+  { v: "1.7.0", date: "2026-10-08", d: { es: "Nueva página «Aprovecha tu plan»: autodiagnóstico de las funciones que el cliente ya paga (La usamos / No la usamos / No sé), porcentaje de adopción, las 5 funciones por las que conviene empezar según los casos de uso de su industria, guía oficial y videos, y resumen para copiar. Las respuestas quedan solo en el navegador. En computadora, el menú superior ahora muestra todas las secciones.", en: "New “Get more from your plan” page: self-diagnosis of the features the customer already pays for (We use it / We don't / Not sure), adoption rate, the 5 features to start with based on their industry's use cases, official guide and videos, and a summary to copy. Answers stay in the browser. On desktop the top menu now shows every section.", pt: "Nova página «Aproveite seu plano»: autodiagnóstico dos recursos que o cliente já paga (Usamos / Não usamos / Não sei), taxa de adoção, os 5 recursos para começar segundo os casos de uso do setor, guia oficial e vídeos, e resumo para copiar. As respostas ficam só no navegador. No computador, o menu superior agora mostra todas as seções." } },
   { v: "1.6.2", date: "2026-10-08", d: { es: "Precios con la redacción oficial de sharefile.com/plans («por usuario / mes» y «Mínimo de 3 usuarios», VDR 5) en Inicio, Mapa, Data Room y Matriz. Corrige un desborde horizontal en la página Data Room en celulares pequeños.", en: "Prices use the official sharefile.com/plans wording (“per user / month” and “Minimum of 3 users”, VDR 5) on Home, Map, Data Room and Matrix. Fixes a horizontal overflow on the Data Room page on small phones.", pt: "Preços com a redação oficial de sharefile.com/plans («por usuário / mês» e «Mínimo de 3 usuários», VDR 5) em Início, Mapa, Data Room e Matriz. Corrige um transbordamento horizontal na página Data Room em celulares pequenos." } },
   { v: "1.6.1", date: "2026-10-08", d: { es: "Mapa, Data Room y Matriz: cada precio indica «por usuario / mes», el tipo de facturación y el mínimo de usuarios del plan. Las columnas Premium y Enterprise del mapa muestran lo que agregan y el total del plan (ej. +28 funciones, 62 en total). En celulares, el mapa muestra el precio y el mínimo que antes quedaban ocultos.", en: "Map, Data Room and Matrix: every price states “per user / month”, the billing type and the plan's minimum users. The Premium and Enterprise map columns show what they add and the plan total (e.g. +28 features, 62 in total). On phones the map now shows the price and minimum that were hidden.", pt: "Mapa, Data Room e Matriz: cada preço indica «por usuário / mês», o tipo de faturamento e o mínimo de usuários do plano. As colunas Premium e Enterprise do mapa mostram o que adicionam e o total do plano (ex. +28 recursos, 62 no total). Em celulares, o mapa mostra o preço e o mínimo que antes ficavam ocultos." } },
   { v: "1.6.0", date: "2026-10-08", d: { es: "Nueva página «Casos de uso»: 5 procesos por cada una de las 9 industrias, con funciones enlazadas, plan mínimo calculado, clientes publicados por ShareFile (cifras tal como las publica cada historia) y fuente oficial. El Recomendador enlaza a los casos de su industria. El pie de página invita a verificar en sharefile.com, docs.sharefile.com y trust.sharefile.com y a contactar al representante de ShareFile de cada región.", en: "New “Use cases” page: 5 processes for each of the 9 industries, with linked features, computed minimum plan, customers published by ShareFile (figures as each story states them) and official source. The Recommender links to its industry's cases. The footer invites readers to verify on sharefile.com, docs.sharefile.com and trust.sharefile.com and to contact their regional ShareFile representative.", pt: "Nova página «Casos de uso»: 5 processos para cada um dos 9 setores, com recursos vinculados, plano mínimo calculado, clientes publicados pelo ShareFile (números como cada história os publica) e fonte oficial. O Recomendador leva aos casos do seu setor. O rodapé convida a verificar em sharefile.com, docs.sharefile.com e trust.sharefile.com e a falar com o representante ShareFile da região." } },
@@ -1107,7 +1122,7 @@ const UI = {
     int: { title: "Integraciones", lead: "Integraciones oficiales de ShareFile con herramientas de correo, almacenamiento, identidad, seguridad, CRM y contabilidad, más integraciones por industria. Cada una enlaza a su documentación oficial.", search: "Buscar integración (ej. Salesforce)", plans: "Planes", planCheck: "Tabla de precios: desde Advanced. Documentación del plugin: Premium o superior.", group: "Categoría", industry: "Industria", all: "Todas", third: "Las integraciones de terceros requieren las licencias del proveedor correspondiente; algunas pueden estar limitadas o no disponibles.", source: "Fuentes: sharefile.com/apps-integrations y docs.sharefile.com.", forIndustry: "Integraciones para esta industria", specific: "Específicas de {i}", noSpecific: "ShareFile no publica integraciones específicas para {i}. Las de abajo sirven igual.", featured: "Destacadas en la página oficial de {i}", noFeatured: "La página oficial de {i} no destaca integraciones concretas.", general: "Resto de integraciones, por función (sirven para cualquier industria)", hidden: "Se ocultan {n} integraciones específicas de otras industrias.", count: "integraciones" },
     billing: { label: "Facturación", monthly: "Mensual", annual: "Anual", perUserMonth: "por usuario / mes", minUsers: "Mínimo de {n} usuarios", annualNote: "facturación anual", monthlyNote: "facturación mensual", save: "Ahorra {n}%", explain: "Precios MSRP en USD de sharefile.com/plans. Con facturación anual, el precio mensual por usuario baja." },
     lang: "Español", siteTag: "Mapa de planes ShareFile", unofficial: "Sitio no oficial", skip: "Saltar al contenido",
-    nav: { home: "Inicio", map: "Mapa de planes", vdr: "Data Room", recommend: "Recomendador", compare: "Comparador", matrix: "Matriz", calc: "Calculadora", knowledge: "Conocimiento", glossary: "Glosario", changelog: "Cambios", discrepancies: "Discrepancias", integrations: "Integraciones", usecases: "Casos de uso" },
+    nav: { home: "Inicio", map: "Mapa de planes", vdr: "Data Room", recommend: "Recomendador", compare: "Comparador", matrix: "Matriz", calc: "Calculadora", knowledge: "Conocimiento", glossary: "Glosario", changelog: "Cambios", discrepancies: "Discrepancias", integrations: "Integraciones", usecases: "Casos de uso", adopt: "Aprovecha tu plan" },
     by: "Por", updated: "Actualizado",
     home: {
       plans: "Planes", industries: "Industrias", sizes: "Tamaño de empresa", tools: "Herramientas", resources: "Recursos",
@@ -1167,6 +1182,7 @@ const UI = {
     ch: { title: "Registro de cambios", lead: "Qué cambió en este sitio y cuándo." },
     ds: { title: "Discrepancias en la fuente oficial", lead: "Inconsistencias encontradas en sharefile.com o en la documentación, y cómo se tratan aquí.", where: "Dónde" },
     uc: { lead: "Los 5 procesos más comunes por industria, según las páginas oficiales de ShareFile, con las funciones que los resuelven, el plan mínimo y clientes publicados por ShareFile.", all: "Todas", problem: "El problema", how: "Cómo ayuda ShareFile", from: "Desde {p}", customers: "Clientes publicados", source: "Fuente oficial", noCust: "ShareFile no publica historias de clientes recientes para esta industria.", signNote: "La firma electrónica de ShareFile es firma electrónica simple. Para actos que la ley de tu país reserva a la firma digital certificada o a un notario, usa esa vía; ShareFile puede guardar y compartir esos documentos ya firmados.", verify: "Las cifras de clientes son las que publica cada historia en sharefile.com. Verifícalas en la fuente y consulta al representante de ShareFile de tu región.", seeAll: "Ver los casos de uso de {ind}", count: "{n} casos" },
+    adopt: { lead: "Autodiagnóstico: marca qué funciones de tu plan ya usan y descubre por dónde empezar con lo que ya pagan.", step1: "1. Tu plan actual", industry: "Industria (opcional, prioriza mejor)", privacy: "Tus respuestas se guardan solo en este navegador. No se envían a nadie.", step2: "2. ¿Qué funciones usan hoy?", reset: "Borrar respuestas", dataHint: "¿No sabes qué se usa? El administrador puede verlo con el reporte oficial de uso y actividad:", yes: "La usamos", no: "No la usamos", unknown: "No sé", adoption: "Adopción del plan", ofTotal: "{n} funciones activables en {p}.", startHere: "Empieza por aquí", why: "Funciones sin usar o sin confirmar que más casos de uso habilitan.", whyInd: "Funciones sin usar o sin confirmar que más casos de uso de {ind} habilitan.", enables: "Habilita", copy: "Copiar resumen", copied: "Resumen copiado", allUsed: "¡Usan todas las funciones activables de su plan!", sumHead: "Plan {p}: adopción {pct}% ({y} de {n} funciones).", sumFoot: "Fuente: guías oficiales de docs.sharefile.com. Para ayuda, contacta al representante de ShareFile de tu región o a tu partner." },
     foot: {
       disclaimer: "Sitio no oficial, mantenido de forma independiente. No representa a Progress Software Corporation. ShareFile y Progress son marcas de Progress Software Corporation.",
       truth: "Fuentes oficiales: {links}. Verifica siempre la información ahí y, antes de cualquier decisión, contacta al representante de ShareFile de tu región o a tu partner.",
@@ -1181,7 +1197,7 @@ const UI = {
     int: { title: "Integrations", lead: "Official ShareFile integrations with email, storage, identity, security, CRM and accounting tools, plus industry-specific integrations. Each links to its official documentation.", search: "Search integrations (e.g. Salesforce)", plans: "Plans", planCheck: "Pricing table: from Advanced. Plug-in documentation: Premium or higher.", group: "Category", industry: "Industry", all: "All", third: "Third-party integrations require the vendor's licenses; some may be limited or unavailable.", source: "Sources: sharefile.com/apps-integrations and docs.sharefile.com.", forIndustry: "Integrations for this industry", specific: "Specific to {i}", noSpecific: "ShareFile publishes no integrations specific to {i}. The ones below still apply.", featured: "Featured on the official {i} page", noFeatured: "The official {i} page does not feature specific integrations.", general: "Other integrations, by function (useful for any industry)", hidden: "{n} integrations specific to other industries are hidden.", count: "integrations" },
     billing: { label: "Billing", monthly: "Monthly", annual: "Annual", perUserMonth: "per user / month", minUsers: "Minimum of {n} users", annualNote: "billed annually", monthlyNote: "billed monthly", save: "Save {n}%", explain: "MSRP in USD from sharefile.com/plans. Annual billing lowers the monthly price per user." },
     lang: "English", siteTag: "ShareFile plans map", unofficial: "Unofficial site", skip: "Skip to content",
-    nav: { home: "Home", map: "Plans map", vdr: "Data Room", recommend: "Recommender", compare: "Comparator", matrix: "Matrix", calc: "Calculator", knowledge: "Knowledge", glossary: "Glossary", changelog: "Changes", discrepancies: "Discrepancies", integrations: "Integrations", usecases: "Use cases" },
+    nav: { home: "Home", map: "Plans map", vdr: "Data Room", recommend: "Recommender", compare: "Comparator", matrix: "Matrix", calc: "Calculator", knowledge: "Knowledge", glossary: "Glossary", changelog: "Changes", discrepancies: "Discrepancies", integrations: "Integrations", usecases: "Use cases", adopt: "Get more from your plan" },
     by: "By", updated: "Updated",
     home: {
       plans: "Plans", industries: "Industries", sizes: "Company size", tools: "Tools", resources: "Resources",
@@ -1241,6 +1257,7 @@ const UI = {
     ch: { title: "Change log", lead: "What changed on this site and when." },
     ds: { title: "Discrepancies in the official source", lead: "Inconsistencies found on sharefile.com or in the documentation, and how this site handles them.", where: "Where" },
     uc: { lead: "The 5 most common processes per industry, from ShareFile's official pages, with the features that solve them, the minimum plan and customers ShareFile has published.", all: "All", problem: "The problem", how: "How ShareFile helps", from: "From {p}", customers: "Published customers", source: "Official source", noCust: "ShareFile publishes no recent customer stories for this industry.", signNote: "ShareFile's e-signature is a simple electronic signature. For acts your country's law reserves for a certified digital signature or a notary, use that route; ShareFile can store and share those signed documents.", verify: "Customer figures are those each story publishes on sharefile.com. Verify them at the source and talk to your regional ShareFile representative.", seeAll: "See the {ind} use cases", count: "{n} cases" },
+    adopt: { lead: "Self-diagnosis: mark which features of your plan you already use and find where to start with what you already pay for.", step1: "1. Your current plan", industry: "Industry (optional, better priorities)", privacy: "Your answers are stored only in this browser. Nothing is sent to anyone.", step2: "2. Which features do you use today?", reset: "Clear answers", dataHint: "Not sure what's used? The admin can check it with the official usage and activity report:", yes: "We use it", no: "We don't", unknown: "Not sure", adoption: "Plan adoption", ofTotal: "{n} features you can turn on in {p}.", startHere: "Start here", why: "Unused or unconfirmed features that enable the most use cases.", whyInd: "Unused or unconfirmed features that enable the most {ind} use cases.", enables: "Enables", copy: "Copy summary", copied: "Summary copied", allUsed: "You use every feature you can turn on in your plan!", sumHead: "{p} plan: {pct}% adoption ({y} of {n} features).", sumFoot: "Source: official docs.sharefile.com guides. For help, contact your regional ShareFile representative or your partner." },
     foot: {
       disclaimer: "Unofficial site, independently maintained. It does not represent Progress Software Corporation. ShareFile and Progress are trademarks of Progress Software Corporation.",
       truth: "Official sources: {links}. Always verify the information there and, before any decision, contact your regional ShareFile representative or your partner.",
@@ -1255,7 +1272,7 @@ const UI = {
     int: { title: "Integrações", lead: "Integrações oficiais do ShareFile com ferramentas de e-mail, armazenamento, identidade, segurança, CRM e contabilidade, além de integrações por setor. Cada uma leva à documentação oficial.", search: "Buscar integração (ex. Salesforce)", plans: "Planos", planCheck: "Tabela de preços: desde o Advanced. Documentação do plugin: Premium ou superior.", group: "Categoria", industry: "Setor", all: "Todas", third: "Integrações de terceiros exigem as licenças do fornecedor; algumas podem estar limitadas ou indisponíveis.", source: "Fontes: sharefile.com/apps-integrations e docs.sharefile.com.", forIndustry: "Integrações para este setor", specific: "Específicas de {i}", noSpecific: "O ShareFile não publica integrações específicas para {i}. As abaixo também se aplicam.", featured: "Destacadas na página oficial de {i}", noFeatured: "A página oficial de {i} não destaca integrações específicas.", general: "Demais integrações, por função (servem para qualquer setor)", hidden: "{n} integrações específicas de outros setores estão ocultas.", count: "integrações" },
     billing: { label: "Cobrança", monthly: "Mensal", annual: "Anual", perUserMonth: "por usuário / mês", minUsers: "Mínimo de {n} usuários", annualNote: "cobrança anual", monthlyNote: "cobrança mensal", save: "Economize {n}%", explain: "Preços MSRP em USD de sharefile.com/plans. Com cobrança anual, o preço mensal por usuário diminui." },
     lang: "Português", siteTag: "Mapa de planos ShareFile", unofficial: "Site não oficial", skip: "Pular para o conteúdo",
-    nav: { home: "Início", map: "Mapa de planos", vdr: "Data Room", recommend: "Recomendador", compare: "Comparador", matrix: "Matriz", calc: "Calculadora", knowledge: "Conhecimento", glossary: "Glossário", changelog: "Mudanças", discrepancies: "Discrepâncias", integrations: "Integrações", usecases: "Casos de uso" },
+    nav: { home: "Início", map: "Mapa de planos", vdr: "Data Room", recommend: "Recomendador", compare: "Comparador", matrix: "Matriz", calc: "Calculadora", knowledge: "Conhecimento", glossary: "Glossário", changelog: "Mudanças", discrepancies: "Discrepâncias", integrations: "Integrações", usecases: "Casos de uso", adopt: "Aproveite seu plano" },
     by: "Por", updated: "Atualizado",
     home: {
       plans: "Planos", industries: "Setores", sizes: "Porte da empresa", tools: "Ferramentas", resources: "Recursos",
@@ -1315,6 +1332,7 @@ const UI = {
     ch: { title: "Registro de mudanças", lead: "O que mudou neste site e quando." },
     ds: { title: "Discrepâncias na fonte oficial", lead: "Inconsistências encontradas no sharefile.com ou na documentação, e como são tratadas aqui.", where: "Onde" },
     uc: { lead: "Os 5 processos mais comuns por setor, segundo as páginas oficiais do ShareFile, com os recursos que os resolvem, o plano mínimo e clientes publicados pelo ShareFile.", all: "Todos", problem: "O problema", how: "Como o ShareFile ajuda", from: "A partir do {p}", customers: "Clientes publicados", source: "Fonte oficial", noCust: "O ShareFile não publica histórias recentes de clientes deste setor.", signNote: "A assinatura eletrônica do ShareFile é uma assinatura eletrônica simples. Para atos que a lei do seu país reserva à assinatura digital certificada (como ICP-Brasil) ou ao cartório, use essa via; o ShareFile pode guardar e compartilhar esses documentos já assinados.", verify: "Os números de clientes são os que cada história publica em sharefile.com. Confira na fonte e fale com o representante ShareFile da sua região.", seeAll: "Ver os casos de uso de {ind}", count: "{n} casos" },
+    adopt: { lead: "Autodiagnóstico: marque quais recursos do seu plano vocês já usam e descubra por onde começar com o que já pagam.", step1: "1. Seu plano atual", industry: "Setor (opcional, prioriza melhor)", privacy: "Suas respostas ficam só neste navegador. Nada é enviado a ninguém.", step2: "2. Quais recursos vocês usam hoje?", reset: "Apagar respostas", dataHint: "Não sabe o que é usado? O administrador pode ver no relatório oficial de uso e atividade:", yes: "Usamos", no: "Não usamos", unknown: "Não sei", adoption: "Adoção do plano", ofTotal: "{n} recursos ativáveis no {p}.", startHere: "Comece por aqui", why: "Recursos não usados ou não confirmados que mais habilitam casos de uso.", whyInd: "Recursos não usados ou não confirmados que mais habilitam casos de uso de {ind}.", enables: "Habilita", copy: "Copiar resumo", copied: "Resumo copiado", allUsed: "Vocês usam todos os recursos ativáveis do plano!", sumHead: "Plano {p}: adoção de {pct}% ({y} de {n} recursos).", sumFoot: "Fonte: guias oficiais de docs.sharefile.com. Para ajuda, fale com o representante ShareFile da sua região ou com seu parceiro." },
     foot: {
       disclaimer: "Site não oficial, mantido de forma independente. Não representa a Progress Software Corporation. ShareFile e Progress são marcas da Progress Software Corporation.",
       truth: "Fontes oficiais: {links}. Verifique sempre as informações ali e, antes de qualquer decisão, fale com o representante ShareFile da sua região ou com seu parceiro.",
@@ -1411,9 +1429,9 @@ const UI = {
   const routes = {
     home: renderHome, map: () => renderMap("all"), "map-a": () => renderMap("A"), "map-p": () => renderMap("P"), "map-e": () => renderMap("E"),
     vdr: renderVdr, recommend: renderRec, compare: renderCompare, matrix: renderMatrix, calc: renderCalc,
-    integrations: renderIntegrations, usecases: renderUseCases, knowledge: renderKnowledge, glossary: renderGlossary, changelog: renderChangelog, discrepancies: renderDisc
+    integrations: renderIntegrations, usecases: renderUseCases, adopt: renderAdopt, knowledge: renderKnowledge, glossary: renderGlossary, changelog: renderChangelog, discrepancies: renderDisc
   };
-  const navKeys = ["home", "map", "vdr", "recommend", "usecases", "compare", "matrix", "calc", "integrations", "knowledge", "glossary"];
+  const navKeys = ["home", "map", "vdr", "recommend", "usecases", "adopt", "compare", "matrix", "calc", "integrations", "knowledge", "glossary"];
 
   function route() {
     let h = (location.hash || "#home").slice(1) || "home";
@@ -1468,7 +1486,7 @@ const UI = {
         ${row(h.plans, [a("#map", h.allPlans), a("#map-a", "Advanced"), a("#map-p", "Premium " + h.stepup), a("#map-e", "Enterprise " + h.stepup), a("#vdr", "Virtual Data Room")].join(""))}
         ${row(h.industries, INDUSTRIES.map(i => a("#recommend-" + i.id, L(i.name))).join(""))}
         ${row(h.sizes, SIZES.map(s => a("#recommend-size-" + s.id, L(s.name))).join(""))}
-        ${row(h.tools, ["recommend", "usecases", "compare", "matrix", "calc"].map(k => a("#" + k, u.nav[k])).join(""))}
+        ${row(h.tools, ["recommend", "usecases", "adopt", "compare", "matrix", "calc"].map(k => a("#" + k, u.nav[k])).join(""))}
         ${row(h.resources, ["integrations", "knowledge", "glossary", "changelog", "discrepancies"].map(k => a("#" + k, u.nav[k])).join(""))}
       </div>
       <div class="toolbar" style="margin-top:28px;margin-bottom:0">${billToggle()}<span class="hint">${esc(t().billing.explain)}</span></div>
@@ -2032,6 +2050,77 @@ const UI = {
       draw();
     }));
     draw();
+  }
+
+  // ── Make the most of your plan: self-diagnosis (answers stay in this browser only)
+  // Always-on items that are not something a customer "adopts".
+  const PASSIVE = new Set(["anytime_access", "file_encryption", "unlimited_clients", "support", "storage", "vdr_storage", "device_security"]);
+  function renderAdopt() {
+    const u = t(), A = u.adopt;
+    const s = state.adopt = state.adopt || store.get("adopt", { plan: "P", ind: "", ans: {} });
+    $("#view").innerHTML = `
+      ${head(u.nav.adopt, A.lead)}
+      <div class="box">
+        <fieldset><legend>${esc(A.step1)}</legend><div class="choices">
+          ${PLANS.map(p => `<label class="choice"><input type="radio" name="aplan" value="${p.id}" ${s.plan === p.id ? "checked" : ""}><span>${esc(p.name)}</span></label>`).join("")}
+        </div></fieldset>
+        <label class="hint">${esc(A.industry)} ${industrySelect("aind", s.ind)}</label>
+        <p class="hint" style="margin-top:10px">${esc(A.privacy)}</p>
+      </div>
+      <section class="box adopt-out" id="adout" aria-live="polite"></section>
+      <div class="box" style="margin-top:16px">
+        <div class="adopt-head"><h2>${esc(A.step2)}</h2><button type="button" class="btn" id="areset">${esc(A.reset)}</button></div>
+        <p class="hint">${esc(A.dataHint)} ${ext(F.reports.url, "Activity Logs and Reports")}</p>
+        <div id="alist"></div>
+      </div>`;
+    const feats = () => FEATURES.filter(f => f.plans.includes(s.plan) && !PASSIVE.has(f.id));
+    const ANS = [["y", A.yes], ["n", A.no], ["u", A.unknown]];
+    const drawList = () => {
+      $("#alist").innerHTML = GROUPS.map(g => { const fs = feats().filter(f => f.g === g.id); if (!fs.length) return "";
+        return `<div class="agrp"><h3><i class="dot g-${g.id}"></i>${esc(L(g.name))}</h3>${fs.map(f => `<div class="arow">
+          <div><span class="feat">${ext(f.url, esc(f.name))}</span><span class="sub">${esc(L(f.d))}</span></div>
+          <span class="seg ans" role="group" aria-label="${esc(f.name)}">${ANS.map(([k, l]) => `<button type="button" data-ans="${f.id}" data-v="${k}" aria-pressed="${(s.ans[f.id] || "u") === k}">${esc(l)}</button>`).join("")}</span>
+        </div>`).join("")}</div>`; }).join("");
+    };
+    const ucFor = id => USECASES.filter(x => x.f.includes(id) && (!s.ind || x.ind === s.ind));
+    const drawOut = () => {
+      const fs = feats(), used = fs.filter(f => s.ans[f.id] === "y"), notUsed = fs.filter(f => s.ans[f.id] === "n"), unk = fs.filter(f => (s.ans[f.id] || "u") === "u");
+      const pct = fs.length ? Math.round(used.length / fs.length * 100) : 0;
+      const cand = [...notUsed, ...unk].map(f => ({ f, n: ucFor(f.id).length })).sort((a, b) => b.n - a.n || a.f.name.localeCompare(b.f.name));
+      const top = cand.filter(x => x.n > 0).slice(0, 5);
+      const pick = top.length ? top : cand.slice(0, 5);
+      const ind = s.ind ? IND[s.ind] : null;
+      $("#adout").innerHTML = `
+        <p class="eyebrow">${esc(P[s.plan].name)}${ind ? " · " + esc(L(ind.name)) : ""}</p>
+        <div class="kpis">
+          <div class="kpi"><span>${esc(A.adoption)}</span><b class="num">${pct}%</b></div>
+          <div class="kpi"><span>${esc(A.yes)}</span><b class="num">${used.length}</b></div>
+          <div class="kpi"><span>${esc(A.no)}</span><b class="num">${notUsed.length}</b></div>
+          <div class="kpi"><span>${esc(A.unknown)}</span><b class="num">${unk.length}</b></div>
+        </div>
+        <p class="hint" style="margin-top:8px">${esc(fmt(A.ofTotal, { n: fs.length, p: P[s.plan].name }))}</p>
+        ${pick.length ? `<h3 style="margin-top:16px">${esc(A.startHere)}</h3><p class="hint">${esc(ind ? fmt(A.whyInd, { ind: L(ind.name) }) : A.why)}</p>
+        <ol class="apick">${pick.map(({ f }) => { const ucs = ucFor(f.id), vs = videosFor("f", f.id);
+          return `<li><b>${ext(f.url, esc(f.name))}</b> <button class="i" type="button" data-detail="${f.id}" aria-label="${esc(u.info + ": " + f.name)}">i</button>
+            <span class="sub">${esc(L(f.d))}</span>
+            ${vs.length ? `<span class="sub">${vs.map(v => "▶ " + ext(YT(v.id), esc(v.t))).join(" · ")}</span>` : ""}
+            ${ucs.length ? `<span class="sub">${esc(A.enables)}: ${ucs.slice(0, 4).map(x => `<a href="#usecases-${x.ind}">${esc(L(x.t))}</a>`).join(" · ")}${ucs.length > 4 ? " …" : ""}</span>` : ""}</li>`; }).join("")}</ol>
+        <button type="button" class="btn" id="acopy">${esc(A.copy)}</button>` : `<p class="note" style="margin-top:12px">${esc(A.allUsed)}</p>`}`;
+      const c = $("#acopy");
+      if (c) c.addEventListener("click", () => {
+        const txt = [fmt(A.sumHead, { p: P[s.plan].name, pct, y: used.length, n: fs.length }), A.startHere + ":",
+          ...pick.map(({ f }, i) => `${i + 1}. ${f.name} — ${f.url}`), "", A.sumFoot].join("\n");
+        try { navigator.clipboard.writeText(txt).then(() => toast(A.copied), () => toast(A.copied)); } catch (e) { toast(A.copied); }
+      });
+    };
+    const save = () => store.set("adopt", s);
+    document.querySelectorAll('input[name="aplan"]').forEach(r => r.addEventListener("change", () => { s.plan = r.value; save(); drawList(); drawOut(); }));
+    $("#aind").addEventListener("change", e => { s.ind = e.target.value; save(); drawOut(); });
+    $("#alist").addEventListener("click", e => { const b = e.target.closest("[data-ans]"); if (!b) return;
+      s.ans[b.dataset.ans] = b.dataset.v; save();
+      b.parentElement.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", String(x === b))); drawOut(); });
+    $("#areset").addEventListener("click", () => { s.ans = {}; save(); drawList(); drawOut(); });
+    drawList(); drawOut();
   }
 
   // ── Knowledge, glossary, logs

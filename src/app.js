@@ -84,9 +84,9 @@
   const routes = {
     home: renderHome, map: () => renderMap("all"), "map-a": () => renderMap("A"), "map-p": () => renderMap("P"), "map-e": () => renderMap("E"),
     vdr: renderVdr, recommend: renderRec, compare: renderCompare, matrix: renderMatrix, calc: renderCalc,
-    integrations: renderIntegrations, usecases: renderUseCases, knowledge: renderKnowledge, glossary: renderGlossary, changelog: renderChangelog, discrepancies: renderDisc
+    integrations: renderIntegrations, usecases: renderUseCases, adopt: renderAdopt, knowledge: renderKnowledge, glossary: renderGlossary, changelog: renderChangelog, discrepancies: renderDisc
   };
-  const navKeys = ["home", "map", "vdr", "recommend", "usecases", "compare", "matrix", "calc", "integrations", "knowledge", "glossary"];
+  const navKeys = ["home", "map", "vdr", "recommend", "usecases", "adopt", "compare", "matrix", "calc", "integrations", "knowledge", "glossary"];
 
   function route() {
     let h = (location.hash || "#home").slice(1) || "home";
@@ -141,7 +141,7 @@
         ${row(h.plans, [a("#map", h.allPlans), a("#map-a", "Advanced"), a("#map-p", "Premium " + h.stepup), a("#map-e", "Enterprise " + h.stepup), a("#vdr", "Virtual Data Room")].join(""))}
         ${row(h.industries, INDUSTRIES.map(i => a("#recommend-" + i.id, L(i.name))).join(""))}
         ${row(h.sizes, SIZES.map(s => a("#recommend-size-" + s.id, L(s.name))).join(""))}
-        ${row(h.tools, ["recommend", "usecases", "compare", "matrix", "calc"].map(k => a("#" + k, u.nav[k])).join(""))}
+        ${row(h.tools, ["recommend", "usecases", "adopt", "compare", "matrix", "calc"].map(k => a("#" + k, u.nav[k])).join(""))}
         ${row(h.resources, ["integrations", "knowledge", "glossary", "changelog", "discrepancies"].map(k => a("#" + k, u.nav[k])).join(""))}
       </div>
       <div class="toolbar" style="margin-top:28px;margin-bottom:0">${billToggle()}<span class="hint">${esc(t().billing.explain)}</span></div>
@@ -705,6 +705,77 @@
       draw();
     }));
     draw();
+  }
+
+  // ── Make the most of your plan: self-diagnosis (answers stay in this browser only)
+  // Always-on items that are not something a customer "adopts".
+  const PASSIVE = new Set(["anytime_access", "file_encryption", "unlimited_clients", "support", "storage", "vdr_storage", "device_security"]);
+  function renderAdopt() {
+    const u = t(), A = u.adopt;
+    const s = state.adopt = state.adopt || store.get("adopt", { plan: "P", ind: "", ans: {} });
+    $("#view").innerHTML = `
+      ${head(u.nav.adopt, A.lead)}
+      <div class="box">
+        <fieldset><legend>${esc(A.step1)}</legend><div class="choices">
+          ${PLANS.map(p => `<label class="choice"><input type="radio" name="aplan" value="${p.id}" ${s.plan === p.id ? "checked" : ""}><span>${esc(p.name)}</span></label>`).join("")}
+        </div></fieldset>
+        <label class="hint">${esc(A.industry)} ${industrySelect("aind", s.ind)}</label>
+        <p class="hint" style="margin-top:10px">${esc(A.privacy)}</p>
+      </div>
+      <section class="box adopt-out" id="adout" aria-live="polite"></section>
+      <div class="box" style="margin-top:16px">
+        <div class="adopt-head"><h2>${esc(A.step2)}</h2><button type="button" class="btn" id="areset">${esc(A.reset)}</button></div>
+        <p class="hint">${esc(A.dataHint)} ${ext(F.reports.url, "Activity Logs and Reports")}</p>
+        <div id="alist"></div>
+      </div>`;
+    const feats = () => FEATURES.filter(f => f.plans.includes(s.plan) && !PASSIVE.has(f.id));
+    const ANS = [["y", A.yes], ["n", A.no], ["u", A.unknown]];
+    const drawList = () => {
+      $("#alist").innerHTML = GROUPS.map(g => { const fs = feats().filter(f => f.g === g.id); if (!fs.length) return "";
+        return `<div class="agrp"><h3><i class="dot g-${g.id}"></i>${esc(L(g.name))}</h3>${fs.map(f => `<div class="arow">
+          <div><span class="feat">${ext(f.url, esc(f.name))}</span><span class="sub">${esc(L(f.d))}</span></div>
+          <span class="seg ans" role="group" aria-label="${esc(f.name)}">${ANS.map(([k, l]) => `<button type="button" data-ans="${f.id}" data-v="${k}" aria-pressed="${(s.ans[f.id] || "u") === k}">${esc(l)}</button>`).join("")}</span>
+        </div>`).join("")}</div>`; }).join("");
+    };
+    const ucFor = id => USECASES.filter(x => x.f.includes(id) && (!s.ind || x.ind === s.ind));
+    const drawOut = () => {
+      const fs = feats(), used = fs.filter(f => s.ans[f.id] === "y"), notUsed = fs.filter(f => s.ans[f.id] === "n"), unk = fs.filter(f => (s.ans[f.id] || "u") === "u");
+      const pct = fs.length ? Math.round(used.length / fs.length * 100) : 0;
+      const cand = [...notUsed, ...unk].map(f => ({ f, n: ucFor(f.id).length })).sort((a, b) => b.n - a.n || a.f.name.localeCompare(b.f.name));
+      const top = cand.filter(x => x.n > 0).slice(0, 5);
+      const pick = top.length ? top : cand.slice(0, 5);
+      const ind = s.ind ? IND[s.ind] : null;
+      $("#adout").innerHTML = `
+        <p class="eyebrow">${esc(P[s.plan].name)}${ind ? " · " + esc(L(ind.name)) : ""}</p>
+        <div class="kpis">
+          <div class="kpi"><span>${esc(A.adoption)}</span><b class="num">${pct}%</b></div>
+          <div class="kpi"><span>${esc(A.yes)}</span><b class="num">${used.length}</b></div>
+          <div class="kpi"><span>${esc(A.no)}</span><b class="num">${notUsed.length}</b></div>
+          <div class="kpi"><span>${esc(A.unknown)}</span><b class="num">${unk.length}</b></div>
+        </div>
+        <p class="hint" style="margin-top:8px">${esc(fmt(A.ofTotal, { n: fs.length, p: P[s.plan].name }))}</p>
+        ${pick.length ? `<h3 style="margin-top:16px">${esc(A.startHere)}</h3><p class="hint">${esc(ind ? fmt(A.whyInd, { ind: L(ind.name) }) : A.why)}</p>
+        <ol class="apick">${pick.map(({ f }) => { const ucs = ucFor(f.id), vs = videosFor("f", f.id);
+          return `<li><b>${ext(f.url, esc(f.name))}</b> <button class="i" type="button" data-detail="${f.id}" aria-label="${esc(u.info + ": " + f.name)}">i</button>
+            <span class="sub">${esc(L(f.d))}</span>
+            ${vs.length ? `<span class="sub">${vs.map(v => "▶ " + ext(YT(v.id), esc(v.t))).join(" · ")}</span>` : ""}
+            ${ucs.length ? `<span class="sub">${esc(A.enables)}: ${ucs.slice(0, 4).map(x => `<a href="#usecases-${x.ind}">${esc(L(x.t))}</a>`).join(" · ")}${ucs.length > 4 ? " …" : ""}</span>` : ""}</li>`; }).join("")}</ol>
+        <button type="button" class="btn" id="acopy">${esc(A.copy)}</button>` : `<p class="note" style="margin-top:12px">${esc(A.allUsed)}</p>`}`;
+      const c = $("#acopy");
+      if (c) c.addEventListener("click", () => {
+        const txt = [fmt(A.sumHead, { p: P[s.plan].name, pct, y: used.length, n: fs.length }), A.startHere + ":",
+          ...pick.map(({ f }, i) => `${i + 1}. ${f.name} — ${f.url}`), "", A.sumFoot].join("\n");
+        try { navigator.clipboard.writeText(txt).then(() => toast(A.copied), () => toast(A.copied)); } catch (e) { toast(A.copied); }
+      });
+    };
+    const save = () => store.set("adopt", s);
+    document.querySelectorAll('input[name="aplan"]').forEach(r => r.addEventListener("change", () => { s.plan = r.value; save(); drawList(); drawOut(); }));
+    $("#aind").addEventListener("change", e => { s.ind = e.target.value; save(); drawOut(); });
+    $("#alist").addEventListener("click", e => { const b = e.target.closest("[data-ans]"); if (!b) return;
+      s.ans[b.dataset.ans] = b.dataset.v; save();
+      b.parentElement.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", String(x === b))); drawOut(); });
+    $("#areset").addEventListener("click", () => { s.ans = {}; save(); drawList(); drawOut(); });
+    drawList(); drawOut();
   }
 
   // ── Knowledge, glossary, logs

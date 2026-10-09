@@ -9,7 +9,7 @@ const FILE = "file://" + path.join(__dirname, "..", "index.html");
 const ctx = {}; vm.createContext(ctx);
 vm.runInContext(fs.readFileSync(path.join(__dirname, "..", "src", "data.js"), "utf8") +
   ";this.F=FEATURES;this.P=PLANS;this.IND=INDUSTRIES;this.S=SIGNALS;this.I=INTEGRATIONS;this.IG=INT_GROUPS;this.G=GROUPS;this.SZ=SIZES;this.U=USECASES;", ctx);
-const ROUTES = ["home", "map", "map-a", "map-p", "map-e", "vdr", "recommend", "compare", "matrix", "calc", "integrations", "usecases", "knowledge", "glossary", "changelog", "discrepancies"];
+const ROUTES = ["home", "map", "map-a", "map-p", "map-e", "vdr", "recommend", "compare", "matrix", "calc", "integrations", "usecases", "adopt", "knowledge", "glossary", "changelog", "discrepancies"];
 const LANGS = ["es", "en", "pt"];
 let pass = 0, fail = 0; const fails = [];
 const ok = (c, m) => { if (c) pass++; else { fail++; fails.push(m); console.error("✗ " + m); } };
@@ -70,6 +70,7 @@ const ok = (c, m) => { if (c) pass++; else { fail++; fails.push(m); console.erro
     for (let i = 0; i < 3; i++) { await page.click("#theme"); seen.add(await page.evaluate(() => document.documentElement.getAttribute("data-theme") || "system")); }
     ok(seen.size === 3, `theme button cycles 3 states (${[...seen].join(",")})`);
     const navHrefs = await page.$$eval("#nav a", as => as.map(a => a.getAttribute("href").slice(1)));
+    ok(await page.$eval("#nav", n => n.scrollWidth <= n.clientWidth + 1), "desktop: every nav item visible without sideways scrolling");
     for (const h of navHrefs) {
       await page.click(`#nav a[href="#${h}"]`);
       const on = await page.waitForFunction(x => { const a = document.querySelector(`#nav a[href="#${x}"]`); return a && a.getAttribute("aria-current") === "page"; }, h, { timeout: 1500 }).then(() => true, () => false);
@@ -287,6 +288,38 @@ const ok = (c, m) => { if (c) pass++; else { fail++; fails.push(m); console.erro
     await page.click('a[href="#usecases-legal"]'); await page.waitForTimeout(60);
     ok(await page.$$eval(".ucard", c => c.length) === 5, "recommender links to its industry use cases");
     ok(errors.length === 0, "use cases no JS errors: " + errors.slice(0, 3).join(" | "));
+    await context.close();
+  }
+
+  // 9c. Get more from your plan (self-diagnosis)
+  {
+    const { page, context, errors } = await newPage("en");
+    const PASSIVE = new Set(["anytime_access", "file_encryption", "unlimited_clients", "support", "storage", "vdr_storage", "device_security"]);
+    await go(page, "adopt");
+    for (const p of ctx.P) {
+      await page.click(`label.choice:has(input[name="aplan"][value="${p.id}"])`);
+      const n = ctx.F.filter(f => f.plans.includes(p.id) && !PASSIVE.has(f.id)).length;
+      ok(await page.$$eval("#alist .arow", r => r.length) === n, `adopt ${p.id}: lists its ${n} features`);
+      ok((await page.$eval("#adout", e => e.innerText)).includes(`${n} features you can turn on in ${p.name}`), `adopt ${p.id}: total stated`);
+    }
+    await page.click('label.choice:has(input[name="aplan"][value="P"])');
+    const ids = await page.$$eval("#alist [data-ans]", b => [...new Set(b.map(x => x.dataset.ans))]);
+    for (const id of ids.slice(0, 10)) await page.click(`[data-ans="${id}"][data-v="y"]`);
+    for (const id of ids.slice(10, 15)) await page.click(`[data-ans="${id}"][data-v="n"]`);
+    const kpi = await page.$$eval("#adout .kpi b", b => b.map(x => x.textContent));
+    ok(kpi[0] === Math.round(10 / ids.length * 100) + "%" && kpi[1] === "10" && kpi[2] === "5", `adopt KPIs follow answers (${kpi.join(",")})`);
+    const picks = await page.$$eval(".apick li [data-detail]", b => b.map(x => x.dataset.detail));
+    ok(picks.length === 5 && picks.every(id => !ids.slice(0, 10).includes(id)), "adopt 'Start here' never suggests features already in use");
+    await page.selectOption("#aind", "legal");
+    const picksLegal = await page.$$eval(".apick li [data-detail]", b => b.map(x => x.dataset.detail));
+    const legalFeats = new Set(ctx.U.filter(u => u.ind === "legal").flatMap(u => u.f));
+    ok(picksLegal.length > 0 && picksLegal.every(id => legalFeats.has(id)), "adopt industry priorities come from that industry's use cases");
+    await page.reload(); await page.waitForSelector("#alist .arow"); await page.waitForTimeout(50);
+    ok(await page.$eval('#aind', s => s.value) === "legal" && (await page.$$eval('#alist [aria-pressed="true"][data-v="y"]', b => b.length)) === 10, "adopt answers persist in this browser");
+    await page.click("#acopy"); await page.waitForTimeout(50); ok(!!(await page.$(".toast")), "adopt copy summary confirms");
+    await page.click("#areset"); ok((await page.$$eval("#adout .kpi b", b => b.map(x => x.textContent)))[0] === "0%", "adopt reset clears answers");
+    await page.click(".apick [data-detail]"); ok(!!(await page.$(".panel")), "adopt ⓘ opens detail"); await page.keyboard.press("Escape");
+    ok(errors.length === 0, "adopt no JS errors: " + errors.slice(0, 3).join(" | "));
     await context.close();
   }
 

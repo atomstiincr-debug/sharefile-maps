@@ -316,3 +316,17 @@ ol.path ul.sigs { margin: 6px 0 0; padding-left: 18px; font-size: .9rem; }
 @media (max-width: 760px) { .map-prices { display: grid; gap: 4px; } }
 /* Chips with long text (e.g. VDR price) wrap instead of pushing the page sideways */
 .toolbar .chip { white-space: normal; max-width: 100%; }
+/* Get more from your plan */
+.adopt-out { margin-top: 16px; }
+.adopt-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.adopt-head h2 { margin: 0; font-size: 1.15rem; }
+.agrp h3 { display: flex; align-items: center; gap: 4px; font-size: .95rem; margin: 18px 0 6px; }
+.arow { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px dotted var(--line); }
+.arow .sub, .apick .sub { display: block; color: var(--muted); font-size: .84rem; margin-top: 2px; }
+.arow .seg.ans { flex: none; }
+.seg.ans button[aria-pressed="true"][data-v="y"] { background: var(--accent); color: var(--surface); }
+.seg.ans button[aria-pressed="true"][data-v="n"] { background: var(--charcoal); color: #fff; }
+.seg.ans button[aria-pressed="true"][data-v="u"] { background: var(--sunk, var(--line)); color: var(--ink); }
+.apick { padding-left: 20px; display: grid; gap: 10px; margin: 8px 0 14px; }
+@media (max-width: 600px) { .arow { flex-direction: column; align-items: stretch; } .arow .seg.ans { align-self: flex-start; } }
+@media (min-width: 901px) { nav.main { flex-wrap: wrap; overflow-x: visible; row-gap: 2px; } }
