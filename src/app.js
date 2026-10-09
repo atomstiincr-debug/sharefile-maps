@@ -91,6 +91,7 @@
   function route() {
     let h = (location.hash || "#home").slice(1) || "home";
     if (h.startsWith("recommend-size-")) { state.rec.size = h.slice(15); h = "recommend"; }
+    else if (h.startsWith("compliance-")) { const id = h.slice(11); state.cc = COMPLIANCE.some(x => x.id === id) ? id : state.cc; h = "compliance"; }
     else if (h.startsWith("usecases-")) { const [id, cid] = h.slice(9).split("~"); state.uc = IND[id] ? id : ""; state.ucFocus = cid || ""; h = "usecases"; }
     else if (h.startsWith("recommend-")) { const id = h.slice(10); if (IND[id] || id === "other") { state.rec.ind = id; state.rec.sub = ""; } h = "recommend"; }
     const fn = routes[h] || renderHome;
@@ -785,22 +786,30 @@
   // ── Regulatory fit by country (customer stays responsible; law quotes are official extracts in Spanish)
   function renderCompliance() {
     const u = t(), C = u.comp;
-    const c = COMPLIANCE.find(x => x.id === state.cc) || COMPLIANCE[0];
+    // North to south; Brazil last (territory backup)
+    const ORDER = ["mx", "gt", "sv", "hn", "cr", "pa", "co", "pe", "cl", "ar", "br"];
+    const list = COMPLIANCE.slice().sort((a, b) => ORDER.indexOf(a.id) - ORDER.indexOf(b.id));
+    const c = COMPLIANCE.find(x => x.id === state.cc) || list[0];
+    const res = typeof c.residency === "string" ? fmt(C["res_" + c.residency], { c: L(c.name) }) : L(c.residency);
+    const checkLabel = n => n.check === "gaceta" ? C.checkGaceta : n.check === "amended" ? C.checkAmended : C.check;
     const planOf = id => P[tierOf(F[id]) || "V"].name;
     $("#view").innerHTML = `
       ${head(u.nav.compliance, C.lead)}
       <section class="note comp-principle"><b>${esc(C.principleTitle)}</b> ${esc(C.principle)} ${esc(C.notLegal)}</section>
-      <nav class="chips" aria-label="${esc(C.country)}" style="margin-top:14px">${COMPLIANCE.map(x => `<button type="button" class="chipbtn" data-cc="${x.id}" aria-pressed="${x.id === c.id}">${esc(L(x.name))}</button>`).join("")}<span class="hint">${esc(C.more)}</span></nav>
+      <nav class="chips" aria-label="${esc(C.country)}" style="margin-top:14px">${list.map(x => `<button type="button" class="chipbtn" data-cc="${x.id}" aria-pressed="${x.id === c.id}">${esc(L(x.name))}</button>`).join("")}</nav>
       <h2 style="margin-top:18px">${esc(L(c.name))} <span class="muted num" style="font-size:.8rem">${esc(C.verified)} ${c.verified}</span></h2>
-      <div class="box comp-res"><h3>${esc(C.residency)}</h3><p>${esc(L(c.residency))}</p></div>
+      ${c.note ? `<p class="note">${esc(L(c.note))}</p>` : ""}
+      <div class="box comp-res"><h3>${esc(C.residency)}</h3><p>${esc(res)}</p></div>
+      ${c.pending ? `<p class="note warn-note"><b>${esc(C.pendingTitle)}:</b> ${esc(L(c.pending))}</p>` : ""}
       ${c.norms.map(n => `<article class="box comp-norm" id="${n.id}">
         <header><div><h3>${esc(n.name)} <span class="muted">· ${esc(L(n.title))}</span></h3>
           <p class="hint">${esc(C.authority)}: ${esc(n.authority)} · ${esc(C.applies)}: ${esc(L(n.applies))}</p></div>
-          <span class="pill ${n.check ? "warn" : "ok"}">${esc(n.check ? C.check : C.ok)}</span></header>
+          <span class="pill ${n.check ? "warn" : "ok"}">${esc(n.check ? checkLabel(n) : C.ok)}</span></header>
+        ${n.note ? `<p class="hint comp-nnote">${esc(L(n.note))}</p>` : ""}
         <p class="hint">${ext(n.url, esc(C.official))}</p>
         ${n.points.map(p => `<div class="comp-pt">
           <h4><span class="num">${esc(p.cite)}</span> · ${esc(L(p.topic))}</h4>
-          <blockquote lang="es">${esc(p.quote)}<span class="hint"> — ${esc(C.extract)}</span></blockquote>
+          <blockquote lang="${p.qlang || "es"}">${esc(p.quote)}<span class="hint"> — ${esc(C.extract)}</span></blockquote>
           <div class="comp-cols">
             <div><span class="eyebrow">${esc(C.sf)}</span><p>${esc(L(p.sf))}</p>
               ${p.f.length ? `<p class="ufeat">${p.f.map(id => `<button type="button" class="fchip" data-detail="${id}"><i class="dot g-${F[id].g}"></i>${esc(F[id].name)} <span class="muted">· ${esc(planOf(id))}${tierOf(F[id]) === "E" ? "" : "+"}</span></button>`).join("")}</p>` : ""}
@@ -809,7 +818,11 @@
           </div></div>`).join("")}
       </article>`).join("")}
       <p class="hint" style="margin-top:16px">${esc(C.foot)} ${ext("https://trust.sharefile.com/", "trust.sharefile.com")}</p>`;
-    document.querySelectorAll("[data-cc]").forEach(b => b.addEventListener("click", () => { state.cc = b.dataset.cc; renderCompliance(); }));
+    document.querySelectorAll("[data-cc]").forEach(b => b.addEventListener("click", () => {
+      state.cc = b.dataset.cc;
+      try { history.replaceState(null, "", "#compliance-" + state.cc); } catch (e) { /* ignore */ }
+      renderCompliance();
+    }));
   }
 
   // ── Knowledge, glossary, logs

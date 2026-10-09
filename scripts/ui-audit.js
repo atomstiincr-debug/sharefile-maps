@@ -331,18 +331,24 @@ const ok = (c, m) => { if (c) pass++; else { fail++; fails.push(m); console.erro
     await context.close();
   }
 
-  // 9d. Compliance
+  // 9d. Compliance: every country, every language
   for (const lang of LANGS) {
     const { page, context, errors } = await newPage(lang);
-    await go(page, "compliance");
-    const c = ctx.C[0];
-    ok(await page.$$eval(".comp-norm", n => n.length) === c.norms.length, `[${lang}] compliance shows ${c.norms.length} norms`);
-    const pts = c.norms.reduce((a, n) => a + n.points.length, 0);
-    ok(await page.$$eval(".comp-pt", n => n.length) === pts && await page.$$eval(".comp-pt blockquote", n => n.length) === pts && await page.$$eval(".comp-you", n => n.length) === pts, `[${lang}] every requirement has official extract, fit and customer responsibility`);
-    ok(!!(await page.$(".comp-principle")) && (await page.$eval(".comp-principle", e => e.innerText)).length > 80, `[${lang}] responsibility principle shown`);
-    const links = await page.$$eval(".comp-norm a[href^='http']", as => as.map(a => a.href));
-    ok(links.every(h => /\.(go|fi)\.cr\/|sharefile\.com\//.test(h)), `[${lang}] compliance links only to government or ShareFile sites`);
-    ok(!/cumple con|complies with|cumpre a/i.test(await page.$$eval(".comp-pt .comp-cols > div:first-child", d => d.map(x => x.innerText).join(" "))), `[${lang}] never claims ShareFile complies`);
+    for (const c of ctx.C) {
+      await go(page, "compliance-" + c.id);
+      const tag = `[${lang}/${c.id}]`;
+      ok(await page.$eval(`[data-cc="${c.id}"]`, b => b.getAttribute("aria-pressed")) === "true", `${tag} country chip active`);
+      ok(await page.$$eval(".comp-norm", n => n.length) === c.norms.length, `${tag} shows ${c.norms.length} norms`);
+      const pts = c.norms.reduce((a, n) => a + n.points.length, 0);
+      ok(await page.$$eval(".comp-pt", n => n.length) === pts && await page.$$eval(".comp-pt blockquote", n => n.length) === pts && await page.$$eval(".comp-you", n => n.length) === pts, `${tag} every requirement has official extract, fit and customer responsibility`);
+      ok((await page.$eval(".comp-principle", e => e.innerText)).length > 80, `${tag} responsibility principle shown`);
+      const res = await page.$eval(".comp-res", e => e.innerText);
+      ok(res.length > 80 && !/\{c\}/.test(res), `${tag} residency text`);
+      const links = await page.$$eval(".comp-norm a[href^='http']", as => as.map(a => a.href));
+      const official = h => /\.(gob|gov)\.[a-z]{2}\/|\.(go|fi)\.cr\/|\/\/(www\.)?(bcn\.cl|cmfchile\.cl|busquedas\.elperuano\.pe)\/|sharefile\.com\//.test(h);
+      ok(links.length > 0 && links.every(official), `${tag} links only to government or ShareFile sites: ` + links.filter(h => !official(h)).join(" "));
+      ok(!/cumple con|complies with|cumpre a/i.test(await page.$$eval(".comp-pt .comp-cols > div:first-child", d => d.map(x => x.innerText).join(" "))), `${tag} never claims ShareFile complies`);
+    }
     if (lang === "en") { await page.click(".comp-norm .fchip"); ok(!!(await page.$(".panel")), "compliance feature chip opens panel"); await page.keyboard.press("Escape"); }
     ok(errors.length === 0, `[${lang}] compliance no JS errors: ` + errors.slice(0, 3).join(" | "));
     await context.close();
@@ -366,7 +372,7 @@ const ok = (c, m) => { if (c) pass++; else { fail++; fails.push(m); console.erro
     }
     ok(bad.size === 0, "all links valid: " + [...bad].slice(0, 5).join(" | "));
     ok(unsafe.size === 0, "all external links open in new tab with noopener: " + [...unsafe].slice(0, 5).join(" | "));
-    const allowed = /(^|\.)sharefile\.com$|(^|\.)youtube\.com$|(^|\.)github\.com$|(^|\.)progress\.com$|appsource\.microsoft\.com$|workspace\.google\.com$|^sharefile\.ideas\.aha\.io$|\.(go|fi)\.cr$/; // .go.cr/.fi.cr: Costa Rica government sources (compliance); aha: ShareFile ideas portal (redirects to ShareFile sign-in)
+    const allowed = /(^|\.)sharefile\.com$|(^|\.)youtube\.com$|(^|\.)github\.com$|(^|\.)progress\.com$|appsource\.microsoft\.com$|workspace\.google\.com$|^sharefile\.ideas\.aha\.io$|\.(go|fi)\.cr$|\.(gob|gov)\.[a-z]{2}$|(^|\.)(bcn\.cl|cmfchile\.cl|elperuano\.pe)$/; // .go.cr/.fi.cr: Costa Rica government sources (compliance); aha: ShareFile ideas portal (redirects to ShareFile sign-in)
     const off = [...domains].filter(d => !allowed.test(d));
     ok(off.length === 0, "external links only go to official domains: " + off.join(", "));
     console.log("external domains:", [...domains].join(", "));

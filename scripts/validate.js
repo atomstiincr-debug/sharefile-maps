@@ -96,13 +96,18 @@ console.log("✓ data OK");
   const c5 = {}; vm.createContext(c5);
   vm.runInContext(fs.readFileSync(path.join(__dirname, "..", "src", "data.js"), "utf8") + "\nthis.COMPLIANCE=COMPLIANCE;this.FEATURES=FEATURES;", c5);
   const fids = new Set(c5.FEATURES.map(f => f.id)); let e5 = 0; const bad = m => { e5++; console.error("✗ compliance " + m); };
-  const GOV = /^https:\/\/([a-z0-9-]+\.)*(go\.cr|fi\.cr)\//;
+  // Official government domains (gob.xx / gov.xx / go.cr / fi.cr) plus official gazettes and regulators without such a suffix
+  const GOV = /^https:\/\/(([a-z0-9-]+\.)*(gob\.[a-z]{2}|gov\.[a-z]{2}|go\.cr|fi\.cr)|(www\.)?(bcn\.cl|cmfchile\.cl|busquedas\.elperuano\.pe))\//;
   const SF = /^https:\/\/((www|docs|trust|status)\.sharefile\.com)\//;
   for (const c of c5.COMPLIANCE) {
-    for (const l of ["es", "en", "pt"]) { if (!c.name[l]) bad(c.id + " name " + l); if (!c.residency[l]) bad(c.id + " residency " + l); }
+    for (const l of ["es", "en", "pt"]) { if (!c.name[l]) bad(c.id + " name " + l); if (typeof c.residency !== "string" && !c.residency[l]) bad(c.id + " residency " + l); }
+    if (typeof c.residency === "string" && !["none", "br"].includes(c.residency)) bad(c.id + " residency key");
     if (!/^\d{4}-\d{2}-\d{2}$/.test(c.verified)) bad(c.id + " verified date");
+    for (const k of ["note", "pending"]) if (c[k]) for (const l of ["es", "en", "pt"]) if (!c[k][l]) bad(c.id + " " + k + " " + l);
     for (const n of c.norms) {
       if (!GOV.test(n.url)) bad(n.id + " law link must be an official government source: " + n.url);
+      if (n.check && ![true, "gaceta", "amended"].includes(n.check)) bad(n.id + " unknown check " + n.check);
+      if (n.note) for (const l of ["es", "en", "pt"]) if (!n.note[l]) bad(n.id + " note " + l);
       for (const l of ["es", "en", "pt"]) { if (!n.title[l]) bad(n.id + " title " + l); if (!n.applies[l]) bad(n.id + " applies " + l); }
       for (const p of n.points) {
         if (!p.cite || !p.quote) bad(n.id + " point without citation/quote");

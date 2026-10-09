@@ -345,3 +345,5 @@ ol.path ul.sigs { margin: 6px 0 0; padding-left: 18px; font-size: .9rem; }
 .comp-cols p { margin: 4px 0; font-size: .92rem; }
 .comp-you { background: var(--accent-soft); border-radius: 6px; padding: 8px 10px; }
 @media (max-width: 720px) { .comp-cols { grid-template-columns: minmax(0, 1fr); } .comp-norm header { flex-direction: column; } }
+.warn-note { background: var(--warn-soft, #FFF4E0); }
+.comp-nnote { margin: 0 0 6px; font-style: italic; }

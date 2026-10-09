@@ -20,7 +20,7 @@ const OVERVIEW_VIDEO = { id: "yQkpfDLkCk0", t: "Progress ShareFile - Built For T
 const TUTORIALS = "https://www.youtube.com/playlist?list=PLSKW9Jc-tCY9W-cB3G2OTYx00GXZrrzZB";
 
 const SITE = {
-  version: "1.9.0",
+  version: "1.10.0",
   updated: "2026-10-08",
   author: "Adrián Bonilla",
   pricingSource: W + "plans",
@@ -597,6 +597,40 @@ const USECASES = [
 const TRUST = "https://trust.sharefile.com/";
 const ZONES = D + "learn-more/sharefile-managed-storage-zones";
 const SZC = "https://docs.sharefile.com/en-us/storage-zones-controller/6-0/about";
+// ── Reusable building blocks for the remaining countries (same rules as the Costa Rica pilot)
+const T3 = (es, en, pt) => ({ es, en, pt });
+const TOP = {
+  sec: T3("Seguridad de los datos", "Data security", "Segurança dos dados"),
+  transfer: T3("Transferencia y almacenamiento fuera del país", "Transfer and storage outside the country", "Transferência e armazenamento fora do país"),
+  breach: T3("Aviso de vulneraciones de seguridad", "Notice of security breaches", "Aviso de incidentes de segurança"),
+  enc: T3("Cifrado de información confidencial", "Encryption of confidential information", "Criptografia de informação confidencial"),
+  third: T3("Proveedores, nube y acceso del supervisor", "Providers, cloud and supervisor access", "Fornecedores, nuvem e acesso do supervisor"),
+  incident: T3("Gestión y reporte de incidentes", "Incident management and reporting", "Gestão e reporte de incidentes"),
+  sign: T3("Firma oficial vs. firma de ShareFile", "Official signature vs. ShareFile e-signature", "Assinatura oficial vs. assinatura do ShareFile"),
+  keep: T3("Conservación de documentos electrónicos", "Retention of electronic records", "Conservação de documentos eletrônicos")
+};
+const FIT = {
+  sec: { f: ["file_encryption", "mfa", "sso", "view_only", "reports"], links: [[W + "product-feature/regulatory-compliance-support", "sharefile.com · Regulatory compliance support"]],
+    sf: T3("Cifrado en tránsito y en reposo, autenticación multifactor, inicio de sesión único, permisos granulares y registros de actividad.", "Encryption in transit and at rest, multi-factor authentication, single sign-on, granular permissions and activity logs.", "Criptografia em trânsito e em repouso, autenticação multifator, login único, permissões granulares e registros de atividade.") },
+  transfer: { f: [], links: [[ZONES, "docs.sharefile.com · Managed storage zones"], [SZC, "docs.sharefile.com · Storage Zones Controller"], [TRUST, "trust.sharefile.com"]],
+    sf: T3("El cliente elige la zona de almacenamiento o usa Storage Zones Controller para guardar los archivos en su propia infraestructura. El Trust Center indica que ShareFile firma un acuerdo de procesamiento de datos (DPA) y lista sus subprocesadores.", "The customer chooses the storage zone or uses Storage Zones Controller to keep files on its own infrastructure. The Trust Center states ShareFile will enter into a data processing agreement (DPA) and lists its subprocessors.", "O cliente escolhe a zona de armazenamento ou usa o Storage Zones Controller para guardar os arquivos em sua própria infraestrutura. O Trust Center indica que o ShareFile firma um acordo de processamento de dados (DPA) e lista seus subprocessadores.") },
+  breach: { f: ["threat_alerts", "reports", "security_center", "siem"], links: [],
+    sf: T3("Alertas de detección de amenazas y registros de actividad para investigar; en Enterprise, Security Center e integración con SIEM.", "Threat detection alerts and activity logs to investigate; on Enterprise, Security Center and SIEM integration.", "Alertas de detecção de ameaças e registros de atividade para investigar; no Enterprise, Security Center e integração com SIEM.") },
+  enc: { f: ["file_encryption", "kms", "umt", "sso", "mfa"], links: [],
+    sf: T3("Cifrado en tránsito (TLS) y en reposo, con opción de llave en AWS KMS; la entidad administra usuarios, permisos, SSO y MFA.", "Encryption in transit (TLS) and at rest, with an AWS KMS key option; the entity administers users, permissions, SSO and MFA.", "Criptografia em trânsito (TLS) e em repouso, com opção de chave no AWS KMS; a entidade administra usuários, permissões, SSO e MFA.") },
+  third: { f: ["reports"], links: [[TRUST, "trust.sharefile.com"], ["https://status.sharefile.com/", "status.sharefile.com"]],
+    sf: T3("El Trust Center publica ISO 27001, SOC 2 Type II, informes de auditoría, plan de recuperación ante desastres y subprocesadores (algunos documentos requieren solicitar acceso); los registros de actividad se pueden programar y exportar.", "The Trust Center publishes ISO 27001, SOC 2 Type II, audit reports, a disaster recovery plan and subprocessors (some documents require requesting access); activity reports can be scheduled and exported.", "O Trust Center publica ISO 27001, SOC 2 Type II, relatórios de auditoria, plano de recuperação de desastres e subprocessadores (alguns documentos exigem solicitar acesso); os relatórios de atividade podem ser agendados e exportados.") },
+  incident: { f: ["threat_alerts", "auto_remediation", "security_center", "ueba", "siem"], links: [],
+    sf: T3("Alertas de amenazas y remediación automática en todos los planes; en Enterprise, Security Center, UEBA e integración con SIEM para alimentar el proceso de incidentes.", "Threat alerts and automated remediation on every plan; on Enterprise, Security Center, UEBA and SIEM integration to feed the incident process.", "Alertas de ameaças e remediação automática em todos os planos; no Enterprise, Security Center, UEBA e integração com SIEM para alimentar o processo de incidentes.") },
+  sign: { f: ["esign", "secure_sharing"], links: [],
+    sf: T3("La firma electrónica integrada de ShareFile sirve para documentos privados con evidencia (registro y certificado de firma), pero no usa certificados de la jerarquía oficial del país. ShareFile puede guardar y compartir documentos ya firmados con la firma oficial.", "ShareFile's integrated e-signature works for private documents with evidence (audit trail and signature certificate), but it does not use certificates from the country's official hierarchy. ShareFile can store and share documents already signed with the official signature.", "A assinatura eletrônica integrada do ShareFile serve para documentos privados com evidência (registro e certificado de assinatura), mas não usa certificados da hierarquia oficial do país. O ShareFile pode guardar e compartilhar documentos já assinados com a assinatura oficial.") },
+  keep: { f: ["sync_versioning", "archiving", "reports"], links: [],
+    sf: T3("ShareFile guarda los documentos con versiones, archivado y registros de actividad, pero no emite constancias de conservación de un prestador acreditado.", "ShareFile stores documents with versioning, archiving and activity logs, but does not issue retention certificates from an accredited provider.", "O ShareFile guarda os documentos com versões, arquivamento e registros de atividade, mas não emite constâncias de conservação de um prestador credenciado.") }
+};
+const PT = (cite, quote, topic, fit, you, qlang) => Object.assign({ cite, quote, topic: TOP[topic], you, qlang: qlang || "es" }, { sf: FIT[fit].sf, f: FIT[fit].f, links: FIT[fit].links });
+const YOU = {
+  sec: T3("Definir y documentar sus medidas; activar y configurar esos controles en su cuenta.", "Define and document its measures; turn on and configure those controls in its account.", "Definir e documentar suas medidas; ativar e configurar esses controles na conta.")
+};
 const COMPLIANCE = [
   { id: "cr", name: { es: "Costa Rica", en: "Costa Rica", pt: "Costa Rica" }, verified: "2026-10-08",
     residency: { es: "ShareFile no tiene zona de almacenamiento gestionada en Costa Rica ni en Centroamérica: sus zonas están en EE. UU., Canadá, Brasil, Unión Europea, Japón, Australia, Singapur, Emiratos e India. Usar una zona gestionada implica guardar los datos fuera del país. Para mantenerlos en Costa Rica existe Storage Zones Controller, una zona que el cliente opera en su propia infraestructura (y que debe mantener en versión soportada y con parches al día).", en: "ShareFile has no managed storage zone in Costa Rica or Central America: its zones are in the US, Canada, Brazil, the European Union, Japan, Australia, Singapore, the UAE and India. Using a managed zone means storing data outside the country. To keep data in Costa Rica there is Storage Zones Controller, a zone the customer runs on its own infrastructure (and must keep on a supported, patched version).", pt: "O ShareFile não tem zona de armazenamento gerenciada na Costa Rica nem na América Central: suas zonas ficam nos EUA, Canadá, Brasil, União Europeia, Japão, Austrália, Singapura, Emirados e Índia. Usar uma zona gerenciada implica guardar os dados fora do país. Para mantê-los na Costa Rica existe o Storage Zones Controller, uma zona que o cliente opera em sua própria infraestrutura (e deve manter em versão suportada e com patches em dia)." },
@@ -660,6 +694,279 @@ const COMPLIANCE = [
             sf: { es: "La firma electrónica integrada de ShareFile sirve para documentos privados con evidencia (registro y certificado de firma), pero no es la Firma Digital certificada del sistema nacional (BCCR). ShareFile puede guardar y compartir documentos ya firmados con Firma Digital.", en: "ShareFile's integrated e-signature works for private documents with evidence (audit trail and signature certificate), but it is not the national certified Firma Digital (BCCR). ShareFile can store and share documents already signed with Firma Digital.", pt: "A assinatura eletrônica integrada do ShareFile serve para documentos privados com evidência (registro e certificado de assinatura), mas não é a Firma Digital certificada do sistema nacional (BCCR). O ShareFile pode guardar e compartilhar documentos já assinados com Firma Digital." },
             f: ["esign", "secure_sharing"], links: [["https://www.bccr.fi.cr/cr/es/firma-digital.html", "bccr.fi.cr · Firma Digital"]],
             you: { es: "Usar Firma Digital certificada (BCCR) en documentos públicos electrónicos y en actos que la exijan.", en: "Use certified Firma Digital (BCCR) for public electronic documents and acts that require it.", pt: "Usar Firma Digital certificada (BCCR) em documentos públicos eletrônicos e em atos que a exijam." } }
+        ] }
+    ] },
+  // ── México
+  { id: "mx", name: T3("México", "Mexico", "México"), verified: "2026-10-09", residency: "none",
+    pending: T3("Disposiciones de la CNBV para instituciones de crédito (contratación de servicios tecnológicos y nube): pendientes de verificar en el texto oficial.", "CNBV rules for credit institutions (technology services and cloud): pending verification in the official text.", "Disposições da CNBV para instituições de crédito (serviços tecnológicos e nuvem): pendentes de verificação no texto oficial."),
+    norms: [
+      { id: "mx-lfpdppp", name: "LFPDPPP 2025", title: T3("Ley Federal de Protección de Datos Personales en Posesión de los Particulares (DOF 20-mar-2025)", "Federal Law on Protection of Personal Data Held by Private Parties (DOF 20 Mar 2025)", "Lei Federal de Proteção de Dados Pessoais em Posse de Particulares (DOF 20-mar-2025)"),
+        authority: "Secretaría Anticorrupción y Buen Gobierno", url: "https://www.diputados.gob.mx/LeyesBiblio/pdf/LFPDPPP.pdf",
+        applies: T3("Particulares (personas y empresas) que tratan datos personales.", "Private parties (individuals and companies) that process personal data.", "Particulares (pessoas e empresas) que tratam dados pessoais."),
+        points: [
+          PT("Art. 18", "Todo responsable deberá establecer y mantener medidas de seguridad administrativas, técnicas y físicas… contra daño, pérdida, alteración, destrucción o el uso, acceso o tratamiento no autorizado…", "sec", "sec", YOU.sec),
+          PT("Art. 2 fr. XII · Art. 35", "(Encargado:) Persona física o jurídica que sola o conjuntamente con otras trate datos personales… (Art. 35:) Cuando el responsable pretenda transferir los datos personales a terceros nacionales o extranjeros,…", "transfer", "transfer",
+            T3("La ley distingue al encargado (quien trata datos por cuenta del responsable) de las transferencias a terceros. Definir el papel de ShareFile, documentarlo en el contrato y el aviso de privacidad, y elegir la zona: ninguna está en México.", "The law separates the processor (who handles data on the controller's behalf) from transfers to third parties. Define ShareFile's role, document it in the contract and privacy notice, and choose the zone: none is in Mexico.", "A lei distingue o encarregado (quem trata dados por conta do responsável) das transferências a terceiros. Definir o papel do ShareFile, documentá-lo no contrato e no aviso de privacidade, e escolher a zona: nenhuma fica no México.")),
+          PT("Art. 19", "Las vulneraciones de seguridad ocurridas en cualquier fase del tratamiento de datos personales… [deben informarse al titular] de forma inmediata…", "breach", "breach",
+            T3("Informar de forma inmediata a los titulares cuando la vulneración afecte significativamente sus derechos.", "Inform data subjects immediately when the breach significantly affects their rights.", "Informar imediatamente os titulares quando o incidente afetar significativamente seus direitos."))
+        ] },
+      { id: "mx-ccom", name: "Código de Comercio · NOM-151-SCFI-2016", title: T3("Firma electrónica y conservación de mensajes de datos", "Electronic signature and retention of data messages", "Assinatura eletrônica e conservação de mensagens de dados"),
+        authority: "Secretaría de Economía · SAT (e.firma)", url: "https://www.diputados.gob.mx/LeyesBiblio/pdf/CCom.pdf",
+        applies: T3("Actos de comercio y comerciantes.", "Commercial acts and merchants.", "Atos de comércio e comerciantes."),
+        points: [
+          PT("Art. 89 · Art. 97", "(Firma Electrónica:) …que produce los mismos efectos jurídicos que la firma autógrafa, siendo admisible como prueba en juicio. (Art. 97:) La Firma Electrónica se considerará Avanzada o Fiable si cumple por lo menos los siguientes requisitos:", "sign", "sign",
+            T3("Usar la e.firma (SAT) en trámites fiscales y con el gobierno (Ley de Firma Electrónica Avanzada) y la firma avanzada de un prestador acreditado cuando se requiera; la firma de ShareFile, en contratos privados.", "Use e.firma (SAT) for tax and government procedures (Advanced Electronic Signature Law) and an accredited provider's advanced signature where required; ShareFile's e-signature for private contracts.", "Usar a e.firma (SAT) em trâmites fiscais e com o governo (Lei de Assinatura Eletrônica Avançada) e a assinatura avançada de um prestador credenciado quando exigida; a assinatura do ShareFile em contratos privados.")),
+          Object.assign(PT("NOM-151 §6.2", "La constancia emitida por el Prestador de Servicios de Certificación, acreditado para tales efectos…", "keep", "keep",
+            T3("Cuando se requiera conservar mensajes de datos conforme a la NOM-151, obtener la constancia de un Prestador de Servicios de Certificación acreditado. ShareFile no se posiciona como cumplimiento de la NOM-151.", "Where data messages must be retained under NOM-151, obtain the certificate from an accredited Certification Service Provider. ShareFile is not positioned as NOM-151 compliance.", "Quando for preciso conservar mensagens de dados conforme a NOM-151, obter a constância de um Prestador de Serviços de Certificação credenciado. O ShareFile não se posiciona como conformidade com a NOM-151.")), { links: [["https://sidof.segob.gob.mx/notas/docFuente/5478024", "DOF · NOM-151-SCFI-2016"]] })
+        ] }
+    ] },
+  // ── Colombia
+  { id: "co", name: T3("Colombia", "Colombia", "Colômbia"), verified: "2026-10-09", residency: "none",
+    norms: [
+      { id: "co-1581", name: "Ley 1581 de 2012", title: T3("Protección de datos personales (reglamentada por el Decreto 1074 de 2015)", "Personal data protection (regulated by Decree 1074 of 2015)", "Proteção de dados pessoais (regulamentada pelo Decreto 1074 de 2015)"),
+        authority: "SIC · Delegatura para la Protección de Datos Personales", url: "https://www.secretariasenado.gov.co/senado/basedoc/ley_1581_2012.html",
+        applies: T3("Responsables y encargados del tratamiento de datos personales en Colombia.", "Controllers and processors of personal data in Colombia.", "Responsáveis e encarregados do tratamento de dados pessoais na Colômbia."),
+        points: [
+          PT("Art. 4 lit. g", "…se deberá manejar con las medidas técnicas, humanas y administrativas que sean necesarias para otorgar seguridad a los registros evitando su adulteración, pérdida, consulta, uso o acceso no autorizado o fraudulento;", "sec", "sec", YOU.sec),
+          Object.assign(PT("Art. 26 · Decreto 1074/2015 art. 2.2.2.25.5.2", "Se prohíbe la transferencia de datos personales de cualquier tipo a países que no proporcionen niveles adecuados de protección de datos… (Decreto:) El contrato que suscriba el Responsable con los encargados para el tratamiento de datos personales…", "transfer", "transfer",
+            T3("Verificar que el destino cumpla los estándares de la SIC o aplicar una excepción (por ejemplo, autorización expresa del titular); con ShareFile como encargado, firmar el contrato de transmisión que exige el decreto. Ninguna zona está en Colombia.", "Check that the destination meets SIC standards or apply an exception (for example, the data subject's express authorization); with ShareFile as processor, sign the transmission contract the decree requires. No zone is in Colombia.", "Verificar se o destino cumpre os padrões da SIC ou aplicar uma exceção (por exemplo, autorização expressa do titular); com o ShareFile como encarregado, firmar o contrato de transmissão exigido pelo decreto. Nenhuma zona fica na Colômbia.")), { links: FIT.transfer.links.concat([["https://cancilleria.gov.co/sites/default/files/Normograma/docs/pdf/decreto_1074_2015_pr026.pdf", "Decreto 1074 de 2015"]]) }),
+          PT("Art. 17 lit. n", "Informar a la autoridad de protección de datos cuando se presenten violaciones a los códigos de seguridad…", "breach", "breach",
+            T3("Informar a la SIC cuando haya violaciones a los códigos de seguridad y riesgos para los titulares (los plazos se consultan en la normativa de la SIC).", "Inform the SIC of security-code violations that put data subjects at risk (check deadlines in SIC rules).", "Informar a SIC quando houver violações dos códigos de segurança e riscos aos titulares (os prazos estão na normativa da SIC)."))
+        ] },
+      { id: "co-sfc", name: "SFC · Circular Básica Jurídica", title: T3("Computación en la nube (CE 005 de 2019) y ciberseguridad (CE 007 de 2018)", "Cloud computing (CE 005 of 2019) and cybersecurity (CE 007 of 2018)", "Computação em nuvem (CE 005 de 2019) e cibersegurança (CE 007 de 2018)"),
+        authority: "Superintendencia Financiera de Colombia", url: "https://www.superfinanciera.gov.co/publicacion/10099659",
+        applies: T3("Entidades vigiladas por la Superintendencia Financiera.", "Entities supervised by the Financial Superintendency.", "Entidades supervisionadas pela Superintendência Financeira."),
+        points: [
+          PT("CE 005/2019 · num. 3.10", "Mantener cifrada la información clasificada como confidencial en tránsito o en reposo", "enc", "enc",
+            T3("Clasificar la información y asegurar el cifrado de la confidencial.", "Classify information and ensure confidential information is encrypted.", "Classificar a informação e garantir a criptografia da confidencial.")),
+          PT("CE 005/2019 · num. 6", "Dentro de los 15 días anteriores al inicio del procesamiento de información en la nube…", "third", "third",
+            T3("Enviar a la SFC la información requerida dentro de los 15 días anteriores a empezar a procesar en la nube, e incluir el riesgo en su SARO.", "Send the SFC the required information within the 15 days before starting cloud processing, and include the risk in its operational risk system (SARO).", "Enviar à SFC as informações exigidas nos 15 dias anteriores ao início do processamento na nuvem, e incluir o risco no seu SARO.")),
+          Object.assign(PT("CE 007/2018 · num. 3.7.1", "…haciendo una breve descripción del incidente, su impacto y las medidas adoptadas para gestionarlo.", "incident", "incident",
+            T3("Reportar a la SFC los incidentes de ciberseguridad significativos e informar a los consumidores afectados.", "Report significant cybersecurity incidents to the SFC and inform affected consumers.", "Reportar à SFC os incidentes de cibersegurança significativos e informar os consumidores afetados.")), { links: [["https://www.superfinanciera.gov.co/publicacion/10096745", "SFC · CE 007 de 2018"]] })
+        ] },
+      { id: "co-527", name: "Ley 527 de 1999", title: T3("Mensajes de datos y firma digital", "Data messages and digital signature", "Mensagens de dados e assinatura digital"),
+        authority: "ONAC (entidades de certificación digital)", url: "https://normograma.mintic.gov.co/mintic/compilacion/docs/ley_0527_1999.htm",
+        applies: T3("Documentos y firmas electrónicas.", "Electronic documents and signatures.", "Documentos e assinaturas eletrônicas."),
+        points: [
+          PT("Art. 28", "El uso de una firma digital tendrá la misma fuerza y efectos que el uso de una firma manuscrita,…", "sign", "sign",
+            T3("Usar firma digital de una entidad de certificación acreditada por ONAC cuando el acto la exija; la firma de ShareFile, en documentos privados donde baste un método confiable y apropiado (Art. 7).", "Use a digital signature from an ONAC-accredited certification entity when the act requires it; ShareFile's e-signature for private documents where a reliable, appropriate method suffices (Art. 7).", "Usar assinatura digital de uma entidade certificadora acreditada pela ONAC quando o ato exigir; a assinatura do ShareFile em documentos privados onde baste um método confiável e apropriado (Art. 7)."))
+        ] }
+    ] },
+  // ── Chile
+  { id: "cl", name: T3("Chile", "Chile", "Chile"), verified: "2026-10-09", residency: "none",
+    norms: [
+      { id: "cl-19628", name: "Ley 19.628", title: T3("Protección de la vida privada (vigente hoy)", "Protection of private life (in force today)", "Proteção da vida privada (vigente hoje)"),
+        authority: "—", url: "https://www.bcn.cl/leychile/navegar?idNorma=141599",
+        applies: T3("Responsables de registros o bases de datos personales.", "Controllers of personal data registries or databases.", "Responsáveis por registros ou bases de dados pessoais."),
+        points: [ PT("Art. 11", "El responsable de los registros o bases donde se almacenen datos personales con posterioridad a su recolección deberá cuidar de ellos con la debida diligencia, haciéndose responsable de los daños.", "sec", "sec", YOU.sec) ] },
+      { id: "cl-21719", name: "Ley 21.719", title: T3("Nueva ley de protección de datos personales (modifica la Ley 19.628)", "New personal data protection law (amends Law 19,628)", "Nova lei de proteção de dados pessoais (modifica a Lei 19.628)"),
+        authority: "Agencia de Protección de Datos Personales", url: "https://www.diariooficial.interior.gob.cl/publicaciones/2024/12/13/44023/01/2583630.pdf",
+        note: T3("Entra en vigencia el 1-dic-2026 (Decreto 12/2025). Un proyecto de ley del Gobierno (Boletín 18.623-07, en primer trámite en el Senado) propone postergarla al 1-dic-2027.", "Takes effect 1 Dec 2026 (Decree 12/2025). A government bill (Bulletin 18.623-07, first stage in the Senate) proposes postponing it to 1 Dec 2027.", "Entra em vigor em 1-dez-2026 (Decreto 12/2025). Um projeto de lei do Governo (Boletim 18.623-07, em primeiro trâmite no Senado) propõe adiá-la para 1-dez-2027."),
+        applies: T3("Responsables del tratamiento de datos personales.", "Controllers of personal data.", "Responsáveis pelo tratamento de dados pessoais."),
+        points: [
+          PT("Art. 14 quinquies", "Las medidas aplicadas por el responsable deben asegurar la confidencialidad, integridad, disponibilidad y resiliencia…", "sec", "sec", YOU.sec),
+          PT("Arts. 27 · 28", "(Art. 28:) Se entiende que el ordenamiento jurídico de un país posee niveles adecuados de protección de datos,…", "transfer", "transfer",
+            T3("Revisar si el destino tiene nivel adecuado o aplicar las garantías que exige la ley; elegir la zona: ninguna está en Chile.", "Check whether the destination has an adequate level or apply the safeguards the law requires; choose the zone: none is in Chile.", "Verificar se o destino tem nível adequado ou aplicar as garantias exigidas pela lei; escolher a zona: nenhuma fica no Chile.")),
+          PT("Art. 14 sexies", "El responsable deberá reportar a la Agencia, por los medios más expeditos posibles y sin dilaciones indebidas,…", "breach", "breach",
+            T3("Reportar a la Agencia por los medios más expeditos y sin dilaciones indebidas.", "Report to the Agency by the fastest means and without undue delay.", "Reportar à Agência pelos meios mais expeditos e sem demoras indevidas."))
+        ] },
+      { id: "cl-21663", name: "Ley 21.663", title: T3("Ley Marco de Ciberseguridad", "Cybersecurity Framework Law", "Lei-Quadro de Cibersegurança"),
+        authority: "ANCI · CSIRT Nacional", url: "https://www.bcn.cl/leychile/navegar?idNorma=1202434",
+        applies: T3("Servicios esenciales (incluye banca, pagos y servicios de TI gestionados por terceros) y operadores de importancia vital.", "Essential services (including banking, payments and third-party-managed IT services) and operators of vital importance.", "Serviços essenciais (inclui bancos, pagamentos e serviços de TI geridos por terceiros) e operadores de importância vital."),
+        points: [
+          PT("Art. 9", "Dentro del plazo máximo de tres horas contado desde que se tiene conocimiento… Dentro del plazo máximo de setenta y dos horas, una actualización… Dentro del plazo máximo de quince días corridos…", "incident", "incident",
+            T3("Reportar al CSIRT Nacional: alerta temprana en 3 horas, actualización en 72 horas (24 horas para operadores de importancia vital con su servicio afectado) e informe final en 15 días corridos.", "Report to the National CSIRT: early warning within 3 hours, update within 72 hours (24 hours for operators of vital importance whose service is affected) and final report within 15 calendar days.", "Reportar ao CSIRT Nacional: alerta precoce em 3 horas, atualização em 72 horas (24 horas para operadores de importância vital com o serviço afetado) e relatório final em 15 dias corridos."))
+        ] },
+      { id: "cl-cmf", name: "CMF · RAN 20-10", title: T3("Gestión de la seguridad de la información y ciberseguridad (Circular 2.261)", "Information security and cybersecurity management (Circular 2,261)", "Gestão da segurança da informação e cibersegurança (Circular 2.261)"),
+        authority: "Comisión para el Mercado Financiero", url: "https://www.cmfchile.cl/portal/normativa/624/articles-29310_doc_pdf.pdf",
+        applies: T3("Bancos y entidades fiscalizadas por la CMF.", "Banks and entities supervised by the CMF.", "Bancos e entidades fiscalizadas pela CMF."),
+        points: [
+          PT("RAN 20-10", "…un proceso de verificación periódica de la aplicación y cumplimiento de sus políticas de seguridad…", "third", "third",
+            T3("Verificar periódicamente a sus proveedores; para servicios externalizados en la nube rige además el Capítulo 20-7 de la RAN.", "Periodically verify its providers; for outsourced cloud services RAN Chapter 20-7 also applies.", "Verificar periodicamente seus fornecedores; para serviços terceirizados em nuvem vale também o Capítulo 20-7 da RAN."))
+        ] },
+      { id: "cl-19799", name: "Ley 19.799", title: T3("Documentos electrónicos y firma electrónica", "Electronic documents and electronic signature", "Documentos eletrônicos e assinatura eletrônica"),
+        authority: "Entidad Acreditadora (prestadores acreditados)", url: "https://www.bcn.cl/leychile/navegar?idNorma=196640",
+        applies: T3("Actos y contratos con firma electrónica.", "Acts and contracts with electronic signature.", "Atos e contratos com assinatura eletrônica."),
+        points: [
+          PT("Art. 4", "Los documentos electrónicos que tengan la calidad de instrumento público, deberán suscribirse mediante firma electrónica avanzada.", "sign", "sign",
+            T3("Usar firma electrónica avanzada de un prestador acreditado en instrumentos públicos y donde la ley la exija; la firma de ShareFile, en documentos privados.", "Use an accredited provider's advanced electronic signature for public instruments and where the law requires it; ShareFile's e-signature for private documents.", "Usar assinatura eletrônica avançada de um prestador credenciado em instrumentos públicos e onde a lei exigir; a assinatura do ShareFile em documentos privados."))
+        ] }
+    ] },
+  // ── Perú
+  { id: "pe", name: T3("Perú", "Peru", "Peru"), verified: "2026-10-09", residency: "none",
+    norms: [
+      { id: "pe-29733", name: "Ley 29733 · D.S. 016-2024-JUS", title: T3("Protección de datos personales y su nuevo reglamento", "Personal data protection and its new regulation", "Proteção de dados pessoais e seu novo regulamento"),
+        authority: "Autoridad Nacional de Protección de Datos Personales (MINJUSDH)", url: "https://www.congreso.gob.pe/Docs/DGP/DIDP/files/ley_29733.pdf",
+        applies: T3("Titulares de bancos de datos y responsables del tratamiento.", "Database owners and controllers.", "Titulares de bancos de dados e responsáveis pelo tratamento."),
+        points: [
+          PT("Ley · Art. 9", "…las medidas técnicas, organizativas y legales necesarias para garantizar…", "sec", "sec", YOU.sec),
+          Object.assign(PT("Ley · Art. 15 · Reglamento Arts. 18, 20, 21", "…solo si el país destinatario mantiene niveles de protección adecuados conforme a la presente Ley. (Reglamento:) …cláusulas contractuales modelo u otros instrumentos jurídicos…", "transfer", "transfer",
+            T3("Asegurar nivel adecuado o garantías (por ejemplo, cláusulas contractuales modelo) y notificar el flujo transfronterizo a la autoridad. Ninguna zona está en Perú.", "Ensure an adequate level or safeguards (for example, model contractual clauses) and notify the cross-border flow to the authority. No zone is in Peru.", "Garantir nível adequado ou salvaguardas (por exemplo, cláusulas contratuais-modelo) e notificar o fluxo transfronteiriço à autoridade. Nenhuma zona fica no Peru.")), { links: FIT.transfer.links.concat([["https://www.congreso.gob.pe/Docs/DGP/DIDP/files/ds_016-2024-jus.pdf", "D.S. 016-2024-JUS"]]) }),
+          PT("Reglamento · Art. 34.1", "…debe notificar a la Autoridad Nacional de Protección de Datos Personales como máximo dentro de las 48 horas posteriores a haber tomado conocimiento o constancia de ello.", "breach", "breach",
+            T3("En los incidentes que el reglamento indica, notificar a la Autoridad en máximo 48 horas, comunicar a los titulares y, si es digital, al Centro Nacional de Seguridad Digital.", "For the incidents the regulation specifies, notify the Authority within 48 hours, inform data subjects and, if digital, the National Digital Security Center.", "Nos incidentes indicados pelo regulamento, notificar a Autoridade em até 48 horas, comunicar os titulares e, se for digital, o Centro Nacional de Segurança Digital."))
+        ] },
+      { id: "pe-sbs", name: "SBS · Res. 504-2021", title: T3("Gestión de la seguridad de la información y ciberseguridad (art. 24 modificado por Res. SBS 01515-2021)", "Information security and cybersecurity management (art. 24 as amended by SBS Res. 01515-2021)", "Gestão da segurança da informação e cibersegurança (art. 24 modificado pela Res. SBS 01515-2021)"),
+        authority: "Superintendencia de Banca, Seguros y AFP", url: "https://busquedas.elperuano.pe/dispositivo/NL/1955432-1",
+        applies: T3("Empresas supervisadas por la SBS.", "Companies supervised by the SBS.", "Empresas supervisionadas pela SBS."),
+        points: [
+          PT("Art. 24.2 · 24.3", "…servicio significativo provisto por terceros para el procesamiento de datos, que incluye servicios en nube… como máximo treinta (30) días calendario después de iniciar la provisión del procesamiento de datos.", "third", "third",
+            T3("Tratar la nube como servicio significativo: estrategia de salida y comunicación a la SBS dentro de los 30 días calendario siguientes al inicio.", "Treat cloud as a significant service: exit strategy and notice to the SBS within 30 calendar days after starting.", "Tratar a nuvem como serviço significativo: estratégia de saída e comunicação à SBS em até 30 dias corridos após o início."))
+        ] },
+      { id: "pe-27269", name: "Ley 27269 · D.S. 052-2008-PCM", title: T3("Firmas y certificados digitales (IOFE)", "Digital signatures and certificates (IOFE)", "Assinaturas e certificados digitais (IOFE)"),
+        authority: "INDECOPI · RENIEC (DNIe)", url: "https://portal.ingemmet.gob.pe/documents/59082/1380545/DS-052-2008-pcm.pdf",
+        applies: T3("Documentos firmados electrónicamente.", "Electronically signed documents.", "Documentos assinados eletronicamente."),
+        points: [
+          PT("Reglamento · Art. 6", "…tiene la misma validez y eficacia jurídica que el uso de una firma manuscrita…", "sign", "sign",
+            T3("Usar firma digital de un prestador acreditado en la IOFE (o el DNIe) donde se requiera esa equivalencia; la firma de ShareFile, en documentos privados.", "Use a digital signature from an IOFE-accredited provider (or the DNIe) where that equivalence is required; ShareFile's e-signature for private documents.", "Usar assinatura digital de um prestador credenciado na IOFE (ou o DNIe) onde essa equivalência for exigida; a assinatura do ShareFile em documentos privados."))
+        ] }
+    ] },
+  // ── Argentina
+  { id: "ar", name: T3("Argentina", "Argentina", "Argentina"), verified: "2026-10-09", residency: "none",
+    norms: [
+      { id: "ar-25326", name: "Ley 25.326", title: T3("Protección de los datos personales (Decreto 1558/2001)", "Personal data protection (Decree 1558/2001)", "Proteção de dados pessoais (Decreto 1558/2001)"),
+        authority: "AAIP", url: "https://servicios.infoleg.gob.ar/infolegInternet/anexos/60000-64999/64790/texact.htm",
+        note: T3("La ley no establece un deber general de notificar vulneraciones; la AAIP publicó medidas de seguridad recomendadas (Res. 47/2018).", "The law sets no general breach-notification duty; the AAIP published recommended security measures (Res. 47/2018).", "A lei não estabelece um dever geral de notificar incidentes; a AAIP publicou medidas de segurança recomendadas (Res. 47/2018)."),
+        applies: T3("Responsables de archivos, registros o bancos de datos personales.", "Controllers of personal data files, registries or databases.", "Responsáveis por arquivos, registros ou bancos de dados pessoais."),
+        points: [
+          PT("Art. 9", "…adoptar las medidas técnicas y organizativas que resulten necesarias…", "sec", "sec", YOU.sec),
+          Object.assign(PT("Art. 12 · Disp. 60-E/2016", "Es prohibida la transferencia de datos personales de cualquier tipo con países u organismos internacionales… que no propocionen niveles de protección adecuados. (Disp. 60-E:) Apruébanse las cláusulas contractuales tipo de transferencia internacional…", "transfer", "transfer",
+            T3("EE. UU. y Brasil no figuran en la lista de países adecuados de la AAIP: usar las cláusulas contractuales tipo (o presentar el contrato a la AAIP en 30 días) o contar con consentimiento expreso. Ninguna zona está en Argentina.", "The US and Brazil are not on the AAIP's adequate-country list: use the model contractual clauses (or submit the contract to the AAIP within 30 days) or obtain express consent. No zone is in Argentina.", "EUA e Brasil não estão na lista de países adequados da AAIP: usar as cláusulas contratuais-tipo (ou apresentar o contrato à AAIP em 30 dias) ou obter consentimento expresso. Nenhuma zona fica na Argentina.")), { links: FIT.transfer.links.concat([["https://www.argentina.gob.ar/normativa/nacional/norma-267922/actualizacion", "Disposición 60-E/2016"]]) })
+        ] },
+      { id: "ar-bcra", name: "BCRA · Com. \"A\" 7724", title: T3("Gestión de riesgos de tecnología y seguridad de la información (texto ordenado vigente)", "Technology risk and information security management (current consolidated text)", "Gestão de riscos de tecnologia e segurança da informação (texto consolidado vigente)"),
+        authority: "Banco Central de la República Argentina", url: "https://www.bcra.gob.ar/archivos/Pdfs/Texord/t-rmgcti.pdf",
+        applies: T3("Entidades financieras.", "Financial institutions.", "Entidades financeiras."),
+        points: [
+          PT("Sección 10", "Previo al inicio de la relación, las entidades deberán informar las características del proceso… a delegar a la Gerencia de Auditoría Externa de Sistemas de la Superintendencia…", "third", "third",
+            T3("Informar a la Superintendencia antes de delegar y asegurar en el contrato el acceso irrestricto del supervisor.", "Inform the Superintendency before delegating and secure unrestricted supervisor access in the contract.", "Informar a Superintendência antes de delegar e garantir no contrato o acesso irrestrito do supervisor.")),
+          PT("Secc. 8.1.3", "Mecanismos para la comunicación con terceras partes, para la gestión y el reporte de ciberincidentes a las autoridades.", "incident", "incident",
+            T3("Definir las políticas y mecanismos de reporte de ciberincidentes a las autoridades.", "Define policies and mechanisms for reporting cyber incidents to the authorities.", "Definir as políticas e os mecanismos de reporte de ciberincidentes às autoridades."))
+        ] },
+      { id: "ar-25506", name: "Ley 25.506", title: T3("Firma digital (modificada por Ley 27.446)", "Digital signature (amended by Law 27,446)", "Assinatura digital (modificada pela Lei 27.446)"),
+        authority: "Certificadores licenciados", url: "https://www.argentina.gob.ar/normativa/nacional/ley-25506-70749/actualizacion",
+        applies: T3("Documentos firmados digital o electrónicamente.", "Digitally or electronically signed documents.", "Documentos assinados digital ou eletronicamente."),
+        points: [
+          PT("Art. 5 · Art. 7", "En caso de ser desconocida la firma electrónica corresponde a quien la invoca acreditar su validez. (Art. 7:) Se presume, salvo prueba en contrario, que toda firma digital pertenece al titular del certificado digital…", "sign", "sign",
+            T3("Usar firma digital de un certificador licenciado cuando se necesite la presunción de autoría; con la firma de ShareFile (firma electrónica), quien la invoca debe probar su validez.", "Use a licensed certifier's digital signature when the presumption of authorship is needed; with ShareFile's (electronic) signature, whoever invokes it must prove its validity.", "Usar assinatura digital de um certificador licenciado quando for necessária a presunção de autoria; com a assinatura do ShareFile (eletrônica), quem a invoca deve provar sua validade."))
+        ] }
+    ] },
+  // ── Panamá
+  { id: "pa", name: T3("Panamá", "Panama", "Panamá"), verified: "2026-10-09", residency: "none",
+    norms: [
+      { id: "pa-81", name: "Ley 81 de 2019", check: "gaceta", title: T3("Protección de datos personales (reglamentada por el Decreto Ejecutivo 285 de 2021)", "Personal data protection (regulated by Executive Decree 285 of 2021)", "Proteção de dados pessoais (regulamentada pelo Decreto Executivo 285 de 2021)"),
+        authority: "ANTAI", url: "https://www.sinaproc.gob.pa/wp-content/uploads/2026/08/Ley-81-de-26-de-marzo-de-2019.pdf",
+        applies: T3("Responsables y custodios de bases de datos personales.", "Controllers and custodians of personal databases.", "Responsáveis e custodiantes de bases de dados pessoais."),
+        points: [
+          PT("Ley 81", "…adoptar las medidas de índole técnica y organizativa necesarias…", "sec", "sec", YOU.sec),
+          PT("Ley 81", "Que el país u organismo internacional o supranacional receptor proporcione un nivel de protección equivalente o superior.", "transfer", "transfer",
+            T3("Verificar que el destino tenga un nivel de protección equivalente o aplicar las garantías del reglamento; elegir la zona: ninguna está en Panamá.", "Check that the destination has an equivalent protection level or apply the regulation's safeguards; choose the zone: none is in Panama.", "Verificar se o destino tem nível de proteção equivalente ou aplicar as garantias do regulamento; escolher a zona: nenhuma fica no Panamá."))
+        ] },
+      { id: "pa-sbp", name: "SBP · Acuerdos 9-2005, 3-2012 y 1-2022", title: T3("Tercerización, riesgo tecnológico y protección de datos en bancos", "Outsourcing, technology risk and data protection at banks", "Terceirização, risco tecnológico e proteção de dados em bancos"),
+        authority: "Superintendencia de Bancos de Panamá", url: "https://www.superbancos.gob.pa/documentos/leyes_y_regulaciones/acuerdos/2005/Acuerdo_9-2005.pdf",
+        applies: T3("Bancos supervisados por la SBP.", "Banks supervised by the SBP.", "Bancos supervisionados pela SBP."),
+        points: [
+          Object.assign(PT("Ac. 9-2005 art. 4 · Ac. 3-2012 art. 14", "…todo contrato de tercerización requerirá autorización de la Superintendencia de Bancos. (Ac. 3-2012:) La obligación de la empresa contratada de permitir a la Superintendencia de Bancos…", "third", "third",
+            T3("Solicitar la autorización de la SBP, indicar en el contrato el lugar donde se presta el servicio y asegurar el acceso del supervisor.", "Request SBP authorization, state in the contract where the service is provided and secure supervisor access.", "Solicitar a autorização da SBP, indicar no contrato o local de prestação do serviço e garantir o acesso do supervisor.")), { links: FIT.third.links.concat([["https://www.superbancos.gob.pa/documentos/leyes_y_regulaciones/acuerdos/2012/Acuerdo_3-2012.pdf", "SBP · Acuerdo 3-2012"]]) }),
+          Object.assign(PT("Ac. 1-2022 art. 26", "…a la Superintendencia de Bancos, a través de su oficial de Seguridad de la Información…", "breach", "breach",
+            T3("Informar los incidentes al titular y a la SBP; el banco mantiene la responsabilidad aunque use encargados (art. 14).", "Report incidents to the data subject and the SBP; the bank remains responsible even when using processors (art. 14).", "Informar os incidentes ao titular e à SBP; o banco mantém a responsabilidade mesmo usando encarregados (art. 14).")), { links: [["https://www.superbancos.gob.pa/documentos/leyes_y_regulaciones/acuerdos/2022/Acuerdo_01-2022.pdf", "SBP · Acuerdo 1-2022"]] })
+        ] },
+      { id: "pa-82", name: "Ley 51 de 2008 · Ley 82 de 2012", title: T3("Documentos y firmas electrónicas", "Electronic documents and signatures", "Documentos e assinaturas eletrônicas"),
+        authority: "Dirección Nacional de Firma Electrónica (Registro Público)", url: "https://registro-publico.gob.pa/images/stories/Ley82de2012atribucionesalRPPparaserAutoridadRegistradoraycertificadoraraiz.pdf",
+        applies: T3("Documentos firmados electrónicamente.", "Electronically signed documents.", "Documentos assinados eletronicamente."),
+        points: [
+          PT("Ley 82 art. 14", "…se presumirán de pleno derecho en el caso de que se esté en presencia de una firma electrónica calificada…", "sign", "sign",
+            T3("Usar firma electrónica calificada cuando se necesite esa presunción o la ley la exija; la firma de ShareFile, en documentos privados.", "Use a qualified electronic signature when that presumption is needed or the law requires it; ShareFile's e-signature for private documents.", "Usar assinatura eletrônica qualificada quando essa presunção for necessária ou a lei exigir; a assinatura do ShareFile em documentos privados."))
+        ] }
+    ] },
+  // ── Guatemala
+  { id: "gt", name: T3("Guatemala", "Guatemala", "Guatemala"), verified: "2026-10-09", residency: "none",
+    note: T3("No identificamos una ley general de protección de datos personales vigente; hay iniciativas en el Congreso. Las normas aplicables son sectoriales.", "We found no general personal data protection law in force; there are bills in Congress. Applicable rules are sector-specific.", "Não identificamos uma lei geral de proteção de dados pessoais vigente; há projetos no Congresso. As normas aplicáveis são setoriais."),
+    pending: T3("Junta Monetaria JM-104-2021 (riesgo tecnológico en bancos): el texto oficial publicado es una imagen escaneada; pendiente de verificar.", "Monetary Board JM-104-2021 (technology risk at banks): the published official text is a scanned image; pending verification.", "Junta Monetária JM-104-2021 (risco tecnológico em bancos): o texto oficial publicado é uma imagem digitalizada; pendente de verificação."),
+    norms: [
+      { id: "gt-47", name: "Decreto 47-2008", title: T3("Reconocimiento de las comunicaciones y firmas electrónicas", "Recognition of electronic communications and signatures", "Reconhecimento das comunicações e assinaturas eletrônicas"),
+        authority: "RPSC (Ministerio de Economía)", url: "https://rpsc.gob.gt/storage/multimedia/0zRtN03kIk11eBKXxa5CbgIEfnlHrLBYARcyNS26.pdf",
+        applies: T3("Comunicaciones y firmas electrónicas.", "Electronic communications and signatures.", "Comunicações e assinaturas eletrônicas."),
+        points: [
+          PT("Art. 33", "…el mismo valor jurídico que la firma manuscrita en relación con los consignados en papel…", "sign", "sign",
+            T3("Usar firma electrónica avanzada de un prestador inscrito en el RPSC cuando se requiera; la firma de ShareFile, en documentos privados.", "Use an advanced electronic signature from an RPSC-registered provider when required; ShareFile's e-signature for private documents.", "Usar assinatura eletrônica avançada de um prestador inscrito no RPSC quando exigido; a assinatura do ShareFile em documentos privados."))
+        ] }
+    ] },
+  // ── El Salvador
+  { id: "sv", name: T3("El Salvador", "El Salvador", "El Salvador"), verified: "2026-10-09", residency: "none",
+    norms: [
+      { id: "sv-144", name: "D.L. 144 (2024)", title: T3("Ley para la Protección de Datos Personales", "Personal Data Protection Law", "Lei de Proteção de Dados Pessoais"),
+        authority: "Agencia de Ciberseguridad del Estado (ACE)", url: "https://www.jurisprudencia.gob.sv/DocumentosBoveda/D/2/2020-2029/2024/11/10660E.PDF",
+        note: T3("Reformada por el D.L. 659 (Diario Oficial 18-sep-2026); los artículos citados aquí no figuran entre los reformados.", "Amended by D.L. 659 (Official Gazette 18 Sep 2026); the articles cited here are not among those amended.", "Reformada pelo D.L. 659 (Diário Oficial 18-set-2026); os artigos citados aqui não estão entre os reformados."),
+        applies: T3("Responsables del tratamiento de datos personales.", "Controllers of personal data.", "Responsáveis pelo tratamento de dados pessoais."),
+        points: [
+          PT("Art. 36", "El responsable deberá acatar y mantener las medidas de seguridad establecidas por la Entidad Rectora…", "sec", "sec", YOU.sec),
+          PT("Art. 44", "…solamente cuando el país receptor o importador de datos personales cumpla como mínimo con los principios de protección de datos personales… En todo caso deberá mediar el consentimiento previo del titular…", "transfer", "transfer",
+            T3("Obtener el consentimiento previo del titular y verificar que el destino cumpla los principios de la ley; elegir la zona: ninguna está en El Salvador.", "Obtain the data subject's prior consent and check that the destination meets the law's principles; choose the zone: none is in El Salvador.", "Obter o consentimento prévio do titular e verificar se o destino cumpre os princípios da lei; escolher a zona: nenhuma fica em El Salvador.")),
+          PT("Art. 25", "…notificará a la Agencia de Ciberseguridad del Estado, a la Fiscalía General de la República y a los titulares afectados… plazo máximo de setenta y dos horas desde que se tuvo conocimiento de la vulneración de seguridad.", "breach", "breach",
+            T3("Notificar a la ACE, a la Fiscalía y a los titulares en un máximo de 72 horas.", "Notify the ACE, the Attorney General's Office and data subjects within 72 hours at most.", "Notificar a ACE, a Procuradoria-Geral e os titulares em no máximo 72 horas."))
+        ] },
+      { id: "sv-143", name: "D.L. 143 (2024)", title: T3("Ley de Ciberseguridad y de la Seguridad de la Información", "Cybersecurity and Information Security Law", "Lei de Cibersegurança e Segurança da Informação"),
+        authority: "Agencia de Ciberseguridad del Estado (ACE)", url: "https://ace.gob.sv/page/documentos/decretos/decreto_143_ciberseguridad.pdf",
+        applies: T3("Órganos del Gobierno y entidades con incidencia en infraestructuras críticas.", "Government bodies and entities that affect critical infrastructure.", "Órgãos do Governo e entidades com incidência em infraestruturas críticas."),
+        points: [
+          PT("Art. 6", "…un sistema de gestión de ciberseguridad y seguridad de la información permanente…", "incident", "incident",
+            T3("Mantener un sistema de gestión de ciberseguridad y responder a incidentes de manera inmediata y eficaz.", "Maintain a cybersecurity management system and respond to incidents immediately and effectively.", "Manter um sistema de gestão de cibersegurança e responder a incidentes de forma imediata e eficaz."))
+        ] },
+      { id: "sv-firma", name: "Ley de Firma Electrónica", title: T3("D.L. 133/2015, reformada por D.L. 100/2021", "D.L. 133/2015, amended by D.L. 100/2021", "D.L. 133/2015, reformada pelo D.L. 100/2021"),
+        authority: "Unidad de Firma Electrónica (Ministerio de Economía)", url: "https://www.jurisprudencia.gob.sv/DocumentosBoveda/R/2/2010-2019/2015/10/E8EC9.HTML",
+        applies: T3("Documentos firmados electrónicamente.", "Electronically signed documents.", "Documentos assinados eletronicamente."),
+        points: [
+          PT("Art. 1 lit. a · Art. 6 (reformados)", "Equiparar la firma electrónica simple y firma electrónica certificada con la firma autógrafa… (Art. 6, firma simple:) no tendrá validez probatoria en los mismos términos…", "sign", "sign",
+            T3("Usar firma electrónica certificada cuando se necesite su valor probatorio; la firma de ShareFile (simple), en documentos privados.", "Use a certified electronic signature when its evidentiary value is needed; ShareFile's (simple) e-signature for private documents.", "Usar assinatura eletrônica certificada quando for necessário seu valor probatório; a assinatura do ShareFile (simples) em documentos privados."))
+        ] }
+    ] },
+  // ── Honduras
+  { id: "hn", name: T3("Honduras", "Honduras", "Honduras"), verified: "2026-10-09", residency: "none",
+    note: T3("No identificamos una ley general de protección de datos personales vigente; la Ley de Transparencia (Decreto 170-2006) reconoce el hábeas data y protege los datos personales.", "We found no general personal data protection law in force; the Transparency Law (Decree 170-2006) recognizes habeas data and protects personal data.", "Não identificamos uma lei geral de proteção de dados pessoais vigente; a Lei de Transparência (Decreto 170-2006) reconhece o habeas data e protege os dados pessoais."),
+    norms: [
+      { id: "hn-cnbs", name: "CNBS · Res. GRD 793/2022", title: T3("Gestión de TI, ciberseguridad y continuidad del negocio", "IT management, cybersecurity and business continuity", "Gestão de TI, cibersegurança e continuidade do negócio"),
+        authority: "Comisión Nacional de Bancos y Seguros", url: "https://circulares.cnbs.gob.hn/Archivo/Viewer/2530/Gaceta36111_Resolucion%20GRD%20793-16-12-2022.pdf",
+        applies: T3("Instituciones supervisadas por la CNBS.", "Institutions supervised by the CNBS.", "Instituições supervisionadas pela CNBS."),
+        points: [
+          PT("Arts. 13 · 16", "…debe ser notificada a esta Comisión, treinta (30) días calendario previos a la suscripción del contrato… Facultades suficientes para que la actividad del proveedor de servicios para la institución pueda ser auditada…", "third", "third",
+            T3("Notificar a la CNBS 30 días calendario antes de firmar una tercerización significativa y asegurar en el contrato que el proveedor pueda ser auditado.", "Notify the CNBS 30 calendar days before signing a significant outsourcing and ensure in the contract that the provider can be audited.", "Notificar a CNBS 30 dias corridos antes de firmar uma terceirização significativa e garantir no contrato que o fornecedor possa ser auditado.")),
+          PT("Art. 21", "…plazo máximo de dos (2) horas luego de identificado el incidente…", "incident", "incident",
+            T3("Primer aviso a la CNBS en máximo 2 horas, informe preliminar en 2 días hábiles (actualizado cada 5) e informe final en 15 días hábiles tras la resolución.", "First notice to the CNBS within 2 hours, preliminary report within 2 business days (updated every 5) and final report within 15 business days after resolution.", "Primeiro aviso à CNBS em até 2 horas, relatório preliminar em 2 dias úteis (atualizado a cada 5) e relatório final em 15 dias úteis após a resolução."))
+        ] },
+      { id: "hn-149", name: "Decreto 149-2013", title: T3("Ley sobre Firmas Electrónicas", "Electronic Signatures Law", "Lei sobre Assinaturas Eletrônicas"),
+        authority: "Dirección General de Propiedad Intelectual (Instituto de la Propiedad)", url: "https://www.tsc.gob.hn/web/leyes/Ley_firmas_electronicas_2013.pdf",
+        applies: T3("Documentos firmados electrónicamente.", "Electronically signed documents.", "Documentos assinados eletronicamente."),
+        points: [
+          PT("Art. 6", "La firma electrónica, cualquiera sea su naturaleza, se tendrá como firma manuscrita para todos los efectos legales.", "sign", "sign",
+            T3("La ley reconoce cualquier firma electrónica; para actos que requieran firma avanzada de un prestador acreditado, usar esa firma.", "The law recognizes any electronic signature; for acts requiring an accredited provider's advanced signature, use that signature.", "A lei reconhece qualquer assinatura eletrônica; para atos que exijam assinatura avançada de um prestador credenciado, usar essa assinatura."))
+        ] }
+    ] },
+  // ── Brasil
+  { id: "br", name: T3("Brasil", "Brazil", "Brasil"), verified: "2026-10-09", residency: "br",
+    norms: [
+      { id: "br-lgpd", name: "LGPD · Lei 13.709/2018", title: T3("Ley General de Protección de Datos Personales", "General Personal Data Protection Law", "Lei Geral de Proteção de Dados Pessoais"),
+        authority: "ANPD", url: "https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709.htm",
+        applies: T3("Agentes de tratamiento (controlador y operador) de datos personales.", "Processing agents (controller and processor) of personal data.", "Agentes de tratamento (controlador e operador) de dados pessoais."),
+        points: [
+          PT("Art. 46", "Os agentes de tratamento devem adotar medidas de segurança, técnicas e administrativas aptas a proteger os dados pessoais de acessos não autorizados…", "sec", "sec", YOU.sec, "pt"),
+          Object.assign(PT("Art. 33 · Res. CD/ANPD 19/2024", "A transferência internacional de dados pessoais somente é permitida nos seguintes casos:… (Res. 19:) As cláusulas-padrão contratuais, elaboradas e aprovadas pela ANPD…", "transfer", "transfer",
+            T3("Con la zona ShareFile Brazil, los archivos pueden quedarse en el país. Si se guardan o procesan fuera, aplicar una base del art. 33 (por ejemplo, las cláusulas estándar de la ANPD). Confirmar con el representante qué datos del servicio se procesan fuera.", "With the ShareFile Brazil zone, files can stay in the country. If stored or processed abroad, apply an art. 33 basis (for example, the ANPD standard clauses). Confirm with the representative which service data is processed abroad.", "Com a zona ShareFile Brazil, os arquivos podem ficar no país. Se forem guardados ou processados fora, aplicar uma base do art. 33 (por exemplo, as cláusulas-padrão da ANPD). Confirmar com o representante quais dados do serviço são processados fora."), "pt"), { links: FIT.transfer.links.concat([["https://www.gov.br/anpd/pt-br/acesso-a-informacao/institucional/atos-normativos/regulamentacoes_anpd/resolucao-cd-anpd-no-19-de-23-de-agosto-de-2024", "Res. CD/ANPD 19/2024"]]) }),
+          Object.assign(PT("Art. 48 · Res. CD/ANPD 15/2024 art. 6", "A comunicação de incidente de segurança à ANPD deverá ser realizada pelo controlador no prazo de três dias úteis…", "breach", "breach",
+            T3("Comunicar a la ANPD y a los titulares en 3 días hábiles los incidentes que puedan causar riesgo o daño relevante (el doble para agentes de pequeño porte).", "Notify the ANPD and data subjects within 3 business days of incidents that may cause relevant risk or harm (double for small agents).", "Comunicar à ANPD e aos titulares em 3 dias úteis os incidentes que possam causar risco ou dano relevante (em dobro para agentes de pequeno porte)."), "pt"), { links: [["https://bibliotecadigital.mj.gov.br/bitstream/1/12879/2/RES_ANPD_2024_15.html", "Res. CD/ANPD 15/2024"]] })
+        ] },
+      { id: "br-cmn", name: "Res. CMN 4.893/2021", check: "amended", title: T3("Seguridad cibernética y contratación de nube (Banco Central do Brasil)", "Cybersecurity and cloud contracting (Central Bank of Brazil)", "Segurança cibernética e contratação de nuvem (Banco Central do Brasil)"),
+        authority: "Conselho Monetário Nacional · Banco Central do Brasil", url: "https://www.bcb.gov.br/content/about/legislation_norms_docs/CMN_Resolution_No_4,893_2021.pdf",
+        note: T3("Extractos de la traducción oficial al inglés del BCB. La norma fue modificada en 2025: confirmar el texto vigente.", "Extracts from the BCB's official English translation. The rule was amended in 2025: confirm the current text.", "Trechos da tradução oficial em inglês do BCB. A norma foi modificada em 2025: confirmar o texto vigente."),
+        applies: T3("Instituciones autorizadas por el Banco Central do Brasil.", "Institutions authorized by the Central Bank of Brazil.", "Instituições autorizadas pelo Banco Central do Brasil."),
+        points: [
+          PT("Arts. 15 · 16 · 17", "The communication mentioned in the heading must be made within ten days after contracting the services… an indication of the countries and the regions in each country where services may be provided…", "third", "third",
+            T3("Comunicar la contratación al BCB en 10 días, indicar en el contrato los países y regiones donde se presta el servicio y, si es en el exterior, verificar el convenio entre supervisores o pedir autorización.", "Notify the BCB within 10 days of contracting, state in the contract the countries and regions where the service is provided and, if abroad, check the supervisors' agreement or request authorization.", "Comunicar a contratação ao BCB em 10 dias, indicar no contrato os países e regiões de prestação do serviço e, se no exterior, verificar o convênio entre supervisores ou pedir autorização."), "en")
+        ] },
+      { id: "br-sign", name: "MP 2.200-2/2001 · Lei 14.063/2020", title: T3("ICP-Brasil y niveles de firma electrónica", "ICP-Brasil and electronic signature levels", "ICP-Brasil e níveis de assinatura eletrônica"),
+        authority: "ITI (ICP-Brasil)", url: "https://www.planalto.gov.br/ccivil_03/_ato2019-2022/2020/lei/l14063.htm",
+        applies: T3("Documentos firmados electrónicamente, incluso ante entes públicos.", "Electronically signed documents, including with public bodies.", "Documentos assinados eletronicamente, inclusive perante entes públicos."),
+        points: [
+          PT("Lei 14.063 art. 4 · art. 5 §1", "…utiliza certificado digital, nos termos do § 1º do art. 10 da Medida Provisória… [a assinatura qualificada] será admitida em qualquer interação eletrônica com ente público", "sign", "sign",
+            T3("Usar firma calificada ICP-Brasil (o avanzada gov.br donde se admita) en actos que la exijan; la firma de ShareFile (simple), en contratos privados.", "Use an ICP-Brasil qualified signature (or gov.br advanced where accepted) for acts that require it; ShareFile's (simple) e-signature for private contracts.", "Usar assinatura qualificada ICP-Brasil (ou avançada gov.br onde admitida) em atos que a exijam; a assinatura do ShareFile (simples) em contratos privados."), "pt")
         ] }
     ] }
 ];
@@ -751,6 +1058,7 @@ const DISCREPANCIES = [
 
 
 const CHANGELOG = [
+  { v: "1.10.0", date: "2026-10-09", d: { es: "Cumplimiento: se agregan México, Guatemala, El Salvador, Honduras, Panamá, Colombia, Perú, Chile, Argentina y Brasil (32 normas en total), cada una con enlace al texto oficial del gobierno. Lo que no se pudo verificar en la fuente oficial aparece como pendiente.", en: "Compliance: adds Mexico, Guatemala, El Salvador, Honduras, Panama, Colombia, Peru, Chile, Argentina and Brazil (32 norms in total), each linked to the official government text. What could not be verified at the official source is shown as pending.", pt: "Conformidade: adiciona México, Guatemala, El Salvador, Honduras, Panamá, Colômbia, Peru, Chile, Argentina e Brasil (32 normas no total), cada uma com link para o texto oficial do governo. O que não pôde ser verificado na fonte oficial aparece como pendente." } },
   { v: "1.9.0", date: "2026-10-08", d: { es: "Nueva página «Cumplimiento» (piloto Costa Rica): Ley 8968 y su reglamento, CONASSIF 5-24 y Ley 8454, con extractos del texto oficial, dónde encaja ShareFile en cada requisito, lo que le corresponde a la empresa y dónde quedan los datos. Principio: quien cumple es la empresa que usa ShareFile.", en: "New “Compliance” page (Costa Rica pilot): Law 8968 and its regulation, CONASSIF 5-24 and Law 8454, with official text extracts, where ShareFile fits each requirement, what falls to the company and where the data lives. Principle: the company using ShareFile is the one that complies.", pt: "Nova página «Conformidade» (piloto Costa Rica): Lei 8968 e seu regulamento, CONASSIF 5-24 e Lei 8454, com trechos do texto oficial, onde o ShareFile se encaixa em cada requisito, o que cabe à empresa e onde ficam os dados. Princípio: quem cumpre é a empresa que usa o ShareFile." } },
   { v: "1.8.1", date: "2026-10-09", d: { es: "El sitio muestra su ícono (los cuatro cuadros de la marca) en la pestaña del navegador y al guardarlo en la pantalla de inicio del celular.", en: "The site shows its icon (the four brand squares) on the browser tab and when saved to a phone's home screen.", pt: "O site mostra seu ícone (os quatro quadrados da marca) na aba do navegador e ao salvá-lo na tela inicial do celular." } },
   { v: "1.8.0", date: "2026-10-08", d: { es: "Casos de uso: de 45 a 61. Contabilidad, Finanzas y Legal llegan a 8; Construcción, Salud y Seguros a 7; Manufactura a 6. Bienes raíces y RR. HH. se mantienen en 5 porque el material oficial no da para más. Cada caso nuevo se verificó contra su fuente. Los enlaces «Habilita» de «Aprovecha tu plan» llevan al caso exacto.", en: "Use cases: from 45 to 61. Accounting, Finance and Legal reach 8; Construction, Healthcare and Insurance 7; Manufacturing 6. Real estate and HR stay at 5 because official material supports no more. Each new case was checked against its source. The “Enables” links in “Get more from your plan” open the exact case.", pt: "Casos de uso: de 45 para 61. Contabilidade, Finanças e Jurídico chegam a 8; Construção, Saúde e Seguros a 7; Manufatura a 6. Imobiliário e RH ficam em 5 porque o material oficial não permite mais. Cada caso novo foi verificado contra a fonte. Os links «Habilita» de «Aproveite seu plano» levam ao caso exato." } },
