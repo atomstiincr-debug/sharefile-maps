@@ -314,3 +314,5 @@ ol.path ul.sigs { margin: 6px 0 0; padding-left: 18px; font-size: .9rem; }
 .th .th-price { margin-top: 2px; opacity: .9; }
 .map-prices { display: none; list-style: none; margin: 0 0 10px; padding: 0; font-size: .85rem; }
 @media (max-width: 760px) { .map-prices { display: grid; gap: 4px; } }
+/* Chips with long text (e.g. VDR price) wrap instead of pushing the page sideways */
+.toolbar .chip { white-space: normal; max-width: 100%; }

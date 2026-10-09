@@ -326,6 +326,8 @@ ol.path ul.sigs { margin: 6px 0 0; padding-left: 18px; font-size: .9rem; }
 .th .th-price { margin-top: 2px; opacity: .9; }
 .map-prices { display: none; list-style: none; margin: 0 0 10px; padding: 0; font-size: .85rem; }
 @media (max-width: 760px) { .map-prices { display: grid; gap: 4px; } }
+/* Chips with long text (e.g. VDR price) wrap instead of pushing the page sideways */
+.toolbar .chip { white-space: normal; max-width: 100%; }
 
 </style>
 </head>
@@ -377,7 +379,7 @@ const OVERVIEW_VIDEO = { id: "yQkpfDLkCk0", t: "Progress ShareFile - Built For T
 const TUTORIALS = "https://www.youtube.com/playlist?list=PLSKW9Jc-tCY9W-cB3G2OTYx00GXZrrzZB";
 
 const SITE = {
-  version: "1.6.1",
+  version: "1.6.2",
   updated: "2026-10-08",
   author: "Adrián Bonilla",
   pricingSource: W + "plans",
@@ -960,6 +962,7 @@ const DISCREPANCIES = [
 
 
 const CHANGELOG = [
+  { v: "1.6.2", date: "2026-10-08", d: { es: "Precios con la redacción oficial de sharefile.com/plans («por usuario / mes» y «Mínimo de 3 usuarios», VDR 5) en Inicio, Mapa, Data Room y Matriz. Corrige un desborde horizontal en la página Data Room en celulares pequeños.", en: "Prices use the official sharefile.com/plans wording (“per user / month” and “Minimum of 3 users”, VDR 5) on Home, Map, Data Room and Matrix. Fixes a horizontal overflow on the Data Room page on small phones.", pt: "Preços com a redação oficial de sharefile.com/plans («por usuário / mês» e «Mínimo de 3 usuários», VDR 5) em Início, Mapa, Data Room e Matriz. Corrige um transbordamento horizontal na página Data Room em celulares pequenos." } },
   { v: "1.6.1", date: "2026-10-08", d: { es: "Mapa, Data Room y Matriz: cada precio indica «por usuario / mes», el tipo de facturación y el mínimo de usuarios del plan. Las columnas Premium y Enterprise del mapa muestran lo que agregan y el total del plan (ej. +28 funciones, 62 en total). En celulares, el mapa muestra el precio y el mínimo que antes quedaban ocultos.", en: "Map, Data Room and Matrix: every price states “per user / month”, the billing type and the plan's minimum users. The Premium and Enterprise map columns show what they add and the plan total (e.g. +28 features, 62 in total). On phones the map now shows the price and minimum that were hidden.", pt: "Mapa, Data Room e Matriz: cada preço indica «por usuário / mês», o tipo de faturamento e o mínimo de usuários do plano. As colunas Premium e Enterprise do mapa mostram o que adicionam e o total do plano (ex. +28 recursos, 62 no total). Em celulares, o mapa mostra o preço e o mínimo que antes ficavam ocultos." } },
   { v: "1.6.0", date: "2026-10-08", d: { es: "Nueva página «Casos de uso»: 5 procesos por cada una de las 9 industrias, con funciones enlazadas, plan mínimo calculado, clientes publicados por ShareFile (cifras tal como las publica cada historia) y fuente oficial. El Recomendador enlaza a los casos de su industria. El pie de página invita a verificar en sharefile.com, docs.sharefile.com y trust.sharefile.com y a contactar al representante de ShareFile de cada región.", en: "New “Use cases” page: 5 processes for each of the 9 industries, with linked features, computed minimum plan, customers published by ShareFile (figures as each story states them) and official source. The Recommender links to its industry's cases. The footer invites readers to verify on sharefile.com, docs.sharefile.com and trust.sharefile.com and to contact their regional ShareFile representative.", pt: "Nova página «Casos de uso»: 5 processos para cada um dos 9 setores, com recursos vinculados, plano mínimo calculado, clientes publicados pelo ShareFile (números como cada história os publica) e fonte oficial. O Recomendador leva aos casos do seu setor. O rodapé convida a verificar em sharefile.com, docs.sharefile.com e trust.sharefile.com e a falar com o representante ShareFile da região." } },
   { v: "1.5.9", date: "2026-10-08", d: { es: "Conocimiento: se agregan los webinars oficiales de ShareFile (en vivo y bajo demanda, en inglés).", en: "Knowledge: adds the official ShareFile webinars (live and on demand, in English).", pt: "Conhecimento: adiciona os webinars oficiais do ShareFile (ao vivo e sob demanda, em inglês)." } },
@@ -1102,7 +1105,7 @@ const UI = {
   es: {
     video: { title: "Video oficial", lang: "en inglés; activa los subtítulos en español", tutorials: "Tutoriales oficiales en YouTube", overview: "Ver qué es ShareFile (en inglés)", long: "video largo" },
     int: { title: "Integraciones", lead: "Integraciones oficiales de ShareFile con herramientas de correo, almacenamiento, identidad, seguridad, CRM y contabilidad, más integraciones por industria. Cada una enlaza a su documentación oficial.", search: "Buscar integración (ej. Salesforce)", plans: "Planes", planCheck: "Tabla de precios: desde Advanced. Documentación del plugin: Premium o superior.", group: "Categoría", industry: "Industria", all: "Todas", third: "Las integraciones de terceros requieren las licencias del proveedor correspondiente; algunas pueden estar limitadas o no disponibles.", source: "Fuentes: sharefile.com/apps-integrations y docs.sharefile.com.", forIndustry: "Integraciones para esta industria", specific: "Específicas de {i}", noSpecific: "ShareFile no publica integraciones específicas para {i}. Las de abajo sirven igual.", featured: "Destacadas en la página oficial de {i}", noFeatured: "La página oficial de {i} no destaca integraciones concretas.", general: "Resto de integraciones, por función (sirven para cualquier industria)", hidden: "Se ocultan {n} integraciones específicas de otras industrias.", count: "integraciones" },
-    billing: { label: "Facturación", monthly: "Mensual", annual: "Anual", perUserMonth: "por usuario / mes", annualNote: "facturación anual", monthlyNote: "facturación mensual", save: "Ahorra {n}%", explain: "Precios MSRP en USD de sharefile.com/plans. Con facturación anual, el precio mensual por usuario baja." },
+    billing: { label: "Facturación", monthly: "Mensual", annual: "Anual", perUserMonth: "por usuario / mes", minUsers: "Mínimo de {n} usuarios", annualNote: "facturación anual", monthlyNote: "facturación mensual", save: "Ahorra {n}%", explain: "Precios MSRP en USD de sharefile.com/plans. Con facturación anual, el precio mensual por usuario baja." },
     lang: "Español", siteTag: "Mapa de planes ShareFile", unofficial: "Sitio no oficial", skip: "Saltar al contenido",
     nav: { home: "Inicio", map: "Mapa de planes", vdr: "Data Room", recommend: "Recomendador", compare: "Comparador", matrix: "Matriz", calc: "Calculadora", knowledge: "Conocimiento", glossary: "Glosario", changelog: "Cambios", discrepancies: "Discrepancias", integrations: "Integraciones", usecases: "Casos de uso" },
     by: "Por", updated: "Actualizado",
@@ -1176,7 +1179,7 @@ const UI = {
   en: {
     video: { title: "Official video", lang: "English", tutorials: "Official tutorials on YouTube", overview: "See what ShareFile is", long: "long video" },
     int: { title: "Integrations", lead: "Official ShareFile integrations with email, storage, identity, security, CRM and accounting tools, plus industry-specific integrations. Each links to its official documentation.", search: "Search integrations (e.g. Salesforce)", plans: "Plans", planCheck: "Pricing table: from Advanced. Plug-in documentation: Premium or higher.", group: "Category", industry: "Industry", all: "All", third: "Third-party integrations require the vendor's licenses; some may be limited or unavailable.", source: "Sources: sharefile.com/apps-integrations and docs.sharefile.com.", forIndustry: "Integrations for this industry", specific: "Specific to {i}", noSpecific: "ShareFile publishes no integrations specific to {i}. The ones below still apply.", featured: "Featured on the official {i} page", noFeatured: "The official {i} page does not feature specific integrations.", general: "Other integrations, by function (useful for any industry)", hidden: "{n} integrations specific to other industries are hidden.", count: "integrations" },
-    billing: { label: "Billing", monthly: "Monthly", annual: "Annual", perUserMonth: "per user / month", annualNote: "billed annually", monthlyNote: "billed monthly", save: "Save {n}%", explain: "MSRP in USD from sharefile.com/plans. Annual billing lowers the monthly price per user." },
+    billing: { label: "Billing", monthly: "Monthly", annual: "Annual", perUserMonth: "per user / month", minUsers: "Minimum of {n} users", annualNote: "billed annually", monthlyNote: "billed monthly", save: "Save {n}%", explain: "MSRP in USD from sharefile.com/plans. Annual billing lowers the monthly price per user." },
     lang: "English", siteTag: "ShareFile plans map", unofficial: "Unofficial site", skip: "Skip to content",
     nav: { home: "Home", map: "Plans map", vdr: "Data Room", recommend: "Recommender", compare: "Comparator", matrix: "Matrix", calc: "Calculator", knowledge: "Knowledge", glossary: "Glossary", changelog: "Changes", discrepancies: "Discrepancies", integrations: "Integrations", usecases: "Use cases" },
     by: "By", updated: "Updated",
@@ -1250,7 +1253,7 @@ const UI = {
   pt: {
     video: { title: "Vídeo oficial", lang: "em inglês; ative as legendas em português", tutorials: "Tutoriais oficiais no YouTube", overview: "Ver o que é o ShareFile (em inglês)", long: "vídeo longo" },
     int: { title: "Integrações", lead: "Integrações oficiais do ShareFile com ferramentas de e-mail, armazenamento, identidade, segurança, CRM e contabilidade, além de integrações por setor. Cada uma leva à documentação oficial.", search: "Buscar integração (ex. Salesforce)", plans: "Planos", planCheck: "Tabela de preços: desde o Advanced. Documentação do plugin: Premium ou superior.", group: "Categoria", industry: "Setor", all: "Todas", third: "Integrações de terceiros exigem as licenças do fornecedor; algumas podem estar limitadas ou indisponíveis.", source: "Fontes: sharefile.com/apps-integrations e docs.sharefile.com.", forIndustry: "Integrações para este setor", specific: "Específicas de {i}", noSpecific: "O ShareFile não publica integrações específicas para {i}. As abaixo também se aplicam.", featured: "Destacadas na página oficial de {i}", noFeatured: "A página oficial de {i} não destaca integrações específicas.", general: "Demais integrações, por função (servem para qualquer setor)", hidden: "{n} integrações específicas de outros setores estão ocultas.", count: "integrações" },
-    billing: { label: "Cobrança", monthly: "Mensal", annual: "Anual", perUserMonth: "por usuário / mês", annualNote: "cobrança anual", monthlyNote: "cobrança mensal", save: "Economize {n}%", explain: "Preços MSRP em USD de sharefile.com/plans. Com cobrança anual, o preço mensal por usuário diminui." },
+    billing: { label: "Cobrança", monthly: "Mensal", annual: "Anual", perUserMonth: "por usuário / mês", minUsers: "Mínimo de {n} usuários", annualNote: "cobrança anual", monthlyNote: "cobrança mensal", save: "Economize {n}%", explain: "Preços MSRP em USD de sharefile.com/plans. Com cobrança anual, o preço mensal por usuário diminui." },
     lang: "Português", siteTag: "Mapa de planos ShareFile", unofficial: "Site não oficial", skip: "Pular para o conteúdo",
     nav: { home: "Início", map: "Mapa de planos", vdr: "Data Room", recommend: "Recomendador", compare: "Comparador", matrix: "Matriz", calc: "Calculadora", knowledge: "Conhecimento", glossary: "Glossário", changelog: "Mudanças", discrepancies: "Discrepâncias", integrations: "Integrações", usecases: "Casos de uso" },
     by: "Por", updated: "Atualizado",
@@ -1478,7 +1481,7 @@ const UI = {
             <span class="hint">${esc(t().billing.perUserMonth)} · ${esc(billLabel())}${state.bill === "annual" ? ` · <b class="save">${esc(fmt(t().billing.save, { n: savePct(p) }))}</b>` : ""}</span>
             <span class="muted" style="font-size:.85rem">${esc(L(p.tag))}</span>
             <span class="tier-bar" aria-hidden="true"><i style="width:${Math.round(n / FEATURES.length * 100)}%"></i></span>
-            <span class="hint">${n} ${esc(u.map.count)} · ${h.min} ${p.min} ${h.users}</span>
+            <span class="hint">${n} ${esc(u.map.count)} · ${esc(fmt(u.billing.minUsers, { n: p.min }))}</span>
           </a>`;
         }).join("")}
       </div>`;
@@ -1519,9 +1522,9 @@ const UI = {
       </div>
       <div class="map-frame">
         <div class="map-title"><h2>${esc(title)}</h2><p>${esc(SITE.updated)} · ShareFile Maps</p></div>
-        <ul class="map-prices">${cols.map(tr => `<li><b>${esc(P[tr].name)}</b>: <span class="num">${money(priceOf(P[tr]))}</span> ${esc(u.billing.perUserMonth)} · ${esc(billLabel())} · ${esc(u.home.min)} ${P[tr].min} ${esc(u.home.users)}</li>`).join("")}</ul>
+        <ul class="map-prices">${cols.map(tr => `<li><b>${esc(P[tr].name)}</b>: <span class="num">${money(priceOf(P[tr]))}</span> ${esc(u.billing.perUserMonth)} · ${esc(billLabel())} · ${esc(fmt(u.billing.minUsers, { n: P[tr].min }))}</li>`).join("")}</ul>
         <div class="map" style="--cols:${cols.length}">
-          <div class="map-head"><div></div>${cols.map((tr, i) => `<div class="th t-${tr}">${esc(names[tr])}<small>${esc(hints[tr])} · ${tr === "A" ? `${counts[i]} ${esc(m.count)}` : `+${counts[i]} ${esc(m.count)} (${esc(fmt(m.total, { n: FEATURES.filter(f => f.plans.includes(tr)).length }))})`}</small><small class="th-price"><b class="num">${money(priceOf(P[tr]))}</b> ${esc(u.billing.perUserMonth)} · ${esc(billLabel())} · ${esc(u.home.min)} ${P[tr].min} ${esc(u.home.users)}</small></div>`).join("")}</div>
+          <div class="map-head"><div></div>${cols.map((tr, i) => `<div class="th t-${tr}">${esc(names[tr])}<small>${esc(hints[tr])} · ${tr === "A" ? `${counts[i]} ${esc(m.count)}` : `+${counts[i]} ${esc(m.count)} (${esc(fmt(m.total, { n: FEATURES.filter(f => f.plans.includes(tr)).length }))})`}</small><small class="th-price"><b class="num">${money(priceOf(P[tr]))}</b> ${esc(u.billing.perUserMonth)} · ${esc(billLabel())} · ${esc(fmt(u.billing.minUsers, { n: P[tr].min }))}</small></div>`).join("")}</div>
           ${bands}
         </div>
         <div class="map-foot">
@@ -1546,7 +1549,7 @@ const UI = {
     $("#view").innerHTML = `
       ${head(m.vdrTitle, m.vdrLead, updatedLine())}
       <div class="toolbar"><label>${esc(m.highlight)} ${industrySelect("hl", state.hl)}</label>
-        ${billToggle()}<span class="chip"><b class="num">${money(priceOf(P.V))}</b> ${esc(u.billing.perUserMonth)} · ${esc(billLabel())} · ${esc(u.home.min)} ${P.V.min} ${esc(u.home.users)}</span>
+        ${billToggle()}<span class="chip"><b class="num">${money(priceOf(P.V))}</b> ${esc(u.billing.perUserMonth)} · ${esc(billLabel())} · ${esc(fmt(u.billing.minUsers, { n: P.V.min }))}</span>
         ${ext(P.V.page, "sharefile.com/plans/sharefile-virtual-data-room")}</div>
       <div class="map-frame">
         <div class="map-title"><h2>Virtual Data Room</h2><p>${inV.length} ${esc(m.count)}</p></div>
@@ -1796,7 +1799,7 @@ const UI = {
         ${billToggle()}
         <span class="mx-count" id="mcount"></span>
       </div>
-      <div class="tbl-wrap"><table><thead><tr><th>${esc(M.feature)}</th>${PLANS.map(p => `<th class="c">${esc(p.name)}<br><span class="num muted" style="font-weight:500">${money(priceOf(p))}</span><br><span class="muted" style="font-weight:400;font-size:.72rem">${esc(u.billing.perUserMonth)} · ${esc(u.home.min)} ${p.min}</span></th>`).join("")}</tr></thead><tbody id="mbody"></tbody></table></div>`;
+      <div class="tbl-wrap"><table><thead><tr><th>${esc(M.feature)}</th>${PLANS.map(p => `<th class="c">${esc(p.name)}<br><span class="num muted" style="font-weight:500">${money(priceOf(p))}</span><br><span class="muted" style="font-weight:400;font-size:.72rem">${esc(u.billing.perUserMonth)} · ${esc(fmt(u.billing.minUsers, { n: p.min }))}</span></th>`).join("")}</tr></thead><tbody id="mbody"></tbody></table></div>`;
     const upd = () => {
       s.q = $("#mq").value.trim(); s.g = $("#mg").value; s.i = $("#mi").value; s.diff = $("#md").checked;
       try {
