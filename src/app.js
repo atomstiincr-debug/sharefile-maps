@@ -61,7 +61,7 @@
     hl: store.get("hl", ""),
     rec: store.get("rec", { ind: "accounting", sub: "", size: "mid", sig: [] }),
     cmp: store.get("cmp3", { a: "A", b: "P", users: 3, custom: false, hl: "" }),
-    calc: store.get("calc2", { plan: "P", users: 3, custom: false }),
+    calc: store.get("calc3", { plan: "P", req: null }), // req = licenses the reader asked for (null = plan minimum)
     mx: { q: "", g: "", i: "", diff: false }
   };
   // No prices on this site: they vary by country (taxes, withholding, local currency). Point to partner / regional rep.
@@ -351,7 +351,7 @@
         ${res.plan !== "A" ? `<button class="btn" type="button" id="toCmp">${esc(R.openCompare)}</button>` : ""}
       </div>`;
     const box = $("#recout"); box.classList.remove("updated"); void box.offsetWidth; box.classList.add("updated");
-    $("#toCalc").addEventListener("click", () => { state.calc.plan = res.plan; store.set("calc2", state.calc); location.hash = "calc"; });
+    $("#toCalc").addEventListener("click", () => { state.calc.plan = res.plan; store.set("calc3", state.calc); location.hash = "calc"; });
     const tc = $("#toCmp");
     if (tc) tc.addEventListener("click", () => { Object.assign(state.cmp, { a: prev, b: res.plan, hl: res.ind ? res.ind.id : "" }); store.set("cmp3", state.cmp); location.hash = "compare"; });
   }
@@ -507,9 +507,13 @@
   }
 
   // ── Calculator
-  let calcAdj = null; // { p, from, n } when the users field was raised to a plan minimum
+  // The number the reader asks for (c.req) is never overwritten by a plan minimum: the field shows
+  // max(req, plan minimum), so 3 on Advanced -> 5 on VDR -> back to 3 on Advanced. Empty field = plan minimum.
+  const calcSeats = (c, q) => Math.max(c.req ?? q.min, q.min);
+  let calcAdj = null; // { p, from, n } when the request is below the selected plan's minimum
   function renderCalc() {
     const u = t(), K = u.calc, c = state.calc;
+    if (!P[c.plan]) c.plan = "P";
     $("#view").innerHTML = `
       ${head(K.title, K.lead, updatedLine())}
       <div class="grid2">
@@ -517,33 +521,29 @@
           <fieldset><legend>${esc(K.plan)}</legend><div class="choices">
             ${PLANS.map(p => `<label class="choice"><input type="radio" name="plan" value="${p.id}" ${c.plan === p.id ? "checked" : ""}><span>${esc(p.name)} <small class="num" style="opacity:.75;color:inherit">${esc(u.home.min)} ${p.min}*</small></span></label>`).join("")}
           </div></fieldset>
-          <label class="hint">${esc(K.users)}<br><input id="kusers" type="number" min="${P[c.plan].min}" max="100000" value="${c.users}"></label>
+          <label class="hint">${esc(K.users)}<br><input id="kusers" type="number" min="${P[c.plan].min}" max="100000" value="${calcSeats(c, P[c.plan])}"></label>
           <p class="hint" style="margin:6px 0 0">${esc(K.usersHint)} ${presetsHTML()}</p>
           <p class="hint">${esc(K.maxNote)} ${ext("https://docs.sharefile.com/en-us/sharefile/people_settings/employee_users/add-user-licenses", "docs.sharefile.com")}</p>
         </form>
         <section class="box" id="calcout" aria-live="polite"></section>
       </div>`;
-    // Raise the users field to the plan minimum (on plan change or when the field is committed).
-    const enforceMin = () => {
-      const p = P[c.plan], el = $("#kusers");
-      el.min = p.min;
-      if (c.users < p.min) { calcAdj = { p: p.name, from: c.users, n: p.min }; c.users = p.min; el.value = p.min; }
+    const el = $("#kusers");
+    // Show the licenses for the selected plan in the field (request raised to the minimum if needed).
+    const sync = () => {
+      const p = P[c.plan];
+      el.min = p.min; el.value = calcSeats(c, p);
+      calcAdj = c.req !== null && c.req < p.min ? { p: p.name, from: c.req, n: p.min } : null;
     };
-    // Untouched field follows the plan minimum; a typed number is kept (raised to the minimum if lower).
-    const read = () => {
-      c.plan = ($('input[name="plan"]:checked') || {}).value || "P";
-      const v = readUsers($("#kusers")); c.custom = v !== null; c.users = v !== null ? v : P[c.plan].min;
-    };
-    const follow = () => { if (!c.custom) { c.users = P[c.plan].min; $("#kusers").value = c.users; $("#kusers").min = c.users; } };
-    // While typing: recompute without rewriting the field. On commit (change) or plan change: enforce minimum.
-    $("#kusers").addEventListener("input", () => { read(); calcAdj = null; store.set("calc2", c); renderCalcOut(); });
+    const save = () => { store.set("calc3", c); renderCalcOut(); };
+    // While typing: recompute without rewriting the field.
+    el.addEventListener("input", () => { c.req = readUsers(el); calcAdj = null; save(); });
     $("#calcf").addEventListener("change", e => {
-      if (e.target.id === "kusers") read(); else c.plan = ($('input[name="plan"]:checked') || {}).value || "P";
-      calcAdj = null; follow(); enforceMin(); store.set("calc2", c); renderCalcOut();
+      if (e.target === el) c.req = readUsers(el);
+      else c.plan = ($('input[name="plan"]:checked') || {}).value || "P";
+      sync(); save();
     });
-    document.querySelectorAll("[data-preset]").forEach(b => b.addEventListener("click", () => { $("#kusers").value = b.dataset.preset; read(); calcAdj = null; enforceMin(); store.set("calc2", c); renderCalcOut(); }));
-    calcAdj = null; follow(); enforceMin(); store.set("calc2", c);
-    renderCalcOut();
+    document.querySelectorAll("[data-preset]").forEach(b => b.addEventListener("click", () => { c.req = +b.dataset.preset; sync(); save(); }));
+    sync(); save();
   }
 
   const STORAGE_DOCS = [[SITE.plansSource, "sharefile.com/plans"],
@@ -552,9 +552,9 @@
 
   function renderCalcOut() {
     const u = t(), K = u.calc, c = state.calc, p = P[c.plan];
-    const seatsOf = q => Math.max(c.users, q.min);
+    const seatsOf = q => calcSeats(c, q);
     const seats = seatsOf(p);
-    const star = q => seatsOf(q) > c.users ? "*" : "";
+    const star = q => c.req !== null && c.req < q.min ? "*" : "";
     $("#calcout").innerHTML = `
       <p class="eyebrow">${esc(p.name)}</p>
       ${calcAdj ? `<p class="note">${esc(fmt(K.adjusted, calcAdj))}</p>` : ""}
@@ -564,10 +564,10 @@
         <div class="kpi"><span>${esc(K.total)}</span><b class="num" id="calctotal">${storageTotal(p, seats)}</b></div>
       </div>
       <p class="hint" id="calcformula">${esc(fmt(K.formula, { n: int(seats), per: perLicense(p), total: storageTotal(p, seats) }))}</p>
-      ${seats > c.users ? `<p class="note">${esc(fmt(K.minApplied, { n: p.min }))}</p>` : ""}
+      ${star(p) && !calcAdj ? `<p class="note">${esc(fmt(K.minApplied, { n: p.min }))}</p>` : ""}
       <div class="note pool" id="calcpool"><b>${esc(K.poolTitle)}.</b> ${esc(K.pool)}
         <ul><li>${esc(K.counts)}</li><li>${esc(K.full)}</li><li>${esc(K.packs)}</li><li>${esc(K.quota)}</li></ul></div>
-      <h3>${esc(K.allPlans)} <span class="muted num">(${int(c.users)})</span></h3>
+      <h3>${c.req !== null ? `${esc(K.allPlans)} <span class="muted num">(${int(c.req)})</span>` : esc(K.allPlansMin)}</h3>
       <div class="tbl-wrap"><table id="calctbl"><thead><tr><th></th><th class="c">${esc(K.licCol)}</th><th class="c">${esc(K.perLicense)}</th><th class="c">${esc(K.total)}</th></tr></thead><tbody>
         ${PLANS.map(q => { const s = seatsOf(q);
           return `<tr data-plan="${q.id}" ${q.id === p.id ? 'style="background:var(--accent-soft)"' : ""}><td><b>${esc(q.name)}</b></td><td class="c num">${int(s)}${star(q)}</td><td class="c num">${perLicense(q)}</td><td class="c num">${storageTotal(q, s)}</td></tr>`; }).join("")}

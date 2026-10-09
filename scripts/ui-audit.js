@@ -234,6 +234,16 @@ const ok = (c, m) => { if (c) pass++; else { fail++; fails.push(m); console.erro
       ok(shown === total, `calc ${p.id} x${n}: pooled storage ${total} (got ${shown})`);
       ok(await page.$eval("#kusers", i => +i.value) === seats, `calc ${p.id} x${n}: field shows ${seats}`);
     }
+    // Round trips between plans never lose the reader's number (Adri's report: VDR 5 -> Advanced must go back to 3)
+    for (const n of presets) {
+      await page.click(`label.choice:has(input[value="A"])`); await page.click(`[data-preset="${n}"]`);
+      const seq = [];
+      for (const id of ["V", "A", "E", "V", "P", "A"]) { await page.click(`label.choice:has(input[value="${id}"])`); seq.push(await page.$eval("#kusers", i => +i.value)); }
+      const want = ["V", "A", "E", "V", "P", "A"].map(id => Math.max(n, ctx.P.find(p => p.id === id).min));
+      ok(seq.join() === want.join(), `calc round trip from ${n}: ${seq.join(",")} (want ${want.join(",")})`);
+    }
+    await page.reload(); await page.waitForTimeout(80);
+    ok(await page.$eval("#kusers", i => +i.value) === Math.max(presets[presets.length - 1], 3), "calc keeps the reader's number after reload");
     const t = await page.$eval("#calcout", e => e.innerText);
     ok(/Storage is pooled/.test(t) && /not a per-user quota/.test(t), "calc explains pooled storage");
     ok(errors.length === 0, "calc no JS errors: " + errors.slice(0, 3).join(" | "));

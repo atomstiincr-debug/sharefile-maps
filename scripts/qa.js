@@ -125,7 +125,7 @@ for (const lang of ["es", "en", "pt"]) {
   const u = env.d.querySelector("#kusers"); u.value = "2"; u.dispatchEvent(new env.w.Event("input", { bubbles: true }));
   const out = () => text(env.d.querySelector("#calcout"));
   const tot = () => text(env.d.querySelector("#calctotal"));
-  ok(/5-license minimum/.test(out()), "calc VDR 2 users applies 5 minimum");
+  ok(/5-license minimum|at least 5 licenses/.test(out()), "calc VDR 2 users applies 5 minimum");
   ok(tot() === "5 GB", `calc VDR 5 licenses = 5 GB (got ${tot()})`);
   const lic = id => text(env.d.querySelector(`#calctbl tr[data-plan="${id}"] td:nth-child(2)`));
   const st = id => text(env.d.querySelector(`#calctbl tr[data-plan="${id}"] td:nth-child(4)`));
@@ -134,13 +134,13 @@ for (const lang of ["es", "en", "pt"]) {
   ok(/Minimum licenses required per plan: Advanced 3 · Premium 3 · Enterprise 3 · Virtual Data Room 5/.test(out()), "calc shows minimum footnote");
   u.dispatchEvent(new env.w.Event("change", { bubbles: true }));
   ok(u.value === "5" && u.min === "5", `calc VDR field raised to 5 on commit (value ${u.value}, min ${u.min})`);
-  ok(/adjusted from 2 to 5/.test(out()), "calc shows adjustment notice");
+  ok(/calculated with 5 instead of 2/.test(out()), "calc shows adjustment notice");
   const a3 = env.d.querySelector('input[name="plan"][value="A"]'); a3.checked = true; change(env, a3);
   u.value = "3"; u.dispatchEvent(new env.w.Event("change", { bubbles: true }));
   ok(u.value === "3" && u.min === "3", "calc Advanced accepts 3");
   v.checked = true; change(env, v);
   ok(u.value === "5", `calc switching to VDR raises 3 -> 5 (got ${u.value})`);
-  ok(text(env.d.querySelector("#calcout .kpi b")) === "5", "calc licenses KPI = 5");
+  ok(text(env.d.querySelector("#calcout .kpi b")) === "5*", "calc licenses KPI = 5* (minimum applied to a request of 3)");
   u.value = "25"; u.dispatchEvent(new env.w.Event("change", { bubbles: true }));
   ok(["A", "P", "E", "V"].every(id => lic(id) === "25"), "calc 25 users: 25 licenses on every plan, no minimum flag");
   ok(st("A") === "25 TB" && st("V") === "25 GB", "calc 25 licenses: 25 TB pooled (A/P/E), 25 GB (VDR)");
@@ -162,7 +162,14 @@ for (const lang of ["es", "en", "pt"]) {
   pick("V"); ok(u.value === "5", `calc untouched field follows VDR minimum 5 (got ${u.value})`);
   pick("A"); ok(u.value === "3", `calc untouched field back to 3 on Advanced (got ${u.value})`);
   env.d.querySelector('[data-preset="3"]').click(); pick("V");
-  ok(u.value === "5" && /se ajustó de 3 a 5/.test(text(env.d.querySelector("#calcout"))), "calc preset 3 on VDR raises to 5 with notice");
+  ok(u.value === "5" && /se calcula con 5 en lugar de 3/.test(text(env.d.querySelector("#calcout"))), "calc preset 3 on VDR raises to 5 with notice");
+  // Adri's report (2026-10-09): VDR raises 3 -> 5, going back to Advanced must return to 3
+  pick("A"); ok(u.value === "3" && text(env.d.querySelector("#calcout .kpi b")) === "3", `calc preset 3: VDR 5 -> back to Advanced 3 (got ${u.value})`);
+  pick("V"); pick("P"); ok(u.value === "3", `calc preset 3: VDR 5 -> Premium 3 (got ${u.value})`);
+  u.value = "3"; u.dispatchEvent(new env.w.Event("input", { bubbles: true })); u.dispatchEvent(new env.w.Event("change", { bubbles: true }));
+  pick("V"); ok(u.value === "5", "calc typed 3 on VDR shows 5"); pick("A"); ok(u.value === "3", `calc typed 3: VDR -> Advanced returns to 3 (got ${u.value})`);
+  u.value = "4"; u.dispatchEvent(new env.w.Event("input", { bubbles: true })); u.dispatchEvent(new env.w.Event("change", { bubbles: true }));
+  pick("V"); pick("A"); ok(u.value === "4", `calc typed 4: VDR 5 -> Advanced 4 (got ${u.value})`);
   pick("A");
   env.d.querySelector('[data-preset="25"]').click();
   ok(u.value === "25" && text(env.d.querySelector("#calcout .kpi b")) === "25", "calc preset 25 sets 25 licenses");

@@ -417,7 +417,7 @@ const OVERVIEW_VIDEO = { id: "yQkpfDLkCk0", t: "Progress ShareFile - Built For T
 const TUTORIALS = "https://www.youtube.com/playlist?list=PLSKW9Jc-tCY9W-cB3G2OTYx00GXZrrzZB";
 
 const SITE = {
-  version: "1.11.0",
+  version: "1.11.1",
   updated: "2026-10-09",
   author: "Adrián Bonilla",
   plansSource: W + "plans",
@@ -1457,6 +1457,7 @@ const DISCREPANCIES = [
 
 
 const CHANGELOG = [
+  { v: "1.11.1", date: "2026-10-09", d: { es: "Calculadora: al pasar a Virtual Data Room (mínimo 5) y volver a Advanced, Premium o Enterprise, las licencias vuelven al número que elegiste (por ejemplo 3) en lugar de quedarse en 5. Un solo aviso explica cuándo se aplica el mínimo del plan.", en: "Calculator: switching to Virtual Data Room (minimum 5) and back to Advanced, Premium or Enterprise now returns the licenses to the number you chose (e.g. 3) instead of staying at 5. A single notice explains when the plan minimum applies.", pt: "Calculadora: ao passar para o Virtual Data Room (mínimo 5) e voltar para Advanced, Premium ou Enterprise, as licenças voltam ao número que você escolheu (por exemplo 3) em vez de ficar em 5. Um único aviso explica quando o mínimo do plano se aplica." } },
   { v: "1.11.0", date: "2026-10-09", d: { es: "El sitio deja de mostrar precios: varían por país (impuestos, retenciones y moneda local). Donde estaban, se invita a contactar al partner o al representante de ShareFile de la región. La Calculadora pasa a ser de almacenamiento: cuánto almacenamiento incluye la cuenta según el plan y las licencias, y por qué es compartido por toda la cuenta y no una cuota por usuario (verificado en sharefile.com/plans y docs.sharefile.com).", en: "The site no longer shows prices: they vary by country (taxes, withholding and local currency). Where they were, readers are invited to contact their partner or regional ShareFile representative. The Calculator becomes a storage calculator: how much storage the account includes by plan and licenses, and why it is pooled across the account rather than a per-user quota (verified on sharefile.com/plans and docs.sharefile.com).", pt: "O site deixa de mostrar preços: variam por país (impostos, retenções e moeda local). Onde estavam, convida-se a contatar o parceiro ou o representante do ShareFile da região. A Calculadora passa a ser de armazenamento: quanto armazenamento a conta inclui por plano e licenças, e por que ele é compartilhado por toda a conta e não uma cota por usuário (verificado em sharefile.com/plans e docs.sharefile.com)." } },
   { v: "1.10.1", date: "2026-10-09", d: { es: "Costa Rica: CONASSIF 5-24 arts. 39 y 40 verificados en el texto oficial (reporte de incidentes moderados o altos a la Superintendencia y comunicación de medidas a los clientes en 5 días hábiles tras el cierre).", en: "Costa Rica: CONASSIF 5-24 arts. 39 and 40 verified in the official text (reporting moderate or high incidents to the Superintendency and telling clients the remediation measures within 5 business days after closing).", pt: "Costa Rica: CONASSIF 5-24 arts. 39 e 40 verificados no texto oficial (reporte de incidentes moderados ou altos à Superintendência e comunicação das medidas aos clientes em 5 dias úteis após o encerramento)." } },
   { v: "1.10.0", date: "2026-10-09", d: { es: "Cumplimiento: se agregan México, Guatemala, El Salvador, Honduras, Panamá, Colombia, Perú, Chile, Argentina y Brasil (32 normas en total), cada una con enlace al texto oficial del gobierno. Lo que no se pudo verificar en la fuente oficial aparece como pendiente.", en: "Compliance: adds Mexico, Guatemala, El Salvador, Honduras, Panama, Colombia, Peru, Chile, Argentina and Brazil (32 norms in total), each linked to the official government text. What could not be verified at the official source is shown as pending.", pt: "Conformidade: adiciona México, Guatemala, El Salvador, Honduras, Panamá, Colômbia, Peru, Chile, Argentina e Brasil (32 normas no total), cada uma com link para o texto oficial do governo. O que não pôde ser verificado na fonte oficial aparece como pendente." } },
@@ -1658,8 +1659,8 @@ const UI = {
       title: "Calculadora de almacenamiento", lead: "Cuánto almacenamiento en la nube incluye la cuenta según el plan y la cantidad de licencias.",
       plan: "Plan", users: "Licencias (usuarios empleados)", storage: "Almacenamiento de la cuenta", perLicense: "Por licencia", total: "Total compartido",
       formula: "{n} licencias × {per} = {total} para toda la cuenta",
-      minApplied: "Se aplica el mínimo de {n} licencias del plan.", allPlans: "Todos los planes con tus licencias",
-      usersHint: "Empieza en el mínimo del plan. Escribe tu cantidad o elige:", maxNote: "ShareFile no publica un máximo de licencias por plan; se pueden agregar en cualquier momento. Solo los usuarios empleados llevan licencia: los usuarios cliente son ilimitados en todos los planes.", licenses: "Licencias", licCol: "Licencias", adjusted: "{p} requiere mínimo {n} licencias: se ajustó de {from} a {n}.",
+      minApplied: "Se aplica el mínimo de {n} licencias del plan.", allPlans: "Todos los planes con tus licencias", allPlansMin: "Todos los planes con su mínimo de licencias",
+      usersHint: "Empieza en el mínimo del plan. Escribe tu cantidad o elige:", maxNote: "ShareFile no publica un máximo de licencias por plan; se pueden agregar en cualquier momento. Solo los usuarios empleados llevan licencia: los usuarios cliente son ilimitados en todos los planes.", licenses: "Licencias", licCol: "Licencias", adjusted: "{p} requiere mínimo {n} licencias: se calcula con {n} en lugar de {from}. Tu número se mantiene para los demás planes.",
       minFoot: "* Mínimo de licencias requeridas por plan: {list}.",
       poolTitle: "El almacenamiento es compartido",
       pool: "No es una cuota por usuario. El almacenamiento de todas las licencias se suma en una sola bolsa para toda la cuenta, y un usuario puede usar más que su parte mientras la cuenta no llegue a su total.",
@@ -1738,8 +1739,8 @@ const UI = {
       title: "Storage calculator", lead: "How much cloud storage the account includes, by plan and number of licenses.",
       plan: "Plan", users: "Licenses (employee users)", storage: "Account storage", perLicense: "Per license", total: "Pooled total",
       formula: "{n} licenses × {per} = {total} for the whole account",
-      minApplied: "The plan's {n}-license minimum applies.", allPlans: "Every plan with your licenses",
-      usersHint: "Starts at the plan minimum. Type your number or pick one:", maxNote: "ShareFile publishes no maximum number of licenses per plan; you can add them anytime. Only employee users need a license: client users are unlimited on every plan.", licenses: "Licenses", licCol: "Licenses", adjusted: "{p} requires at least {n} licenses: adjusted from {from} to {n}.",
+      minApplied: "The plan's {n}-license minimum applies.", allPlans: "Every plan with your licenses", allPlansMin: "Every plan at its license minimum",
+      usersHint: "Starts at the plan minimum. Type your number or pick one:", maxNote: "ShareFile publishes no maximum number of licenses per plan; you can add them anytime. Only employee users need a license: client users are unlimited on every plan.", licenses: "Licenses", licCol: "Licenses", adjusted: "{p} requires at least {n} licenses: calculated with {n} instead of {from}. Your number is kept for the other plans.",
       minFoot: "* Minimum licenses required per plan: {list}.",
       poolTitle: "Storage is pooled",
       pool: "It is not a per-user quota. Storage from every license adds up to one pool for the whole account, and a user can use more than their share as long as the account stays within its total.",
@@ -1818,8 +1819,8 @@ const UI = {
       title: "Calculadora de armazenamento", lead: "Quanto armazenamento em nuvem a conta inclui, por plano e quantidade de licenças.",
       plan: "Plano", users: "Licenças (usuários funcionários)", storage: "Armazenamento da conta", perLicense: "Por licença", total: "Total compartilhado",
       formula: "{n} licenças × {per} = {total} para toda a conta",
-      minApplied: "Aplica-se o mínimo de {n} licenças do plano.", allPlans: "Todos os planos com suas licenças",
-      usersHint: "Começa no mínimo do plano. Digite sua quantidade ou escolha:", maxNote: "O ShareFile não publica um máximo de licenças por plano; é possível adicioná-las a qualquer momento. Só usuários funcionários precisam de licença: usuários cliente são ilimitados em todos os planos.", licenses: "Licenças", licCol: "Licenças", adjusted: "{p} exige no mínimo {n} licenças: ajustado de {from} para {n}.",
+      minApplied: "Aplica-se o mínimo de {n} licenças do plano.", allPlans: "Todos os planos com suas licenças", allPlansMin: "Todos os planos com seu mínimo de licenças",
+      usersHint: "Começa no mínimo do plano. Digite sua quantidade ou escolha:", maxNote: "O ShareFile não publica um máximo de licenças por plano; é possível adicioná-las a qualquer momento. Só usuários funcionários precisam de licença: usuários cliente são ilimitados em todos os planos.", licenses: "Licenças", licCol: "Licenças", adjusted: "{p} exige no mínimo {n} licenças: calculado com {n} em vez de {from}. Seu número é mantido para os demais planos.",
       minFoot: "* Mínimo de licenças exigido por plano: {list}.",
       poolTitle: "O armazenamento é compartilhado",
       pool: "Não é uma cota por usuário. O armazenamento de todas as licenças soma uma única reserva para toda a conta, e um usuário pode usar mais que sua parte enquanto a conta não atingir o total.",
@@ -1908,7 +1909,7 @@ const UI = {
     hl: store.get("hl", ""),
     rec: store.get("rec", { ind: "accounting", sub: "", size: "mid", sig: [] }),
     cmp: store.get("cmp3", { a: "A", b: "P", users: 3, custom: false, hl: "" }),
-    calc: store.get("calc2", { plan: "P", users: 3, custom: false }),
+    calc: store.get("calc3", { plan: "P", req: null }), // req = licenses the reader asked for (null = plan minimum)
     mx: { q: "", g: "", i: "", diff: false }
   };
   // No prices on this site: they vary by country (taxes, withholding, local currency). Point to partner / regional rep.
@@ -2198,7 +2199,7 @@ const UI = {
         ${res.plan !== "A" ? `<button class="btn" type="button" id="toCmp">${esc(R.openCompare)}</button>` : ""}
       </div>`;
     const box = $("#recout"); box.classList.remove("updated"); void box.offsetWidth; box.classList.add("updated");
-    $("#toCalc").addEventListener("click", () => { state.calc.plan = res.plan; store.set("calc2", state.calc); location.hash = "calc"; });
+    $("#toCalc").addEventListener("click", () => { state.calc.plan = res.plan; store.set("calc3", state.calc); location.hash = "calc"; });
     const tc = $("#toCmp");
     if (tc) tc.addEventListener("click", () => { Object.assign(state.cmp, { a: prev, b: res.plan, hl: res.ind ? res.ind.id : "" }); store.set("cmp3", state.cmp); location.hash = "compare"; });
   }
@@ -2354,9 +2355,13 @@ const UI = {
   }
 
   // ── Calculator
-  let calcAdj = null; // { p, from, n } when the users field was raised to a plan minimum
+  // The number the reader asks for (c.req) is never overwritten by a plan minimum: the field shows
+  // max(req, plan minimum), so 3 on Advanced -> 5 on VDR -> back to 3 on Advanced. Empty field = plan minimum.
+  const calcSeats = (c, q) => Math.max(c.req ?? q.min, q.min);
+  let calcAdj = null; // { p, from, n } when the request is below the selected plan's minimum
   function renderCalc() {
     const u = t(), K = u.calc, c = state.calc;
+    if (!P[c.plan]) c.plan = "P";
     $("#view").innerHTML = `
       ${head(K.title, K.lead, updatedLine())}
       <div class="grid2">
@@ -2364,33 +2369,29 @@ const UI = {
           <fieldset><legend>${esc(K.plan)}</legend><div class="choices">
             ${PLANS.map(p => `<label class="choice"><input type="radio" name="plan" value="${p.id}" ${c.plan === p.id ? "checked" : ""}><span>${esc(p.name)} <small class="num" style="opacity:.75;color:inherit">${esc(u.home.min)} ${p.min}*</small></span></label>`).join("")}
           </div></fieldset>
-          <label class="hint">${esc(K.users)}<br><input id="kusers" type="number" min="${P[c.plan].min}" max="100000" value="${c.users}"></label>
+          <label class="hint">${esc(K.users)}<br><input id="kusers" type="number" min="${P[c.plan].min}" max="100000" value="${calcSeats(c, P[c.plan])}"></label>
           <p class="hint" style="margin:6px 0 0">${esc(K.usersHint)} ${presetsHTML()}</p>
           <p class="hint">${esc(K.maxNote)} ${ext("https://docs.sharefile.com/en-us/sharefile/people_settings/employee_users/add-user-licenses", "docs.sharefile.com")}</p>
         </form>
         <section class="box" id="calcout" aria-live="polite"></section>
       </div>`;
-    // Raise the users field to the plan minimum (on plan change or when the field is committed).
-    const enforceMin = () => {
-      const p = P[c.plan], el = $("#kusers");
-      el.min = p.min;
-      if (c.users < p.min) { calcAdj = { p: p.name, from: c.users, n: p.min }; c.users = p.min; el.value = p.min; }
+    const el = $("#kusers");
+    // Show the licenses for the selected plan in the field (request raised to the minimum if needed).
+    const sync = () => {
+      const p = P[c.plan];
+      el.min = p.min; el.value = calcSeats(c, p);
+      calcAdj = c.req !== null && c.req < p.min ? { p: p.name, from: c.req, n: p.min } : null;
     };
-    // Untouched field follows the plan minimum; a typed number is kept (raised to the minimum if lower).
-    const read = () => {
-      c.plan = ($('input[name="plan"]:checked') || {}).value || "P";
-      const v = readUsers($("#kusers")); c.custom = v !== null; c.users = v !== null ? v : P[c.plan].min;
-    };
-    const follow = () => { if (!c.custom) { c.users = P[c.plan].min; $("#kusers").value = c.users; $("#kusers").min = c.users; } };
-    // While typing: recompute without rewriting the field. On commit (change) or plan change: enforce minimum.
-    $("#kusers").addEventListener("input", () => { read(); calcAdj = null; store.set("calc2", c); renderCalcOut(); });
+    const save = () => { store.set("calc3", c); renderCalcOut(); };
+    // While typing: recompute without rewriting the field.
+    el.addEventListener("input", () => { c.req = readUsers(el); calcAdj = null; save(); });
     $("#calcf").addEventListener("change", e => {
-      if (e.target.id === "kusers") read(); else c.plan = ($('input[name="plan"]:checked') || {}).value || "P";
-      calcAdj = null; follow(); enforceMin(); store.set("calc2", c); renderCalcOut();
+      if (e.target === el) c.req = readUsers(el);
+      else c.plan = ($('input[name="plan"]:checked') || {}).value || "P";
+      sync(); save();
     });
-    document.querySelectorAll("[data-preset]").forEach(b => b.addEventListener("click", () => { $("#kusers").value = b.dataset.preset; read(); calcAdj = null; enforceMin(); store.set("calc2", c); renderCalcOut(); }));
-    calcAdj = null; follow(); enforceMin(); store.set("calc2", c);
-    renderCalcOut();
+    document.querySelectorAll("[data-preset]").forEach(b => b.addEventListener("click", () => { c.req = +b.dataset.preset; sync(); save(); }));
+    sync(); save();
   }
 
   const STORAGE_DOCS = [[SITE.plansSource, "sharefile.com/plans"],
@@ -2399,9 +2400,9 @@ const UI = {
 
   function renderCalcOut() {
     const u = t(), K = u.calc, c = state.calc, p = P[c.plan];
-    const seatsOf = q => Math.max(c.users, q.min);
+    const seatsOf = q => calcSeats(c, q);
     const seats = seatsOf(p);
-    const star = q => seatsOf(q) > c.users ? "*" : "";
+    const star = q => c.req !== null && c.req < q.min ? "*" : "";
     $("#calcout").innerHTML = `
       <p class="eyebrow">${esc(p.name)}</p>
       ${calcAdj ? `<p class="note">${esc(fmt(K.adjusted, calcAdj))}</p>` : ""}
@@ -2411,10 +2412,10 @@ const UI = {
         <div class="kpi"><span>${esc(K.total)}</span><b class="num" id="calctotal">${storageTotal(p, seats)}</b></div>
       </div>
       <p class="hint" id="calcformula">${esc(fmt(K.formula, { n: int(seats), per: perLicense(p), total: storageTotal(p, seats) }))}</p>
-      ${seats > c.users ? `<p class="note">${esc(fmt(K.minApplied, { n: p.min }))}</p>` : ""}
+      ${star(p) && !calcAdj ? `<p class="note">${esc(fmt(K.minApplied, { n: p.min }))}</p>` : ""}
       <div class="note pool" id="calcpool"><b>${esc(K.poolTitle)}.</b> ${esc(K.pool)}
         <ul><li>${esc(K.counts)}</li><li>${esc(K.full)}</li><li>${esc(K.packs)}</li><li>${esc(K.quota)}</li></ul></div>
-      <h3>${esc(K.allPlans)} <span class="muted num">(${int(c.users)})</span></h3>
+      <h3>${c.req !== null ? `${esc(K.allPlans)} <span class="muted num">(${int(c.req)})</span>` : esc(K.allPlansMin)}</h3>
       <div class="tbl-wrap"><table id="calctbl"><thead><tr><th></th><th class="c">${esc(K.licCol)}</th><th class="c">${esc(K.perLicense)}</th><th class="c">${esc(K.total)}</th></tr></thead><tbody>
         ${PLANS.map(q => { const s = seatsOf(q);
           return `<tr data-plan="${q.id}" ${q.id === p.id ? 'style="background:var(--accent-soft)"' : ""}><td><b>${esc(q.name)}</b></td><td class="c num">${int(s)}${star(q)}</td><td class="c num">${perLicense(q)}</td><td class="c num">${storageTotal(q, s)}</td></tr>`; }).join("")}
