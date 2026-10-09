@@ -244,9 +244,6 @@ footer .wrap { padding-block: 22px calc(22px + env(safe-area-inset-bottom, 0px))
 .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 8px 14px; border-radius: var(--r); font-size: .86rem; z-index: 60; }
 
 /* Billing toggle */
-.seg.bill button { min-height: 34px; }
-.was { color: var(--muted); font-size: .62em; font-weight: 500; text-decoration-thickness: 1.5px; margin-right: 4px; }
-.save { color: var(--accent); font-weight: 700; }
 .price .amt { display: flex; align-items: baseline; gap: 2px; flex-wrap: wrap; }
 .result-plan .seg { margin-left: auto; }
 
@@ -328,9 +325,9 @@ ol.path ul.sigs { margin: 6px 0 0; padding-left: 18px; font-size: .9rem; }
 .ucust p { font-size: .88rem; }
 .ucard .hint { margin-top: auto; word-break: break-word; }
 .th small { display: block; }
-.th .th-price { margin-top: 2px; opacity: .9; }
-.map-prices { display: none; list-style: none; margin: 0 0 10px; padding: 0; font-size: .85rem; }
-@media (max-width: 760px) { .map-prices { display: grid; gap: 4px; } }
+.th .th-min { margin-top: 2px; opacity: .9; }
+.map-mins { display: none; list-style: none; margin: 0 0 10px; padding: 0; font-size: .85rem; }
+@media (max-width: 760px) { .map-mins { display: grid; gap: 4px; } }
 /* Chips with long text (e.g. VDR price) wrap instead of pushing the page sideways */
 .toolbar .chip { white-space: normal; max-width: 100%; }
 /* Get more from your plan */
@@ -364,6 +361,11 @@ ol.path ul.sigs { margin: 6px 0 0; padding-left: 18px; font-size: .9rem; }
 @media (max-width: 720px) { .comp-cols { grid-template-columns: minmax(0, 1fr); } .comp-norm header { flex-direction: column; } }
 .warn-note { background: var(--warn-soft, #FFF4E0); }
 .comp-nnote { margin: 0 0 6px; font-style: italic; }
+/* Storage calculator and pricing note */
+.pricing-note { margin-top: 16px; }
+.note.pool ul { margin: 8px 0 0; padding-left: 18px; }
+.note.pool li { margin: 3px 0; }
+.cmp-meta { margin: -4px 0 10px; }
 
 </style>
 </head>
@@ -415,22 +417,24 @@ const OVERVIEW_VIDEO = { id: "yQkpfDLkCk0", t: "Progress ShareFile - Built For T
 const TUTORIALS = "https://www.youtube.com/playlist?list=PLSKW9Jc-tCY9W-cB3G2OTYx00GXZrrzZB";
 
 const SITE = {
-  version: "1.10.1",
-  updated: "2026-10-08",
+  version: "1.11.0",
+  updated: "2026-10-09",
   author: "Adrián Bonilla",
-  pricingSource: W + "plans",
+  plansSource: W + "plans",
   analyticsId: "" // GA4 measurement ID (G-XXXXXXX). Empty = no analytics, no cookie banner.
 };
 
-/* Plans: MSRP in USD per user per month, from sharefile.com/plans (2026-10-08). */
+/* Plans and minimum licenses, from sharefile.com/plans (2026-10-09). The site publishes no prices:
+   local prices vary by country (taxes, withholding, currency), so readers are sent to their partner or ShareFile rep.
+   storage: included cloud storage per license (pooled across the account); storageMin: account floor. */
 const PLANS = [
-  { id: "A", key: "advanced",   name: "Advanced",          annual: 16.50, monthly: 18.15, min: 3, page: W + "plans",
+  { id: "A", key: "advanced",   name: "Advanced",          min: 3, storage: 1, unit: "TB", storageMin: 3, page: W + "plans",
     tag: { es: "Archivos seguros para equipos", en: "Secure file sharing for teams", pt: "Compartilhamento seguro para equipes" } },
-  { id: "P", key: "premium",    name: "Premium",           annual: 26.00, monthly: 28.59, min: 3, page: W + "plans/sharefile-premium",
+  { id: "P", key: "premium",    name: "Premium",           min: 3, storage: 1, unit: "TB", storageMin: 3, page: W + "plans/sharefile-premium",
     tag: { es: "Flujos documentales con clientes", en: "End-to-end document workflows", pt: "Fluxos documentais com clientes" } },
-  { id: "E", key: "enterprise", name: "Enterprise",        annual: 35.00, monthly: 42.00, min: 3, page: W + "plans/sharefile-enterprise",
+  { id: "E", key: "enterprise", name: "Enterprise",        min: 3, storage: 1, unit: "TB", storageMin: 3, page: W + "plans/sharefile-enterprise",
     tag: { es: "Control que escala con la colaboración", en: "Control that scales with collaboration", pt: "Controle que escala com a colaboração" } },
-  { id: "V", key: "vdr",        name: "Virtual Data Room", annual: 69.30, monthly: 77.00, min: 5, page: W + "plans/sharefile-virtual-data-room",
+  { id: "V", key: "vdr",        name: "Virtual Data Room", min: 5, storage: 1, unit: "GB", storageMin: 5, page: W + "plans/sharefile-virtual-data-room",
     tag: { es: "Data room para operaciones confidenciales", en: "Confidential deal rooms", pt: "Data room para operações confidenciais" } }
 ];
 
@@ -489,9 +493,9 @@ const FEATURES = [
   { id: "support", g: "core", plans: "APEV", name: "Dedicated Support", url: "https://support.sharefile.com/s/article/ShareFile-Support-Offerings-and-Coverage",
     d: { es: "Especialistas de onboarding y Customer Care para configuración y soporte.", en: "Onboarding specialists and Customer Care for setup and support.", pt: "Especialistas de onboarding e Customer Care para configuração e suporte." } },
   { id: "storage", g: "core", plans: "APE", name: "All the Storage You Need", url: D + "account_settings/storage/storage-quota",
-    d: { es: "1 TB por licencia, agregado en la cuenta; mínimo 3 TB. Paquetes extra de 3 TB.", en: "1 TB per license pooled at account level; 3 TB minimum. Extra 3 TB packs.", pt: "1 TB por licença, agregado na conta; mínimo de 3 TB. Pacotes extras de 3 TB." } },
+    d: { es: "1 TB por licencia, compartido por toda la cuenta (no es una cuota por usuario); mínimo 3 TB. Se amplía con paquetes de 3 TB.", en: "1 TB per license, pooled across the whole account (not a per-user quota); 3 TB minimum. Expandable with 3 TB packs.", pt: "1 TB por licença, compartilhado por toda a conta (não é uma cota por usuário); mínimo de 3 TB. Ampliável com pacotes de 3 TB." } },
   { id: "vdr_storage", g: "core", plans: "V", name: "1 GB of Account Storage per License", url: D + "account_settings/storage/storage-quota",
-    d: { es: "En VDR: 1 GB por licencia, con mínimo de 5 licencias.", en: "VDR: 1 GB per license, with a 5-license minimum.", pt: "No VDR: 1 GB por licença, com mínimo de 5 licenças." } },
+    d: { es: "En VDR: 1 GB por licencia, compartido por la cuenta, con mínimo de 5 licencias.", en: "VDR: 1 GB per license, pooled across the account, with a 5-license minimum.", pt: "No VDR: 1 GB por licença, compartilhado pela conta, com mínimo de 5 licenças." } },
   { id: "umt", g: "core", plans: "APEV", name: "User Management Tool", url: D + "user-management-tool/1-7/sf-umt-overview",
     d: { es: "Crea cuentas de empleados y grupos de distribución desde Active Directory.", en: "Provision employee accounts and distribution groups from Active Directory.", pt: "Provisione contas de funcionários e grupos de distribuição a partir do Active Directory." } },
   { id: "reports", g: "core", plans: "APEV", name: "Activity Logs and Reports", url: D + "account_settings/reporting/reports_overview",
@@ -589,7 +593,7 @@ const FEATURES = [
   { id: "doc_packager", g: "sign", plans: "PEV", name: "Document Packager", url: D + "electronic-signature/help/document-package",
     d: { es: "Une varios documentos en un solo paquete para firma.", en: "Merge several documents into one package for signature.", pt: "Junte vários documentos em um só pacote para assinatura." } },
   { id: "eidas", g: "sign", plans: "PE", name: "eIDAS-supported E-Signatures", url: D + "signatures/eidas-signature", badges: ["eu", "check"],
-    note: { es: "No aparece en la tabla de precios; fuente: documentación. Premium o superior, control plane UE, firmantes de UE y Reino Unido.", en: "Not in the pricing table; source: documentation. Premium or higher, EU control plane, EU/UK signers.", pt: "Não aparece na tabela de preços; fonte: documentação. Premium ou superior, control plane UE, signatários da UE e Reino Unido." },
+    note: { es: "No aparece en la tabla de planes; fuente: documentación. Premium o superior, control plane UE, firmantes de UE y Reino Unido.", en: "Not in the plans table; source: documentation. Premium or higher, EU control plane, EU/UK signers.", pt: "Não aparece na tabela de planos; fonte: documentação. Premium ou superior, control plane UE, signatários da UE e Reino Unido." },
     d: { es: "Firmas avanzadas (AES) y cualificadas (QES) bajo eIDAS.", en: "Advanced (AES) and Qualified (QES) signatures under eIDAS.", pt: "Assinaturas avançadas (AES) e qualificadas (QES) sob o eIDAS." } },
 
   // ── Client experience
@@ -1385,9 +1389,9 @@ const GLOSSARY = [
   { term: "eIDAS · AES · QES", d: { es: "Marco europeo de firma electrónica. AES es firma avanzada y QES cualificada. En ShareFile: control plane UE.", en: "EU e-signature framework. AES is advanced, QES is qualified. In ShareFile: EU control plane.", pt: "Marco europeu de assinatura eletrônica. AES é avançada e QES qualificada. No ShareFile: control plane UE." } },
   { term: "BAA", d: { es: "Business Associate Agreement: contrato requerido por HIPAA con Progress para manejar información de salud.", en: "Business Associate Agreement: HIPAA contract with Progress required to handle health information.", pt: "Business Associate Agreement: contrato exigido pela HIPAA com a Progress para tratar dados de saúde." } },
   { term: "VDR", d: { es: "Virtual Data Room: espacio para documentos confidenciales de M&A, auditorías o litigios.", en: "Virtual Data Room: space for confidential documents in M&A, audits or litigation.", pt: "Virtual Data Room: espaço para documentos confidenciais de M&A, auditorias ou litígios." } },
+  { term: "Pooled storage", d: { es: "Almacenamiento compartido: el de todas las licencias se suma en una sola bolsa para la cuenta. No es una cuota por usuario; en Enterprise el administrador puede fijar cuotas por usuario si lo desea.", en: "Storage from every license adds up to one pool for the account. It is not a per-user quota; on Enterprise, admins can set per-user quotas if they want.", pt: "Armazenamento compartilhado: o de todas as licenças soma uma única reserva para a conta. Não é uma cota por usuário; no Enterprise o administrador pode definir cotas por usuário, se quiser." } },
   { term: "Request List", d: { es: "Lista para pedir, recibir y dar seguimiento a documentos de un cliente.", en: "List to request, collect and track a client's documents.", pt: "Lista para pedir, receber e acompanhar documentos de um cliente." } },
   { term: "Client Hub", d: { es: "Directorio central de clientes vinculado a carpetas, proyectos y equipos.", en: "Central client directory linked to folders, projects and teams.", pt: "Diretório central de clientes vinculado a pastas, projetos e equipes." } },
-  { term: "MSRP", d: { es: "Precio de lista sugerido por el fabricante. El precio final puede variar por canal, volumen o plazo.", en: "Manufacturer's suggested list price. Final price may vary by channel, volume or term.", pt: "Preço de lista sugerido pelo fabricante. O preço final pode variar por canal, volume ou prazo." } }
 ];
 
 const KNOWLEDGE = [
@@ -1445,14 +1449,15 @@ const DISCREPANCIES = [
   { where: W + "plans", d: { es: "La fila Folder Q&A dice \"Included in Virtual Data Room\" en las cuatro columnas. Aquí se trata como exclusivo de VDR.", en: "The Folder Q&A row reads \"Included in Virtual Data Room\" in all four columns. Treated here as VDR-only.", pt: "A linha Folder Q&A diz \"Included in Virtual Data Room\" nas quatro colunas. Aqui é tratada como exclusiva do VDR." } },
   { where: W + "plans", d: { es: "La fila Feedback & Approval aparece duplicada dentro de Workflows.", en: "The Feedback & Approval row appears twice under Workflows.", pt: "A linha Feedback & Approval aparece duplicada em Workflows." } },
   { where: W + "plans", d: { es: "HIPAA Eligible dice \"Available only in ShareFile Premium\", pero la tabla lo marca también en Enterprise y VDR.", en: "HIPAA Eligible says \"Available only in ShareFile Premium\", yet the table also marks Enterprise and VDR.", pt: "HIPAA Eligible diz \"Available only in ShareFile Premium\", mas a tabela também marca Enterprise e VDR." } },
-  { where: D + "signatures/eidas-signature", d: { es: "Las firmas eIDAS están documentadas para Premium y superiores, pero no aparecen en la tabla de precios.", en: "eIDAS signatures are documented for Premium and higher but are missing from the pricing table.", pt: "As assinaturas eIDAS estão documentadas para Premium e superiores, mas não aparecem na tabela de preços." } },
+  { where: D + "signatures/eidas-signature", d: { es: "Las firmas eIDAS están documentadas para Premium y superiores, pero no aparecen en la tabla de planes.", en: "eIDAS signatures are documented for Premium and higher but are missing from the plans table.", pt: "As assinaturas eIDAS estão documentadas para Premium e superiores, mas não aparecem na tabela de planos." } },
   { where: W + "enterprise", d: { es: "La página de tamaño \"Large\" (/enterprise) no menciona las funciones del plan Enterprise, y el menú la llama a veces \"Large\" y a veces \"Enterprise\".", en: "The \"Large\" company-size page (/enterprise) does not mention Enterprise plan features, and the menu labels it \"Large\" or \"Enterprise\" inconsistently.", pt: "A página de porte \"Large\" (/enterprise) não cita os recursos do plano Enterprise, e o menu a chama ora de \"Large\", ora de \"Enterprise\"." } },
   { where: W + "industry/finance", d: { es: "Algunas páginas (Finance, Healthcare, Real Estate, Small Business, /enterprise) todavía muestran \"Industry Advantage\" en el menú, aunque ya no aparece en /plans.", en: "Some pages (Finance, Healthcare, Real Estate, Small Business, /enterprise) still list \"Industry Advantage\" in the menu, though it is gone from /plans.", pt: "Algumas páginas (Finance, Healthcare, Real Estate, Small Business, /enterprise) ainda mostram \"Industry Advantage\" no menu, embora não esteja mais em /plans." } },
-  { where: D + "sharefile-app/sharefile-for-outlook", d: { es: "La tabla de precios incluye los plugins de correo desde Advanced, pero la documentación del plugin de Outlook pide ShareFile Premium o superior.", en: "The pricing table includes email plug-ins from Advanced, but the Outlook plug-in documentation requires ShareFile Premium or higher.", pt: "A tabela de preços inclui os plugins de e-mail desde o Advanced, mas a documentação do plugin do Outlook exige ShareFile Premium ou superior." } }
+  { where: D + "sharefile-app/sharefile-for-outlook", d: { es: "La tabla de planes incluye los plugins de correo desde Advanced, pero la documentación del plugin de Outlook pide ShareFile Premium o superior.", en: "The plans table includes email plug-ins from Advanced, but the Outlook plug-in documentation requires ShareFile Premium or higher.", pt: "A tabela de planos inclui os plugins de e-mail desde o Advanced, mas a documentação do plugin do Outlook exige ShareFile Premium ou superior." } }
 ];
 
 
 const CHANGELOG = [
+  { v: "1.11.0", date: "2026-10-09", d: { es: "El sitio deja de mostrar precios: varían por país (impuestos, retenciones y moneda local). Donde estaban, se invita a contactar al partner o al representante de ShareFile de la región. La Calculadora pasa a ser de almacenamiento: cuánto almacenamiento incluye la cuenta según el plan y las licencias, y por qué es compartido por toda la cuenta y no una cuota por usuario (verificado en sharefile.com/plans y docs.sharefile.com).", en: "The site no longer shows prices: they vary by country (taxes, withholding and local currency). Where they were, readers are invited to contact their partner or regional ShareFile representative. The Calculator becomes a storage calculator: how much storage the account includes by plan and licenses, and why it is pooled across the account rather than a per-user quota (verified on sharefile.com/plans and docs.sharefile.com).", pt: "O site deixa de mostrar preços: variam por país (impostos, retenções e moeda local). Onde estavam, convida-se a contatar o parceiro ou o representante do ShareFile da região. A Calculadora passa a ser de armazenamento: quanto armazenamento a conta inclui por plano e licenças, e por que ele é compartilhado por toda a conta e não uma cota por usuário (verificado em sharefile.com/plans e docs.sharefile.com)." } },
   { v: "1.10.1", date: "2026-10-09", d: { es: "Costa Rica: CONASSIF 5-24 arts. 39 y 40 verificados en el texto oficial (reporte de incidentes moderados o altos a la Superintendencia y comunicación de medidas a los clientes en 5 días hábiles tras el cierre).", en: "Costa Rica: CONASSIF 5-24 arts. 39 and 40 verified in the official text (reporting moderate or high incidents to the Superintendency and telling clients the remediation measures within 5 business days after closing).", pt: "Costa Rica: CONASSIF 5-24 arts. 39 e 40 verificados no texto oficial (reporte de incidentes moderados ou altos à Superintendência e comunicação das medidas aos clientes em 5 dias úteis após o encerramento)." } },
   { v: "1.10.0", date: "2026-10-09", d: { es: "Cumplimiento: se agregan México, Guatemala, El Salvador, Honduras, Panamá, Colombia, Perú, Chile, Argentina y Brasil (32 normas en total), cada una con enlace al texto oficial del gobierno. Lo que no se pudo verificar en la fuente oficial aparece como pendiente.", en: "Compliance: adds Mexico, Guatemala, El Salvador, Honduras, Panama, Colombia, Peru, Chile, Argentina and Brazil (32 norms in total), each linked to the official government text. What could not be verified at the official source is shown as pending.", pt: "Conformidade: adiciona México, Guatemala, El Salvador, Honduras, Panamá, Colômbia, Peru, Chile, Argentina e Brasil (32 normas no total), cada uma com link para o texto oficial do governo. O que não pôde ser verificado na fonte oficial aparece como pendente." } },
   { v: "1.9.0", date: "2026-10-08", d: { es: "Nueva página «Cumplimiento» (piloto Costa Rica): Ley 8968 y su reglamento, CONASSIF 5-24 y Ley 8454, con extractos del texto oficial, dónde encaja ShareFile en cada requisito, lo que le corresponde a la empresa y dónde quedan los datos. Principio: quien cumple es la empresa que usa ShareFile.", en: "New “Compliance” page (Costa Rica pilot): Law 8968 and its regulation, CONASSIF 5-24 and Law 8454, with official text extracts, where ShareFile fits each requirement, what falls to the company and where the data lives. Principle: the company using ShareFile is the one that complies.", pt: "Nova página «Conformidade» (piloto Costa Rica): Lei 8968 e seu regulamento, CONASSIF 5-24 e Lei 8454, com trechos do texto oficial, onde o ShareFile se encaixa em cada requisito, o que cabe à empresa e onde ficam os dados. Princípio: quem cumpre é a empresa que usa o ShareFile." } },
@@ -1601,15 +1606,15 @@ const INTEGRATIONS = [
 const UI = {
   es: {
     video: { title: "Video oficial", lang: "en inglés; activa los subtítulos en español", tutorials: "Tutoriales oficiales en YouTube", overview: "Ver qué es ShareFile (en inglés)", long: "video largo" },
-    int: { title: "Integraciones", lead: "Integraciones oficiales de ShareFile con herramientas de correo, almacenamiento, identidad, seguridad, CRM y contabilidad, más integraciones por industria. Cada una enlaza a su documentación oficial.", search: "Buscar integración (ej. Salesforce)", plans: "Planes", planCheck: "Tabla de precios: desde Advanced. Documentación del plugin: Premium o superior.", group: "Categoría", industry: "Industria", all: "Todas", third: "Las integraciones de terceros requieren las licencias del proveedor correspondiente; algunas pueden estar limitadas o no disponibles.", source: "Fuentes: sharefile.com/apps-integrations y docs.sharefile.com.", forIndustry: "Integraciones para esta industria", specific: "Específicas de {i}", noSpecific: "ShareFile no publica integraciones específicas para {i}. Las de abajo sirven igual.", featured: "Destacadas en la página oficial de {i}", noFeatured: "La página oficial de {i} no destaca integraciones concretas.", general: "Resto de integraciones, por función (sirven para cualquier industria)", hidden: "Se ocultan {n} integraciones específicas de otras industrias.", count: "integraciones" },
-    billing: { label: "Facturación", monthly: "Mensual", annual: "Anual", perUserMonth: "por usuario / mes", minUsers: "Mínimo de {n} usuarios", annualNote: "facturación anual", monthlyNote: "facturación mensual", save: "Ahorra {n}%", explain: "Precios MSRP en USD de sharefile.com/plans. Con facturación anual, el precio mensual por usuario baja." },
+    int: { title: "Integraciones", lead: "Integraciones oficiales de ShareFile con herramientas de correo, almacenamiento, identidad, seguridad, CRM y contabilidad, más integraciones por industria. Cada una enlaza a su documentación oficial.", search: "Buscar integración (ej. Salesforce)", plans: "Planes", planCheck: "Tabla de planes: desde Advanced. Documentación del plugin: Premium o superior.", group: "Categoría", industry: "Industria", all: "Todas", third: "Las integraciones de terceros requieren las licencias del proveedor correspondiente; algunas pueden estar limitadas o no disponibles.", source: "Fuentes: sharefile.com/apps-integrations y docs.sharefile.com.", forIndustry: "Integraciones para esta industria", specific: "Específicas de {i}", noSpecific: "ShareFile no publica integraciones específicas para {i}. Las de abajo sirven igual.", featured: "Destacadas en la página oficial de {i}", noFeatured: "La página oficial de {i} no destaca integraciones concretas.", general: "Resto de integraciones, por función (sirven para cualquier industria)", hidden: "Se ocultan {n} integraciones específicas de otras industrias.", count: "integraciones" },
+    lic: { minUsers: "Mínimo de {n} usuarios", minShort: "mín. {n} licencias", storage: "{s} por licencia, compartido", pricing: "Este sitio no publica precios. Para precios en tu país (impuestos, retenciones y moneda local), contacta a tu partner o al representante de ShareFile de tu región." },
     lang: "Español", siteTag: "Mapa de planes ShareFile", unofficial: "Sitio no oficial", skip: "Saltar al contenido",
     nav: { home: "Inicio", map: "Mapa de planes", vdr: "Data Room", recommend: "Recomendador", compare: "Comparador", matrix: "Matriz", calc: "Calculadora", knowledge: "Conocimiento", glossary: "Glosario", changelog: "Cambios", discrepancies: "Discrepancias", integrations: "Integraciones", usecases: "Casos de uso", adopt: "Aprovecha tu plan", compliance: "Cumplimiento" },
     by: "Por", updated: "Actualizado",
     home: {
       plans: "Planes", industries: "Industrias", sizes: "Tamaño de empresa", tools: "Herramientas", resources: "Recursos",
-      allPlans: "Todos", stepup: "step-up", perUser: "por usuario / mes, anual", min: "mín.", users: "usuarios",
-      lead: "Qué incluye cada plan de ShareFile, cuál conviene según la industria y el tamaño, y cuánto cuesta. Cada función enlaza a la documentación oficial."
+      allPlans: "Todos", stepup: "step-up", min: "mín.", users: "usuarios",
+      lead: "Qué incluye cada plan de ShareFile, cuál conviene según la industria y el tamaño, y cuánto almacenamiento incluye. Cada función enlaza a la documentación oficial."
     },
     map: {
       title: "Mapa de planes ShareFile", vdrTitle: "Virtual Data Room",
@@ -1632,17 +1637,17 @@ const UI = {
       result: "Plan recomendado", why: "Por qué", needs: "Funciones que destaca la página oficial de la industria", from: "desde",
       sigAdds: "Las señales marcadas agregan", vdrToo: "Además, considera Virtual Data Room", vdrWhy: "Para M&A, auditorías o litigios, sharefile.com recomienda Virtual Data Room.",
       warnings: "Ten en cuenta", sizeNote: "El tamaño ajusta el mensaje, pero no cambia el plan por sí solo. Lo que justifica Enterprise son las señales de seguridad.",
-      industryPage: "Página oficial de la industria", sizePage: "Página oficial del tamaño", openCalc: "Calcular costo", openCompare: "Comparar con el plan anterior",
+      industryPage: "Página oficial de la industria", sizePage: "Página oficial del tamaño", openCalc: "Calcular almacenamiento", openCompare: "Comparar con el plan anterior",
       baseReason: "Todas las funciones que destaca la página de {ind} están incluidas desde {plan}.",
       advReason: "Para compartir y guardar archivos sin firma, portal ni flujos, Advanced cubre lo necesario.",
       entReason: "Marcaste señales que sharefile.com asocia a Enterprise: organizaciones grandes o reguladas que necesitan monitoreo, protección de datos e investigación."
     },
     cmp: {
-      title: "Comparador", lead: "Elige dos planes y mira qué cambia. Los precios son MSRP en USD.",
-      planA: "Plan A", planB: "Plan B", users: "Usuarios", billing: "Facturación", annual: "Anual", monthly: "Mensual",
-      onlyA: "Solo en {p}", onlyB: "Solo en {p}", both: "En ambos", diff: "Diferencia", perUser: "por usuario / mes",
-      perMonth: "por mes", perYear: "por año", same: "Elige dos planes distintos.", highlight: "Resaltar por industria", relevant: "relevante para la industria",
-      count: "{n} funciones", everything: "Todo lo de {p}", plus: "Más estas {k}:", own: "Solo en {p} ({k}):", base: "Base común: {n} funciones que tienen {a} y {b}", seeAll: "Ver las {n} funciones", none: "Ninguna: todo lo de este plan está en el otro.", total: "{p} tiene {n} funciones en total.", upTo: "en {p} sube a {y}", sumSuper: "{b} incluye todo lo de {a} y agrega {k} funciones.", sumSuperUp: "{b} incluye todo lo de {a} ({x} sube a {y}) y agrega {k} funciones.", sumGen: "{a} tiene {na} funciones y {b} tiene {nb}; comparten {n}. Cada uno tiene funciones que el otro no.", seats: "Licencias facturadas con {u} usuarios: {list}", seatsMin: "* {p}: se factura el mínimo de {n} licencias del plan."
+      title: "Comparador", lead: "Elige dos planes y mira qué cambia.",
+      planA: "Plan A", planB: "Plan B",
+      onlyA: "Solo en {p}", onlyB: "Solo en {p}", both: "En ambos",
+      same: "Elige dos planes distintos.", highlight: "Resaltar por industria", relevant: "relevante para la industria",
+      count: "{n} funciones", everything: "Todo lo de {p}", plus: "Más estas {k}:", own: "Solo en {p} ({k}):", base: "Base común: {n} funciones que tienen {a} y {b}", seeAll: "Ver las {n} funciones", none: "Ninguna: todo lo de este plan está en el otro.", total: "{p} tiene {n} funciones en total.", upTo: "en {p} sube a {y}", sumSuper: "{b} incluye todo lo de {a} y agrega {k} funciones.", sumSuperUp: "{b} incluye todo lo de {a} ({x} sube a {y}) y agrega {k} funciones.", sumGen: "{a} tiene {na} funciones y {b} tiene {nb}; comparten {n}. Cada uno tiene funciones que el otro no."
     },
     mx: {
       title: "Matriz de funciones", lead: "Todas las funciones de la tabla oficial, en una sola vista. El enlace de la página guarda tus filtros.",
@@ -1650,14 +1655,19 @@ const UI = {
       feature: "Función", export: "Exportar CSV", copy: "Copiar enlace", copied: "Enlace copiado", shown: "funciones visibles"
     },
     calc: {
-      title: "Calculadora", lead: "Costo de lista y almacenamiento incluido según usuarios y plan.",
-      plan: "Plan", users: "Usuarios con licencia", billing: "Facturación", annual: "Anual", monthly: "Mensual",
-      perUser: "Precio por usuario / mes", monthTotal: "Total mensual", yearTotal: "Total anual", storage: "Almacenamiento incluido",
-      minApplied: "Se aplica el mínimo de {n} licencias del plan.", allPlans: "Todos los planes con tus usuarios",
-      usersHint: "Empieza en el mínimo del plan. Escribe tu cantidad o elige:", maxNote: "ShareFile no publica un máximo de licencias por plan; se pueden agregar en cualquier momento. Solo los usuarios empleados llevan licencia: los usuarios cliente son ilimitados en todos los planes.", licenses: "Licencias facturadas", licCol: "Licencias", adjusted: "{p} requiere mínimo {n} licencias: se ajustó de {from} a {n}.",
-      minFoot: "* Mínimo de licencias requeridas por plan: {list}. Si tienes menos usuarios, se factura el mínimo.",
-      storageNote: "Advanced, Premium y Enterprise: 1 TB por licencia agregado, mínimo 3 TB. VDR: 1 GB por licencia. Se pueden sumar paquetes de 3 TB.",
-      priceNote: "Precios MSRP de sharefile.com/plans. El precio final puede variar por canal, volumen o plazo."
+      title: "Calculadora de almacenamiento", lead: "Cuánto almacenamiento en la nube incluye la cuenta según el plan y la cantidad de licencias.",
+      plan: "Plan", users: "Licencias (usuarios empleados)", storage: "Almacenamiento de la cuenta", perLicense: "Por licencia", total: "Total compartido",
+      formula: "{n} licencias × {per} = {total} para toda la cuenta",
+      minApplied: "Se aplica el mínimo de {n} licencias del plan.", allPlans: "Todos los planes con tus licencias",
+      usersHint: "Empieza en el mínimo del plan. Escribe tu cantidad o elige:", maxNote: "ShareFile no publica un máximo de licencias por plan; se pueden agregar en cualquier momento. Solo los usuarios empleados llevan licencia: los usuarios cliente son ilimitados en todos los planes.", licenses: "Licencias", licCol: "Licencias", adjusted: "{p} requiere mínimo {n} licencias: se ajustó de {from} a {n}.",
+      minFoot: "* Mínimo de licencias requeridas por plan: {list}.",
+      poolTitle: "El almacenamiento es compartido",
+      pool: "No es una cuota por usuario. El almacenamiento de todas las licencias se suma en una sola bolsa para toda la cuenta, y un usuario puede usar más que su parte mientras la cuenta no llegue a su total.",
+      counts: "Cuentan para el total: carpetas personales, carpetas compartidas, File Box y la papelera de reciclaje.",
+      full: "Si la cuenta llega al límite, se bloquean las cargas y la creación de documentos nuevos. Los usuarios pueden seguir entrando, viendo y descargando, y el administrador puede comprar más almacenamiento (Add Storage).",
+      packs: "Advanced, Premium y Enterprise: se amplía con paquetes de 3 TB. Enterprise también ofrece almacenamiento on-premises o híbrido.",
+      quota: "En Enterprise, el administrador puede fijar cuotas por usuario (Storage Quota) si quiere limitar cuánto usa cada uno.",
+      sources: "Fuentes oficiales:"
     },
     kn: { title: "Conocimiento", lead: "Enlaces oficiales de ShareFile y Progress, agrupados por tema." },
     gl: { title: "Glosario", lead: "Términos que aparecen en planes y conversaciones de venta.", search: "Buscar término" },
@@ -1668,8 +1678,7 @@ const UI = {
     comp: { lead: "Normas públicas de cada país y dónde encaja ShareFile en cada requisito, con el texto oficial y lo que le corresponde a la empresa.", principleTitle: "Quién cumple:", principle: "la empresa que usa ShareFile. Muchas obligaciones recaen directamente en ella, y el cumplimiento depende de cómo implementa, configura, gobierna y usa la solución. ShareFile ofrece capacidades y evidencia que apoyan esos requisitos; no los cumple por el cliente.", notLegal: "Información general, no asesoría legal: valida con tu asesor legal y con el representante de ShareFile de tu región.", country: "País", more: "Más países en preparación.", verified: "Verificado el", residency: "Dónde quedan los datos", authority: "Autoridad", applies: "Aplica a", official: "Texto oficial", ok: "Verificado", check: "Confirmar vigencia en SCIJ", checkGaceta: "Confirmar numeración en la Gaceta Oficial", checkAmended: "Modificada: confirmar texto vigente", pendingTitle: "Pendiente de verificar", res_none: "ShareFile no tiene zona de almacenamiento gestionada en {c}: sus zonas están en EE. UU., Canadá, Brasil, Unión Europea, Japón, Australia, Singapur, Emiratos e India. Usar una zona gestionada implica guardar los datos fuera de {c}. Para mantenerlos en el país existe Storage Zones Controller, una zona que el cliente opera en su propia infraestructura (con versión soportada y parches al día). El Trust Center lista además los subprocesadores de ShareFile y sus países.", res_br: "ShareFile tiene una zona gestionada en Brasil (ShareFile Brazil), la única de la región: los archivos pueden guardarse en el país. Confirma con tu representante qué otros datos del servicio se procesan fuera; el Trust Center lista los subprocesadores de ShareFile y sus países.", extract: "extracto del texto oficial", sf: "Dónde encaja ShareFile", you: "Le corresponde a la empresa", foot: "Para cuestionarios regulatorios o de seguridad, pide la revisión a tu representante de ShareFile. Algunos documentos del Trust Center requieren solicitar acceso:" },
     foot: {
       disclaimer: "Sitio no oficial, mantenido de forma independiente. No representa a Progress Software Corporation. ShareFile y Progress son marcas de Progress Software Corporation.",
-      truth: "Fuentes oficiales: {links}. Verifica siempre la información ahí y, antes de cualquier decisión, contacta al representante de ShareFile de tu región o a tu partner.",
-      prices: "Precios MSRP en USD tomados de sharefile.com/plans."
+      truth: "Fuentes oficiales: {links}. Verifica siempre la información ahí y, antes de cualquier decisión, contacta al representante de ShareFile de tu región o a tu partner."
     },
     cookies: { text: "Usamos cookies de analítica para saber qué secciones se consultan. No identifican a nadie.", accept: "Aceptar", reject: "Rechazar" },
     theme: "Tema", light: "Claro", dark: "Oscuro", system: "Sistema", info: "Detalles"
@@ -1677,15 +1686,15 @@ const UI = {
 
   en: {
     video: { title: "Official video", lang: "English", tutorials: "Official tutorials on YouTube", overview: "See what ShareFile is", long: "long video" },
-    int: { title: "Integrations", lead: "Official ShareFile integrations with email, storage, identity, security, CRM and accounting tools, plus industry-specific integrations. Each links to its official documentation.", search: "Search integrations (e.g. Salesforce)", plans: "Plans", planCheck: "Pricing table: from Advanced. Plug-in documentation: Premium or higher.", group: "Category", industry: "Industry", all: "All", third: "Third-party integrations require the vendor's licenses; some may be limited or unavailable.", source: "Sources: sharefile.com/apps-integrations and docs.sharefile.com.", forIndustry: "Integrations for this industry", specific: "Specific to {i}", noSpecific: "ShareFile publishes no integrations specific to {i}. The ones below still apply.", featured: "Featured on the official {i} page", noFeatured: "The official {i} page does not feature specific integrations.", general: "Other integrations, by function (useful for any industry)", hidden: "{n} integrations specific to other industries are hidden.", count: "integrations" },
-    billing: { label: "Billing", monthly: "Monthly", annual: "Annual", perUserMonth: "per user / month", minUsers: "Minimum of {n} users", annualNote: "billed annually", monthlyNote: "billed monthly", save: "Save {n}%", explain: "MSRP in USD from sharefile.com/plans. Annual billing lowers the monthly price per user." },
+    int: { title: "Integrations", lead: "Official ShareFile integrations with email, storage, identity, security, CRM and accounting tools, plus industry-specific integrations. Each links to its official documentation.", search: "Search integrations (e.g. Salesforce)", plans: "Plans", planCheck: "Plans table: from Advanced. Plug-in documentation: Premium or higher.", group: "Category", industry: "Industry", all: "All", third: "Third-party integrations require the vendor's licenses; some may be limited or unavailable.", source: "Sources: sharefile.com/apps-integrations and docs.sharefile.com.", forIndustry: "Integrations for this industry", specific: "Specific to {i}", noSpecific: "ShareFile publishes no integrations specific to {i}. The ones below still apply.", featured: "Featured on the official {i} page", noFeatured: "The official {i} page does not feature specific integrations.", general: "Other integrations, by function (useful for any industry)", hidden: "{n} integrations specific to other industries are hidden.", count: "integrations" },
+    lic: { minUsers: "Minimum of {n} users", minShort: "min. {n} licenses", storage: "{s} per license, pooled", pricing: "This site does not publish prices. For pricing in your country (taxes, withholding and local currency), contact your partner or your regional ShareFile representative." },
     lang: "English", siteTag: "ShareFile plans map", unofficial: "Unofficial site", skip: "Skip to content",
     nav: { home: "Home", map: "Plans map", vdr: "Data Room", recommend: "Recommender", compare: "Comparator", matrix: "Matrix", calc: "Calculator", knowledge: "Knowledge", glossary: "Glossary", changelog: "Changes", discrepancies: "Discrepancies", integrations: "Integrations", usecases: "Use cases", adopt: "Get more from your plan", compliance: "Compliance" },
     by: "By", updated: "Updated",
     home: {
       plans: "Plans", industries: "Industries", sizes: "Company size", tools: "Tools", resources: "Resources",
-      allPlans: "All", stepup: "step-up", perUser: "per user / month, annual", min: "min.", users: "users",
-      lead: "What each ShareFile plan includes, which one fits by industry and size, and what it costs. Every feature links to official documentation."
+      allPlans: "All", stepup: "step-up", min: "min.", users: "users",
+      lead: "What each ShareFile plan includes, which one fits by industry and size, and how much storage it includes. Every feature links to official documentation."
     },
     map: {
       title: "ShareFile plans map", vdrTitle: "Virtual Data Room",
@@ -1708,17 +1717,17 @@ const UI = {
       result: "Recommended plan", why: "Why", needs: "Features the official industry page highlights", from: "from",
       sigAdds: "The checked signals add", vdrToo: "Also consider Virtual Data Room", vdrWhy: "For M&A, audits or litigation, sharefile.com recommends Virtual Data Room.",
       warnings: "Keep in mind", sizeNote: "Size shapes the message but does not change the plan by itself. Security signals are what justify Enterprise.",
-      industryPage: "Official industry page", sizePage: "Official company-size page", openCalc: "Calculate cost", openCompare: "Compare with the plan below",
+      industryPage: "Official industry page", sizePage: "Official company-size page", openCalc: "Calculate storage", openCompare: "Compare with the plan below",
       baseReason: "Every feature the {ind} page highlights is included from {plan}.",
       advReason: "For secure file sharing and storage without e-signature, portal or workflows, Advanced covers it.",
       entReason: "You checked signals sharefile.com links to Enterprise: larger or regulated organizations that need monitoring, data protection and investigation."
     },
     cmp: {
-      title: "Comparator", lead: "Pick two plans and see what changes. Prices are MSRP in USD.",
-      planA: "Plan A", planB: "Plan B", users: "Users", billing: "Billing", annual: "Annual", monthly: "Monthly",
-      onlyA: "Only in {p}", onlyB: "Only in {p}", both: "In both", diff: "Difference", perUser: "per user / month",
-      perMonth: "per month", perYear: "per year", same: "Pick two different plans.", highlight: "Highlight by industry", relevant: "relevant to the industry",
-      count: "{n} features", everything: "Everything in {p}", plus: "Plus these {k}:", own: "Only in {p} ({k}):", base: "Shared base: {n} features in both {a} and {b}", seeAll: "See all {n} features", none: "None: everything in this plan is in the other.", total: "{p} has {n} features in total.", upTo: "in {p} upgrades to {y}", sumSuper: "{b} includes everything in {a} and adds {k} features.", sumSuperUp: "{b} includes everything in {a} ({x} upgrades to {y}) and adds {k} features.", sumGen: "{a} has {na} features and {b} has {nb}; they share {n}. Each has features the other lacks.", seats: "Billed licenses for {u} users: {list}", seatsMin: "* {p}: the plan's {n}-license minimum is billed."
+      title: "Comparator", lead: "Pick two plans and see what changes.",
+      planA: "Plan A", planB: "Plan B",
+      onlyA: "Only in {p}", onlyB: "Only in {p}", both: "In both",
+      same: "Pick two different plans.", highlight: "Highlight by industry", relevant: "relevant to the industry",
+      count: "{n} features", everything: "Everything in {p}", plus: "Plus these {k}:", own: "Only in {p} ({k}):", base: "Shared base: {n} features in both {a} and {b}", seeAll: "See all {n} features", none: "None: everything in this plan is in the other.", total: "{p} has {n} features in total.", upTo: "in {p} upgrades to {y}", sumSuper: "{b} includes everything in {a} and adds {k} features.", sumSuperUp: "{b} includes everything in {a} ({x} upgrades to {y}) and adds {k} features.", sumGen: "{a} has {na} features and {b} has {nb}; they share {n}. Each has features the other lacks."
     },
     mx: {
       title: "Feature matrix", lead: "Every feature in the official table, in one view. The page link keeps your filters.",
@@ -1726,14 +1735,19 @@ const UI = {
       feature: "Feature", export: "Export CSV", copy: "Copy link", copied: "Link copied", shown: "features shown"
     },
     calc: {
-      title: "Calculator", lead: "List cost and included storage by users and plan.",
-      plan: "Plan", users: "Licensed users", billing: "Billing", annual: "Annual", monthly: "Monthly",
-      perUser: "Price per user / month", monthTotal: "Monthly total", yearTotal: "Annual total", storage: "Included storage",
-      minApplied: "The plan's {n}-license minimum applies.", allPlans: "Every plan with your users",
-      usersHint: "Starts at the plan minimum. Type your number or pick one:", maxNote: "ShareFile publishes no maximum number of licenses per plan; licenses can be added at any time. Only employee users need a license: client users are unlimited on every plan.", licenses: "Billed licenses", licCol: "Licenses", adjusted: "{p} requires at least {n} licenses: adjusted from {from} to {n}.",
-      minFoot: "* Minimum licenses required per plan: {list}. With fewer users, the minimum is billed.",
-      storageNote: "Advanced, Premium and Enterprise: 1 TB per license pooled, 3 TB minimum. VDR: 1 GB per license. 3 TB packs can be added.",
-      priceNote: "MSRP from sharefile.com/plans. Final price may vary by channel, volume or term."
+      title: "Storage calculator", lead: "How much cloud storage the account includes, by plan and number of licenses.",
+      plan: "Plan", users: "Licenses (employee users)", storage: "Account storage", perLicense: "Per license", total: "Pooled total",
+      formula: "{n} licenses × {per} = {total} for the whole account",
+      minApplied: "The plan's {n}-license minimum applies.", allPlans: "Every plan with your licenses",
+      usersHint: "Starts at the plan minimum. Type your number or pick one:", maxNote: "ShareFile publishes no maximum number of licenses per plan; you can add them anytime. Only employee users need a license: client users are unlimited on every plan.", licenses: "Licenses", licCol: "Licenses", adjusted: "{p} requires at least {n} licenses: adjusted from {from} to {n}.",
+      minFoot: "* Minimum licenses required per plan: {list}.",
+      poolTitle: "Storage is pooled",
+      pool: "It is not a per-user quota. Storage from every license adds up to one pool for the whole account, and a user can use more than their share as long as the account stays within its total.",
+      counts: "What counts toward the total: personal folders, shared folders, File Box and the Recycle Bin.",
+      full: "If the account reaches its limit, uploads and new documents are blocked. Users can still sign in, view and download, and the admin can buy more storage (Add Storage).",
+      packs: "Advanced, Premium and Enterprise: expandable with 3 TB packs. Enterprise also offers on-premises or hybrid storage.",
+      quota: "On Enterprise, admins can set per-user quotas (Storage Quota) to limit how much each user consumes.",
+      sources: "Official sources:"
     },
     kn: { title: "Knowledge", lead: "Official ShareFile and Progress links, grouped by topic." },
     gl: { title: "Glossary", lead: "Terms that come up in plans and sales conversations.", search: "Search terms" },
@@ -1744,8 +1758,7 @@ const UI = {
     comp: { lead: "Each country's public regulations and where ShareFile fits each requirement, with the official text and what falls to the company.", principleTitle: "Who complies:", principle: "the company using ShareFile. Many obligations fall directly on it, and compliance depends on how it implements, configures, governs and uses the solution. ShareFile provides capabilities and evidence that support those requirements; it does not comply on the customer's behalf.", notLegal: "General information, not legal advice: validate with your legal advisor and your regional ShareFile representative.", country: "Country", more: "More countries in progress.", verified: "Verified on", residency: "Where the data lives", authority: "Authority", applies: "Applies to", official: "Official text", ok: "Verified", check: "Confirm current status in SCIJ", checkGaceta: "Confirm article numbering in the Official Gazette", checkAmended: "Amended: confirm current text", pendingTitle: "Pending verification", res_none: "ShareFile has no managed storage zone in {c}: its zones are in the US, Canada, Brazil, the European Union, Japan, Australia, Singapore, the UAE and India. Using a managed zone means storing data outside {c}. To keep data in the country there is Storage Zones Controller, a zone the customer runs on its own infrastructure (on a supported, patched version). The Trust Center also lists ShareFile's subprocessors and their countries.", res_br: "ShareFile has a managed zone in Brazil (ShareFile Brazil), the only one in the region: files can be stored in the country. Confirm with your representative which other service data is processed abroad; the Trust Center lists ShareFile's subprocessors and their countries.", extract: "extract of the official text", sf: "Where ShareFile fits", you: "What falls to the company", foot: "For regulatory or security questionnaires, ask your ShareFile representative for a review. Some Trust Center documents require requesting access:" },
     foot: {
       disclaimer: "Unofficial site, independently maintained. It does not represent Progress Software Corporation. ShareFile and Progress are trademarks of Progress Software Corporation.",
-      truth: "Official sources: {links}. Always verify the information there and, before any decision, contact your regional ShareFile representative or your partner.",
-      prices: "MSRP in USD from sharefile.com/plans."
+      truth: "Official sources: {links}. Always verify the information there and, before any decision, contact your regional ShareFile representative or your partner."
     },
     cookies: { text: "We use analytics cookies to learn which sections are used. They do not identify anyone.", accept: "Accept", reject: "Decline" },
     theme: "Theme", light: "Light", dark: "Dark", system: "System", info: "Details"
@@ -1753,15 +1766,15 @@ const UI = {
 
   pt: {
     video: { title: "Vídeo oficial", lang: "em inglês; ative as legendas em português", tutorials: "Tutoriais oficiais no YouTube", overview: "Ver o que é o ShareFile (em inglês)", long: "vídeo longo" },
-    int: { title: "Integrações", lead: "Integrações oficiais do ShareFile com ferramentas de e-mail, armazenamento, identidade, segurança, CRM e contabilidade, além de integrações por setor. Cada uma leva à documentação oficial.", search: "Buscar integração (ex. Salesforce)", plans: "Planos", planCheck: "Tabela de preços: desde o Advanced. Documentação do plugin: Premium ou superior.", group: "Categoria", industry: "Setor", all: "Todas", third: "Integrações de terceiros exigem as licenças do fornecedor; algumas podem estar limitadas ou indisponíveis.", source: "Fontes: sharefile.com/apps-integrations e docs.sharefile.com.", forIndustry: "Integrações para este setor", specific: "Específicas de {i}", noSpecific: "O ShareFile não publica integrações específicas para {i}. As abaixo também se aplicam.", featured: "Destacadas na página oficial de {i}", noFeatured: "A página oficial de {i} não destaca integrações específicas.", general: "Demais integrações, por função (servem para qualquer setor)", hidden: "{n} integrações específicas de outros setores estão ocultas.", count: "integrações" },
-    billing: { label: "Cobrança", monthly: "Mensal", annual: "Anual", perUserMonth: "por usuário / mês", minUsers: "Mínimo de {n} usuários", annualNote: "cobrança anual", monthlyNote: "cobrança mensal", save: "Economize {n}%", explain: "Preços MSRP em USD de sharefile.com/plans. Com cobrança anual, o preço mensal por usuário diminui." },
+    int: { title: "Integrações", lead: "Integrações oficiais do ShareFile com ferramentas de e-mail, armazenamento, identidade, segurança, CRM e contabilidade, além de integrações por setor. Cada uma leva à documentação oficial.", search: "Buscar integração (ex. Salesforce)", plans: "Planos", planCheck: "Tabela de planos: desde o Advanced. Documentação do plugin: Premium ou superior.", group: "Categoria", industry: "Setor", all: "Todas", third: "Integrações de terceiros exigem as licenças do fornecedor; algumas podem estar limitadas ou indisponíveis.", source: "Fontes: sharefile.com/apps-integrations e docs.sharefile.com.", forIndustry: "Integrações para este setor", specific: "Específicas de {i}", noSpecific: "O ShareFile não publica integrações específicas para {i}. As abaixo também se aplicam.", featured: "Destacadas na página oficial de {i}", noFeatured: "A página oficial de {i} não destaca integrações específicas.", general: "Demais integrações, por função (servem para qualquer setor)", hidden: "{n} integrações específicas de outros setores estão ocultas.", count: "integrações" },
+    lic: { minUsers: "Mínimo de {n} usuários", minShort: "mín. {n} licenças", storage: "{s} por licença, compartilhado", pricing: "Este site não publica preços. Para preços no seu país (impostos, retenções e moeda local), contate seu parceiro ou o representante do ShareFile da sua região." },
     lang: "Português", siteTag: "Mapa de planos ShareFile", unofficial: "Site não oficial", skip: "Pular para o conteúdo",
     nav: { home: "Início", map: "Mapa de planos", vdr: "Data Room", recommend: "Recomendador", compare: "Comparador", matrix: "Matriz", calc: "Calculadora", knowledge: "Conhecimento", glossary: "Glossário", changelog: "Mudanças", discrepancies: "Discrepâncias", integrations: "Integrações", usecases: "Casos de uso", adopt: "Aproveite seu plano", compliance: "Conformidade" },
     by: "Por", updated: "Atualizado",
     home: {
       plans: "Planos", industries: "Setores", sizes: "Porte da empresa", tools: "Ferramentas", resources: "Recursos",
-      allPlans: "Todos", stepup: "step-up", perUser: "por usuário / mês, anual", min: "mín.", users: "usuários",
-      lead: "O que cada plano do ShareFile inclui, qual convém por setor e porte, e quanto custa. Cada recurso leva à documentação oficial."
+      allPlans: "Todos", stepup: "step-up", min: "mín.", users: "usuários",
+      lead: "O que cada plano do ShareFile inclui, qual convém por setor e porte, e quanto armazenamento inclui. Cada recurso leva à documentação oficial."
     },
     map: {
       title: "Mapa de planos ShareFile", vdrTitle: "Virtual Data Room",
@@ -1784,17 +1797,17 @@ const UI = {
       result: "Plano recomendado", why: "Por quê", needs: "Recursos que a página oficial do setor destaca", from: "a partir do",
       sigAdds: "Os sinais marcados adicionam", vdrToo: "Considere também o Virtual Data Room", vdrWhy: "Para M&A, auditorias ou litígios, o sharefile.com recomenda o Virtual Data Room.",
       warnings: "Atenção", sizeNote: "O porte ajusta a mensagem, mas não muda o plano sozinho. O que justifica o Enterprise são os sinais de segurança.",
-      industryPage: "Página oficial do setor", sizePage: "Página oficial do porte", openCalc: "Calcular custo", openCompare: "Comparar com o plano anterior",
+      industryPage: "Página oficial do setor", sizePage: "Página oficial do porte", openCalc: "Calcular armazenamento", openCompare: "Comparar com o plano anterior",
       baseReason: "Todos os recursos que a página de {ind} destaca estão incluídos a partir do {plan}.",
       advReason: "Para compartilhar e guardar arquivos sem assinatura, portal ou fluxos, o Advanced atende.",
       entReason: "Você marcou sinais que o sharefile.com associa ao Enterprise: organizações maiores ou reguladas que precisam de monitoramento, proteção de dados e investigação."
     },
     cmp: {
-      title: "Comparador", lead: "Escolha dois planos e veja o que muda. Os preços são MSRP em USD.",
-      planA: "Plano A", planB: "Plano B", users: "Usuários", billing: "Cobrança", annual: "Anual", monthly: "Mensal",
-      onlyA: "Só no {p}", onlyB: "Só no {p}", both: "Em ambos", diff: "Diferença", perUser: "por usuário / mês",
-      perMonth: "por mês", perYear: "por ano", same: "Escolha dois planos diferentes.", highlight: "Destacar por setor", relevant: "relevante para o setor",
-      count: "{n} recursos", everything: "Tudo do {p}", plus: "Mais estes {k}:", own: "Só no {p} ({k}):", base: "Base comum: {n} recursos que {a} e {b} têm", seeAll: "Ver os {n} recursos", none: "Nenhum: tudo deste plano está no outro.", total: "{p} tem {n} recursos no total.", upTo: "no {p} passa a {y}", sumSuper: "{b} inclui tudo do {a} e adiciona {k} recursos.", sumSuperUp: "{b} inclui tudo do {a} ({x} passa a {y}) e adiciona {k} recursos.", sumGen: "{a} tem {na} recursos e {b} tem {nb}; compartilham {n}. Cada um tem recursos que o outro não tem.", seats: "Licenças faturadas com {u} usuários: {list}", seatsMin: "* {p}: fatura-se o mínimo de {n} licenças do plano."
+      title: "Comparador", lead: "Escolha dois planos e veja o que muda.",
+      planA: "Plano A", planB: "Plano B",
+      onlyA: "Só no {p}", onlyB: "Só no {p}", both: "Em ambos",
+      same: "Escolha dois planos diferentes.", highlight: "Destacar por setor", relevant: "relevante para o setor",
+      count: "{n} recursos", everything: "Tudo do {p}", plus: "Mais estes {k}:", own: "Só no {p} ({k}):", base: "Base comum: {n} recursos que {a} e {b} têm", seeAll: "Ver os {n} recursos", none: "Nenhum: tudo deste plano está no outro.", total: "{p} tem {n} recursos no total.", upTo: "no {p} passa a {y}", sumSuper: "{b} inclui tudo do {a} e adiciona {k} recursos.", sumSuperUp: "{b} inclui tudo do {a} ({x} passa a {y}) e adiciona {k} recursos.", sumGen: "{a} tem {na} recursos e {b} tem {nb}; compartilham {n}. Cada um tem recursos que o outro não tem."
     },
     mx: {
       title: "Matriz de recursos", lead: "Todos os recursos da tabela oficial, em uma só visão. O link da página guarda seus filtros.",
@@ -1802,14 +1815,19 @@ const UI = {
       feature: "Recurso", export: "Exportar CSV", copy: "Copiar link", copied: "Link copiado", shown: "recursos visíveis"
     },
     calc: {
-      title: "Calculadora", lead: "Custo de lista e armazenamento incluído por usuários e plano.",
-      plan: "Plano", users: "Usuários licenciados", billing: "Cobrança", annual: "Anual", monthly: "Mensal",
-      perUser: "Preço por usuário / mês", monthTotal: "Total mensal", yearTotal: "Total anual", storage: "Armazenamento incluído",
-      minApplied: "Aplica-se o mínimo de {n} licenças do plano.", allPlans: "Todos os planos com seus usuários",
-      usersHint: "Começa no mínimo do plano. Digite sua quantidade ou escolha:", maxNote: "O ShareFile não publica um máximo de licenças por plano; é possível adicionar a qualquer momento. Só os usuários funcionários precisam de licença: os usuários clientes são ilimitados em todos os planos.", licenses: "Licenças faturadas", licCol: "Licenças", adjusted: "{p} exige no mínimo {n} licenças: ajustado de {from} para {n}.",
-      minFoot: "* Mínimo de licenças exigidas por plano: {list}. Com menos usuários, fatura-se o mínimo.",
-      storageNote: "Advanced, Premium e Enterprise: 1 TB por licença agregado, mínimo de 3 TB. VDR: 1 GB por licença. É possível adicionar pacotes de 3 TB.",
-      priceNote: "Preços MSRP de sharefile.com/plans. O preço final pode variar por canal, volume ou prazo."
+      title: "Calculadora de armazenamento", lead: "Quanto armazenamento em nuvem a conta inclui, por plano e quantidade de licenças.",
+      plan: "Plano", users: "Licenças (usuários funcionários)", storage: "Armazenamento da conta", perLicense: "Por licença", total: "Total compartilhado",
+      formula: "{n} licenças × {per} = {total} para toda a conta",
+      minApplied: "Aplica-se o mínimo de {n} licenças do plano.", allPlans: "Todos os planos com suas licenças",
+      usersHint: "Começa no mínimo do plano. Digite sua quantidade ou escolha:", maxNote: "O ShareFile não publica um máximo de licenças por plano; é possível adicioná-las a qualquer momento. Só usuários funcionários precisam de licença: usuários cliente são ilimitados em todos os planos.", licenses: "Licenças", licCol: "Licenças", adjusted: "{p} exige no mínimo {n} licenças: ajustado de {from} para {n}.",
+      minFoot: "* Mínimo de licenças exigido por plano: {list}.",
+      poolTitle: "O armazenamento é compartilhado",
+      pool: "Não é uma cota por usuário. O armazenamento de todas as licenças soma uma única reserva para toda a conta, e um usuário pode usar mais que sua parte enquanto a conta não atingir o total.",
+      counts: "Contam para o total: pastas pessoais, pastas compartilhadas, File Box e a lixeira.",
+      full: "Se a conta atingir o limite, uploads e novos documentos ficam bloqueados. Os usuários continuam podendo entrar, ver e baixar, e o administrador pode comprar mais armazenamento (Add Storage).",
+      packs: "Advanced, Premium e Enterprise: ampliável com pacotes de 3 TB. O Enterprise também oferece armazenamento on-premises ou híbrido.",
+      quota: "No Enterprise, o administrador pode definir cotas por usuário (Storage Quota) para limitar quanto cada um consome.",
+      sources: "Fontes oficiais:"
     },
     kn: { title: "Conhecimento", lead: "Links oficiais do ShareFile e da Progress, agrupados por tema." },
     gl: { title: "Glossário", lead: "Termos que aparecem em planos e conversas de venda.", search: "Buscar termo" },
@@ -1820,8 +1838,7 @@ const UI = {
     comp: { lead: "Normas públicas de cada país e onde o ShareFile se encaixa em cada requisito, com o texto oficial e o que cabe à empresa.", principleTitle: "Quem cumpre:", principle: "a empresa que usa o ShareFile. Muitas obrigações recaem diretamente sobre ela, e a conformidade depende de como implementa, configura, governa e usa a solução. O ShareFile oferece recursos e evidências que apoiam esses requisitos; não os cumpre pelo cliente.", notLegal: "Informação geral, não é assessoria jurídica: valide com seu assessor jurídico e com o representante ShareFile da sua região.", country: "País", more: "Mais países em preparação.", verified: "Verificado em", residency: "Onde ficam os dados", authority: "Autoridade", applies: "Aplica-se a", official: "Texto oficial", ok: "Verificado", check: "Confirmar vigência no SCIJ", checkGaceta: "Confirmar numeração na Gaceta Oficial", checkAmended: "Modificada: confirmar texto vigente", pendingTitle: "Pendente de verificação", res_none: "O ShareFile não tem zona de armazenamento gerenciada em {c}: suas zonas ficam nos EUA, Canadá, Brasil, União Europeia, Japão, Austrália, Singapura, Emirados e Índia. Usar uma zona gerenciada implica guardar os dados fora de {c}. Para mantê-los no país existe o Storage Zones Controller, uma zona que o cliente opera em sua própria infraestrutura (com versão suportada e patches em dia). O Trust Center lista ainda os subprocessadores do ShareFile e seus países.", res_br: "O ShareFile tem uma zona gerenciada no Brasil (ShareFile Brazil), a única da região: os arquivos podem ser guardados no país. Confirme com seu representante quais outros dados do serviço são processados fora; o Trust Center lista os subprocessadores do ShareFile e seus países.", extract: "trecho do texto oficial", sf: "Onde o ShareFile se encaixa", you: "O que cabe à empresa", foot: "Para questionários regulatórios ou de segurança, peça a revisão ao seu representante ShareFile. Alguns documentos do Trust Center exigem solicitar acesso:" },
     foot: {
       disclaimer: "Site não oficial, mantido de forma independente. Não representa a Progress Software Corporation. ShareFile e Progress são marcas da Progress Software Corporation.",
-      truth: "Fontes oficiais: {links}. Verifique sempre as informações ali e, antes de qualquer decisão, fale com o representante ShareFile da sua região ou com seu parceiro.",
-      prices: "Preços MSRP em USD de sharefile.com/plans."
+      truth: "Fontes oficiais: {links}. Verifique sempre as informações ali e, antes de qualquer decisão, fale com o representante ShareFile da sua região ou com seu parceiro."
     },
     cookies: { text: "Usamos cookies de análise para saber quais seções são consultadas. Eles não identificam ninguém.", accept: "Aceitar", reject: "Recusar" },
     theme: "Tema", light: "Claro", dark: "Escuro", system: "Sistema", info: "Detalhes"
@@ -1856,8 +1873,6 @@ const UI = {
   const t = () => UI[lang];
   const L = obj => (obj && (obj[lang] || obj.es || obj.en)) || "";
   const fmt = (s, map) => s.replace(/\{(\w+)\}/g, (_, k) => map[k] ?? "");
-  const money = (n, dec = 2) => new Intl.NumberFormat(lang === "en" ? "en-US" : lang === "pt" ? "pt-BR" : "es-CR",
-    { style: "currency", currency: "USD", minimumFractionDigits: dec, maximumFractionDigits: dec }).format(n);
   const int = n => new Intl.NumberFormat(lang === "en" ? "en-US" : lang === "pt" ? "pt-BR" : "es-CR").format(n);
 
   // ── Helpers
@@ -1894,17 +1909,13 @@ const UI = {
     rec: store.get("rec", { ind: "accounting", sub: "", size: "mid", sig: [] }),
     cmp: store.get("cmp3", { a: "A", b: "P", users: 3, custom: false, hl: "" }),
     calc: store.get("calc2", { plan: "P", users: 3, custom: false }),
-    mx: { q: "", g: "", i: "", diff: false },
-    bill: store.get("bill", "annual")
+    mx: { q: "", g: "", i: "", diff: false }
   };
-  const priceOf = p => state.bill === "annual" ? p.annual : p.monthly;
-  const savePct = p => Math.round((1 - p.annual / p.monthly) * 100);
-  const billLabel = () => state.bill === "annual" ? t().billing.annualNote : t().billing.monthlyNote;
-  const priceHTML = p => state.bill === "annual"
-    ? `<s class="was">${money(p.monthly)}</s> ${money(p.annual)}`
-    : money(p.monthly);
-  const billToggle = () => `<span class="seg bill" role="group" aria-label="${esc(t().billing.label)}">${["monthly", "annual"].map(b =>
-    `<button type="button" data-bill="${b}" aria-pressed="${state.bill === b}">${esc(t().billing[b])}</button>`).join("")}</span>`;
+  // No prices on this site: they vary by country (taxes, withholding, local currency). Point to partner / regional rep.
+  const pricingNote = () => `<p class="hint pricing-note">${esc(t().lic.pricing)}</p>`;
+  // Included cloud storage (sharefile.com/plans): 1 TB per license pooled, 3 TB floor (A/P/E); VDR 1 GB per license.
+  const perLicense = p => int(p.storage) + " " + p.unit;
+  const storageTotal = (p, seats) => int(Math.max(p.storageMin, seats * p.storage)) + " " + p.unit;
   try {
     const qs = new URLSearchParams(location.search);
     state.mx = { q: qs.get("q") || "", g: qs.get("g") || "", i: qs.get("i") || "", diff: qs.get("diff") === "1" };
@@ -1947,13 +1958,13 @@ const UI = {
     $("#theme").setAttribute("aria-label", u.theme);
     $("#foot").innerHTML = `
       <p>${esc(u.foot.disclaimer)}</p>
-      <p>${esc(u.foot.truth).replace("{links}", [["https://www.sharefile.com/", "sharefile.com"], ["https://docs.sharefile.com/en-us/sharefile/welcome", "docs.sharefile.com"], ["https://trust.sharefile.com/", "trust.sharefile.com"]].map(([h, l]) => ext(h, l)).join(", "))} ${esc(u.foot.prices)}</p>
+      <p>${esc(u.foot.truth).replace("{links}", [["https://www.sharefile.com/", "sharefile.com"], ["https://docs.sharefile.com/en-us/sharefile/welcome", "docs.sharefile.com"], ["https://trust.sharefile.com/", "trust.sharefile.com"]].map(([h, l]) => ext(h, l)).join(", "))} ${esc(u.lic.pricing)}</p>
       <p>${u.by} ${esc(SITE.author)} · ${u.updated} <span class="num">${SITE.updated}</span> · v<span class="num">${SITE.version}</span> ·
         <a href="#changelog">${u.nav.changelog}</a> · <a href="#discrepancies">${u.nav.discrepancies}</a></p>`;
   }
 
   const head = (title, lead, extra = "") => `<div class="page-head"><h1>${esc(title)}</h1>${lead ? `<p class="lead">${esc(lead)}</p>` : ""}${extra}</div>`;
-  const updatedLine = () => `<p class="meta">${t().updated} <span class="num">${SITE.updated}</span> · ${ext(SITE.pricingSource, "sharefile.com/plans")}</p>`;
+  const updatedLine = () => `<p class="meta">${t().updated} <span class="num">${SITE.updated}</span> · ${ext(SITE.plansSource, "sharefile.com/plans")}</p>`;
 
   // ── Home
   function renderHome() {
@@ -1975,20 +1986,19 @@ const UI = {
         ${row(h.tools, ["recommend", "usecases", "adopt", "compare", "matrix", "calc"].map(k => a("#" + k, u.nav[k])).join(""))}
         ${row(h.resources, ["integrations", "knowledge", "glossary", "changelog", "discrepancies"].map(k => a("#" + k, u.nav[k])).join(""))}
       </div>
-      <div class="toolbar" style="margin-top:28px;margin-bottom:0">${billToggle()}<span class="hint">${esc(t().billing.explain)}</span></div>
-      <div class="price-row" style="margin-top:12px">
+      <div class="price-row">
         ${PLANS.map(p => {
           const n = FEATURES.filter(f => f.plans.includes(p.id)).length;
           return `<a class="price" href="${p.id === "V" ? "#vdr" : "#map-" + p.id.toLowerCase()}" style="text-decoration:none;color:inherit">
             <span class="eyebrow">${esc(p.name)}</span>
-            <span class="amt">${priceHTML(p)}</span>
-            <span class="hint">${esc(t().billing.perUserMonth)} · ${esc(billLabel())}${state.bill === "annual" ? ` · <b class="save">${esc(fmt(t().billing.save, { n: savePct(p) }))}</b>` : ""}</span>
+            <span class="amt">${n} <small>${esc(u.map.count)}</small></span>
             <span class="muted" style="font-size:.85rem">${esc(L(p.tag))}</span>
             <span class="tier-bar" aria-hidden="true"><i style="width:${Math.round(n / FEATURES.length * 100)}%"></i></span>
-            <span class="hint">${n} ${esc(u.map.count)} · ${esc(fmt(u.billing.minUsers, { n: p.min }))}</span>
+            <span class="hint">${esc(fmt(u.lic.minUsers, { n: p.min }))} · ${esc(fmt(u.lic.storage, { s: perLicense(p) }))}</span>
           </a>`;
         }).join("")}
-      </div>`;
+      </div>
+      ${pricingNote()}`;
   }
 
   // ── Plan map
@@ -2022,13 +2032,12 @@ const UI = {
             `<a href="#${h}" ${(h === "map" && view === "all") || h === "map-" + view.toLowerCase() ? 'aria-current="true"' : ""}>${esc(lbl)}</a>`).join("")}
         </span>
         <label>${esc(m.highlight)} ${industrySelect("hl", state.hl)}</label>
-        ${billToggle()}
       </div>
       <div class="map-frame">
         <div class="map-title"><h2>${esc(title)}</h2><p>${esc(SITE.updated)} · ShareFile Maps</p></div>
-        <ul class="map-prices">${cols.map(tr => `<li><b>${esc(P[tr].name)}</b>: <span class="num">${money(priceOf(P[tr]))}</span> ${esc(u.billing.perUserMonth)} · ${esc(billLabel())} · ${esc(fmt(u.billing.minUsers, { n: P[tr].min }))}</li>`).join("")}</ul>
+        <ul class="map-mins">${cols.map(tr => `<li><b>${esc(P[tr].name)}</b>: ${esc(fmt(u.lic.minUsers, { n: P[tr].min }))}</li>`).join("")}</ul>
         <div class="map" style="--cols:${cols.length}">
-          <div class="map-head"><div></div>${cols.map((tr, i) => `<div class="th t-${tr}">${esc(names[tr])}<small>${esc(hints[tr])} · ${tr === "A" ? `${counts[i]} ${esc(m.count)}` : `+${counts[i]} ${esc(m.count)} (${esc(fmt(m.total, { n: FEATURES.filter(f => f.plans.includes(tr)).length }))})`}</small><small class="th-price"><b class="num">${money(priceOf(P[tr]))}</b> ${esc(u.billing.perUserMonth)} · ${esc(billLabel())} · ${esc(fmt(u.billing.minUsers, { n: P[tr].min }))}</small></div>`).join("")}</div>
+          <div class="map-head"><div></div>${cols.map((tr, i) => `<div class="th t-${tr}">${esc(names[tr])}<small>${esc(hints[tr])} · ${tr === "A" ? `${counts[i]} ${esc(m.count)}` : `+${counts[i]} ${esc(m.count)} (${esc(fmt(m.total, { n: FEATURES.filter(f => f.plans.includes(tr)).length }))})`}</small><small class="th-min">${esc(fmt(u.lic.minUsers, { n: P[tr].min }))}</small></div>`).join("")}</div>
           ${bands}
         </div>
         <div class="map-foot">
@@ -2036,7 +2045,8 @@ const UI = {
           <span class="k">${esc(m.legend)}</span>
           <span class="k">▶ ${ext(TUTORIALS, esc(t().video.tutorials))}</span>
         </div>
-      </div>`;
+      </div>
+      ${pricingNote()}`;
     $("#hl").addEventListener("change", e => { state.hl = e.target.value; store.set("hl", state.hl); renderMap(view); });
   }
 
@@ -2053,7 +2063,7 @@ const UI = {
     $("#view").innerHTML = `
       ${head(m.vdrTitle, m.vdrLead, updatedLine())}
       <div class="toolbar"><label>${esc(m.highlight)} ${industrySelect("hl", state.hl)}</label>
-        ${billToggle()}<span class="chip"><b class="num">${money(priceOf(P.V))}</b> ${esc(u.billing.perUserMonth)} · ${esc(billLabel())} · ${esc(fmt(u.billing.minUsers, { n: P.V.min }))}</span>
+<span class="chip">${esc(fmt(u.lic.minUsers, { n: P.V.min }))} · ${esc(fmt(u.lic.storage, { s: perLicense(P.V) }))}</span>
         ${ext(P.V.page, "sharefile.com/plans/sharefile-virtual-data-room")}</div>
       <div class="map-frame">
         <div class="map-title"><h2>Virtual Data Room</h2><p>${inV.length} ${esc(m.count)}</p></div>
@@ -2063,7 +2073,8 @@ const UI = {
       <div class="vdr-out box">
         <h3>${esc(m.notInVdr)}</h3>
         <div class="cell">${notV.map(f => tileHTML(f)).join("")}</div>
-      </div>`;
+      </div>
+      ${pricingNote()}`;
     $("#hl").addEventListener("change", e => { state.hl = e.target.value; store.set("hl", state.hl); renderVdr(); });
   }
 
@@ -2085,7 +2096,7 @@ const UI = {
       <dl>
         <dt>${esc(dd.plans)}</dt><dd>${PLANS.filter(p => f.plans.includes(p.id)).map(p => esc(p.name)).join(", ")}</dd>
         ${inds.length ? `<dt>${esc(u.home.industries)}</dt><dd>${inds.map(i => esc(L(i.name))).join(", ")}</dd>` : ""}
-        <dt>${esc(dd.source)}</dt><dd>${f.id === "eidas" ? ext(f.url, "docs.sharefile.com") : ext(SITE.pricingSource, "sharefile.com/plans")}</dd>
+        <dt>${esc(dd.source)}</dt><dd>${f.id === "eidas" ? ext(f.url, "docs.sharefile.com") : ext(SITE.plansSource, "sharefile.com/plans")}</dd>
         ${videosFor("f", f.id).length ? `<dt>${esc(t().video.title)}</dt><dd><ul class="flist">${videoList(videosFor("f", f.id))}</ul></dd>` : ""}
         ${f.also ? `<dt>${esc(dd.also)}</dt><dd>${f.also.map(a => ext(a.url, esc(a.label))).join(" · ")}</dd>` : ""}
       </dl>
@@ -2166,7 +2177,7 @@ const UI = {
     const entOnly = id => F[id].plans === "E";
     $("#recout").innerHTML = `
       <p class="eyebrow">${esc(fmt(R.resultFor, { who }))}</p>
-      <div class="result-plan"><strong>${esc(p.name)}</strong><span class="num">${priceHTML(p)}</span><span class="muted">${esc(u.billing.perUserMonth)} · ${esc(billLabel())}</span>${billToggle()}</div>
+      <div class="result-plan"><strong>${esc(p.name)}</strong><span class="muted">${esc(fmt(u.lic.minUsers, { n: p.min }))}</span></div>
       <ol class="path">
         <li><span class="step">${esc(R.stepInd)}</span><b>${esc(basePlan.name)}</b><span class="why">${esc(reasons[0])}</span></li>
         ${res.entSigs.length ? `<li><span class="step">${esc(R.stepSig)}</span><b>Enterprise</b><span class="why">${esc(R.entReason)}</span>
@@ -2174,11 +2185,12 @@ const UI = {
       </ol>
       ${res.ind && !res.entSigs.length ? `<p class="hint">${esc(R.samePlan)}</p>` : ""}
       ${res.ind ? `<div><h3>${esc(fmt(R.needsFor, { ind: L(res.ind.name) }))}</h3>${fl(res.needs)}<p style="margin-top:10px"><a href="#usecases-${res.ind.id}">${esc(fmt(u.uc.seeAll, { ind: L(res.ind.name) }))} →</a></p></div>` : ""}
-      ${res.vdr ? `<div class="note"><b>${esc(R.vdrToo)}.</b> ${esc(R.vdrWhy)} <span class="num">${money(priceOf(P.V))}</span> · <a href="#vdr">${esc(u.nav.vdr)}</a></div>` : ""}
+      ${res.vdr ? `<div class="note"><b>${esc(R.vdrToo)}.</b> ${esc(R.vdrWhy)} <a href="#vdr">${esc(u.nav.vdr)}</a></div>` : ""}
       ${res.ind && INTEGRATIONS.some(x => (x.ind || []).includes(res.ind.id)) ? `<div><h3>${esc(u.int.forIndustry)}</h3><ul class="flist">${INTEGRATIONS.filter(x => (x.ind || []).includes(res.ind.id)).map(x => `<li><span>${ext(x.url, esc(x.name))}</span><span>${esc(L(x.d).slice(0, 60))}…</span></li>`).join("")}</ul></div>` : ""}
       ${warns.length ? `<div><h3>${esc(R.warnings)}</h3><ul>${warns.map(w => `<li>${esc(w)}</li>`).join("")}</ul></div>` : ""}
       ${(res.ind && res.ind.video) || (size && size.video) ? `<div><h3>${esc(u.video.title)}</h3><ul class="flist">${[res.ind && res.ind.video, size && size.video].filter(Boolean).map(v => `<li><span>▶ ${ext("https://www.youtube.com/watch?v=" + v.id, esc(v.t))}</span><span>YouTube · ${esc(u.video.lang)}</span></li>`).join("")}</ul></div>` : ""}
       <p class="hint">${esc(R.sizeNote)}</p>
+      ${pricingNote()}
       <div class="actions">
         ${res.ind ? ext(res.ind.url, esc(R.industryPage) + " ↗", "btn") : ""}
         ${size ? ext(size.url, esc(R.sizePage) + " ↗", "btn") : ""}
@@ -2186,9 +2198,9 @@ const UI = {
         ${res.plan !== "A" ? `<button class="btn" type="button" id="toCmp">${esc(R.openCompare)}</button>` : ""}
       </div>`;
     const box = $("#recout"); box.classList.remove("updated"); void box.offsetWidth; box.classList.add("updated");
-    $("#toCalc").addEventListener("click", () => { state.calc.plan = res.plan; store.set("calc", state.calc); location.hash = "calc"; });
+    $("#toCalc").addEventListener("click", () => { state.calc.plan = res.plan; store.set("calc2", state.calc); location.hash = "calc"; });
     const tc = $("#toCmp");
-    if (tc) tc.addEventListener("click", () => { Object.assign(state.cmp, { a: prev, b: res.plan, hl: res.ind ? res.ind.id : "" }); store.set("cmp", state.cmp); location.hash = "compare"; });
+    if (tc) tc.addEventListener("click", () => { Object.assign(state.cmp, { a: prev, b: res.plan, hl: res.ind ? res.ind.id : "" }); store.set("cmp3", state.cmp); location.hash = "compare"; });
   }
 
   // ── Users field helpers (calculator and comparator)
@@ -2206,24 +2218,17 @@ const UI = {
         <div class="cmp-head">
           <label class="hint">${esc(C.planA)}<br>${planSel("ca", c.a)}</label>
           <label class="hint">${esc(C.planB)}<br>${planSel("cb", c.b)}</label>
-          <label class="hint">${esc(C.users)}<br><input id="cu" type="number" min="1" max="100000" value="${c.users}"></label>
-          <div class="hint">${esc(C.billing)}<br>${billToggle()}</div>
           <label class="hint">${esc(C.highlight)}<br>${industrySelect("chl", c.hl)}</label>
         </div>
-        <p class="hint" style="margin:8px 0 0">${esc(u.calc.usersHint)} ${presetsHTML()}</p>
         <div id="cmpout"></div>
-      </div>`;
-    const floor = () => Math.max(P[c.a].min, P[c.b].min);
-    const sync = () => { if (!c.custom) { c.users = floor(); $("#cu").value = c.users; } };
+      </div>
+      ${pricingNote()}`;
     const upd = () => {
       c.a = $("#ca").value; c.b = $("#cb").value; c.hl = $("#chl").value;
-      sync(); store.set("cmp3", c); renderCmpOut();
+      store.set("cmp3", c); renderCmpOut();
     };
     ["#ca", "#cb", "#chl"].forEach(s => $(s).addEventListener("change", upd));
-    $("#cu").addEventListener("input", () => { const v = readUsers($("#cu")); c.custom = v !== null; c.users = v !== null ? v : floor(); store.set("cmp3", c); renderCmpOut(); });
-    $("#cu").addEventListener("change", () => { if (!c.custom) $("#cu").value = c.users; });
-    document.querySelectorAll("[data-preset]").forEach(b => b.addEventListener("click", () => { $("#cu").value = b.dataset.preset; c.custom = true; c.users = +b.dataset.preset; store.set("cmp3", c); renderCmpOut(); }));
-    sync(); renderCmpOut();
+    renderCmpOut();
   }
 
   function renderCmpOut() {
@@ -2233,11 +2238,6 @@ const UI = {
     const onlyA = FEATURES.filter(f => f.plans.includes(c.a) && !f.plans.includes(c.b));
     const onlyB = FEATURES.filter(f => f.plans.includes(c.b) && !f.plans.includes(c.a));
     const both = FEATURES.filter(f => f.plans.includes(c.a) && f.plans.includes(c.b));
-    const price = priceOf;
-    const seats = p => Math.max(c.users, p.min);
-    const tot = p => price(p) * seats(p);
-    const dU = price(B) - price(A), dM = tot(B) - tot(A);
-    const sign = n => (n > 0 ? "+" : n < 0 ? "−" : "") + money(Math.abs(n));
     // Feature in one plan whose upgraded version is in the other (e.g. Basic -> Enhanced Client Portal)
     const upIn = (f, other) => f.up && F[f.up] && F[f.up].plans.includes(other.id) ? F[f.up] : null;
     const item = (f, other) => { const up = other && upIn(f, other);
@@ -2258,7 +2258,7 @@ const UI = {
     const featsOf = p => FEATURES.filter(f => f.plans.includes(p.id));
     // X = this column's plan, Y = the other; onlyX = features only in X; lostOther = Y-only features with no upgrade in X
     const col = (X, Y, onlyX, lostOther) => {
-      const headX = `<h3>${esc(X.name)} <span class="muted num">· ${esc(fmt(C.count, { n: featsOf(X).length }))}</span></h3>`;
+      const headX = `<h3>${esc(X.name)} <span class="muted num">· ${esc(fmt(C.count, { n: featsOf(X).length }))}</span></h3><p class="hint cmp-meta">${esc(fmt(u.lic.minShort, { n: X.min }))} · ${esc(fmt(u.lic.storage, { s: perLicense(X) }))}</p>`;
       if (!lostOther.length) { // X contains everything in Y (superset)
         const ups = FEATURES.filter(f => f.plans.includes(Y.id) && !f.plans.includes(X.id) && upIn(f, X));
         return `<div class="cmp-col" data-col="${X.id}">${headX}
@@ -2271,13 +2271,6 @@ const UI = {
       return `<div class="cmp-col" data-col="${X.id}">${headX}<h4 class="plus">${esc(fmt(C.own, { p: X.name, k: onlyX.length }))}</h4>${grouped(onlyX, Y)}</div>`;
     };
     $("#cmpout").innerHTML = `
-      <div class="kpis" style="margin-top:16px">
-        <div class="kpi"><span>${esc(C.diff)} · ${esc(C.perUser)}</span><b class="delta ${dU > 0 ? "up" : "down"}">${sign(dU)}</b></div>
-        <div class="kpi"><span>${esc(C.diff)} · ${esc(C.perMonth)}</span><b class="delta ${dM > 0 ? "up" : "down"}">${sign(dM)}</b></div>
-        <div class="kpi"><span>${esc(C.diff)} · ${esc(C.perYear)}</span><b class="delta ${dM > 0 ? "up" : "down"}">${sign(dM * 12)}</b></div>
-      </div>
-      <p class="hint" style="margin-top:10px">${esc(fmt(C.seats, { u: int(c.users), list: [A, B].map(p => p.name + " " + int(seats(p)) + (seats(p) > c.users ? "*" : "")).join(" · ") }))}</p>
-      ${[A, B].some(p => seats(p) > c.users) ? `<p class="note">${[A, B].filter(p => seats(p) > c.users).map(p => esc(fmt(C.seatsMin, { p: p.name, n: p.min }))).join("<br>")}</p>` : ""}
       <p class="cmp-sum" id="cmpsum">${esc(summary)}</p>
       ${neither ? `<section class="box cmp-base" id="cmpbase">
         <h3>${esc(fmt(C.base, { n: both.length, a: A.name, b: B.name }))}</h3>
@@ -2300,10 +2293,10 @@ const UI = {
         <label class="check" style="padding:0"><input id="md" type="checkbox" ${s.diff ? "checked" : ""}><span>${esc(M.onlyDiff)}</span></label>
         <button class="btn" type="button" id="mexp">${esc(M.export)}</button>
         <button class="btn" type="button" id="mcopy">${esc(M.copy)}</button>
-        ${billToggle()}
         <span class="mx-count" id="mcount"></span>
       </div>
-      <div class="tbl-wrap"><table><thead><tr><th>${esc(M.feature)}</th>${PLANS.map(p => `<th class="c">${esc(p.name)}<br><span class="num muted" style="font-weight:500">${money(priceOf(p))}</span><br><span class="muted" style="font-weight:400;font-size:.72rem">${esc(u.billing.perUserMonth)} · ${esc(fmt(u.billing.minUsers, { n: p.min }))}</span></th>`).join("")}</tr></thead><tbody id="mbody"></tbody></table></div>`;
+      <div class="tbl-wrap"><table><thead><tr><th>${esc(M.feature)}</th>${PLANS.map(p => `<th class="c">${esc(p.name)}<br><span class="muted" style="font-weight:400;font-size:.72rem">${esc(fmt(u.lic.minShort, { n: p.min }))}</span></th>`).join("")}</tr></thead><tbody id="mbody"></tbody></table></div>
+      ${pricingNote()}`;
     const upd = () => {
       s.q = $("#mq").value.trim(); s.g = $("#mg").value; s.i = $("#mi").value; s.diff = $("#md").checked;
       try {
@@ -2373,10 +2366,7 @@ const UI = {
           </div></fieldset>
           <label class="hint">${esc(K.users)}<br><input id="kusers" type="number" min="${P[c.plan].min}" max="100000" value="${c.users}"></label>
           <p class="hint" style="margin:6px 0 0">${esc(K.usersHint)} ${presetsHTML()}</p>
-          <fieldset><legend>${esc(K.billing)}</legend>${billToggle()}</fieldset>
           <p class="hint">${esc(K.maxNote)} ${ext("https://docs.sharefile.com/en-us/sharefile/people_settings/employee_users/add-user-licenses", "docs.sharefile.com")}</p>
-          <p class="hint">${esc(K.storageNote)}</p>
-          <p class="hint">${esc(K.priceNote)}</p>
         </form>
         <section class="box" id="calcout" aria-live="polite"></section>
       </div>`;
@@ -2403,31 +2393,35 @@ const UI = {
     renderCalcOut();
   }
 
-  const storageFor = (p, seats) => p.id === "V" ? int(seats) + " GB" : int(Math.max(3, seats)) + " TB";
+  const STORAGE_DOCS = [[SITE.plansSource, "sharefile.com/plans"],
+    ["https://docs.sharefile.com/en-us/sharefile/account_settings/storage/storage-usage", "docs.sharefile.com · Storage usage"],
+    ["https://docs.sharefile.com/en-us/sharefile/account_settings/storage/storage-quota", "docs.sharefile.com · Storage quota"]];
 
   function renderCalcOut() {
     const u = t(), K = u.calc, c = state.calc, p = P[c.plan];
     const seatsOf = q => Math.max(c.users, q.min);
     const seats = seatsOf(p);
-    const per = priceOf(p);
     const star = q => seatsOf(q) > c.users ? "*" : "";
     $("#calcout").innerHTML = `
-      <p class="eyebrow">${esc(p.name)} · ${esc(billLabel())}</p>
+      <p class="eyebrow">${esc(p.name)}</p>
       ${calcAdj ? `<p class="note">${esc(fmt(K.adjusted, calcAdj))}</p>` : ""}
       <div class="kpis">
         <div class="kpi"><span>${esc(K.licenses)}</span><b class="num">${int(seats)}${star(p)}</b></div>
-        <div class="kpi"><span>${esc(K.perUser)}</span><b>${money(per)}</b></div>
-        <div class="kpi"><span>${esc(K.monthTotal)}</span><b>${money(per * seats)}</b></div>
-        <div class="kpi"><span>${esc(K.yearTotal)}</span><b>${money(per * seats * 12, 0)}</b></div>
-        <div class="kpi"><span>${esc(K.storage)}</span><b>${storageFor(p, seats)}</b></div>
+        <div class="kpi"><span>${esc(K.perLicense)}</span><b class="num">${perLicense(p)}</b></div>
+        <div class="kpi"><span>${esc(K.total)}</span><b class="num" id="calctotal">${storageTotal(p, seats)}</b></div>
       </div>
+      <p class="hint" id="calcformula">${esc(fmt(K.formula, { n: int(seats), per: perLicense(p), total: storageTotal(p, seats) }))}</p>
       ${seats > c.users ? `<p class="note">${esc(fmt(K.minApplied, { n: p.min }))}</p>` : ""}
-      <h3>${esc(K.allPlans)} <span class="muted num">(${int(c.users)} ${esc(u.home.users)})</span></h3>
-      <div class="tbl-wrap"><table id="calctbl"><thead><tr><th></th><th class="c">${esc(K.licCol)}</th><th class="c">${esc(K.perUser)}</th><th class="c">${esc(K.monthTotal)}</th><th class="c">${esc(K.yearTotal)}</th><th class="c">${esc(K.storage)}</th></tr></thead><tbody>
-        ${PLANS.map(q => { const s = seatsOf(q), pr = priceOf(q);
-          return `<tr data-plan="${q.id}" ${q.id === p.id ? 'style="background:var(--accent-soft)"' : ""}><td><b>${esc(q.name)}</b></td><td class="c num">${int(s)}${star(q)}</td><td class="c num">${money(pr)}</td><td class="c num">${money(pr * s)}</td><td class="c num">${money(pr * s * 12, 0)}</td><td class="c num">${storageFor(q, s)}</td></tr>`; }).join("")}
+      <div class="note pool" id="calcpool"><b>${esc(K.poolTitle)}.</b> ${esc(K.pool)}
+        <ul><li>${esc(K.counts)}</li><li>${esc(K.full)}</li><li>${esc(K.packs)}</li><li>${esc(K.quota)}</li></ul></div>
+      <h3>${esc(K.allPlans)} <span class="muted num">(${int(c.users)})</span></h3>
+      <div class="tbl-wrap"><table id="calctbl"><thead><tr><th></th><th class="c">${esc(K.licCol)}</th><th class="c">${esc(K.perLicense)}</th><th class="c">${esc(K.total)}</th></tr></thead><tbody>
+        ${PLANS.map(q => { const s = seatsOf(q);
+          return `<tr data-plan="${q.id}" ${q.id === p.id ? 'style="background:var(--accent-soft)"' : ""}><td><b>${esc(q.name)}</b></td><td class="c num">${int(s)}${star(q)}</td><td class="c num">${perLicense(q)}</td><td class="c num">${storageTotal(q, s)}</td></tr>`; }).join("")}
       </tbody></table></div>
-      <p class="hint">${esc(fmt(K.minFoot, { list: PLANS.map(q => q.name + " " + q.min).join(" · ") }))}</p>`;
+      <p class="hint">${esc(fmt(K.minFoot, { list: PLANS.map(q => q.name + " " + q.min).join(" · ") }))}</p>
+      <p class="hint">${esc(K.sources)} ${STORAGE_DOCS.map(([h, l]) => ext(h, esc(l))).join(" · ")}</p>
+      ${pricingNote()}`;
   }
 
   // ── Integrations
@@ -2726,8 +2720,6 @@ const UI = {
 
   // ── Boot
   document.addEventListener("click", e => {
-    const bt = e.target.closest("[data-bill]");
-    if (bt) { state.bill = bt.dataset.bill; store.set("bill", state.bill); const y = window.scrollY; route(); window.scrollTo(0, y); return; }
     const d = e.target.closest("[data-detail]");
     if (d) { e.preventDefault(); openDetail(d.dataset.detail); }
   });

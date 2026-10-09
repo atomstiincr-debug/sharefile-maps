@@ -26,8 +26,6 @@
   const t = () => UI[lang];
   const L = obj => (obj && (obj[lang] || obj.es || obj.en)) || "";
   const fmt = (s, map) => s.replace(/\{(\w+)\}/g, (_, k) => map[k] ?? "");
-  const money = (n, dec = 2) => new Intl.NumberFormat(lang === "en" ? "en-US" : lang === "pt" ? "pt-BR" : "es-CR",
-    { style: "currency", currency: "USD", minimumFractionDigits: dec, maximumFractionDigits: dec }).format(n);
   const int = n => new Intl.NumberFormat(lang === "en" ? "en-US" : lang === "pt" ? "pt-BR" : "es-CR").format(n);
 
   // ── Helpers
@@ -64,17 +62,13 @@
     rec: store.get("rec", { ind: "accounting", sub: "", size: "mid", sig: [] }),
     cmp: store.get("cmp3", { a: "A", b: "P", users: 3, custom: false, hl: "" }),
     calc: store.get("calc2", { plan: "P", users: 3, custom: false }),
-    mx: { q: "", g: "", i: "", diff: false },
-    bill: store.get("bill", "annual")
+    mx: { q: "", g: "", i: "", diff: false }
   };
-  const priceOf = p => state.bill === "annual" ? p.annual : p.monthly;
-  const savePct = p => Math.round((1 - p.annual / p.monthly) * 100);
-  const billLabel = () => state.bill === "annual" ? t().billing.annualNote : t().billing.monthlyNote;
-  const priceHTML = p => state.bill === "annual"
-    ? `<s class="was">${money(p.monthly)}</s> ${money(p.annual)}`
-    : money(p.monthly);
-  const billToggle = () => `<span class="seg bill" role="group" aria-label="${esc(t().billing.label)}">${["monthly", "annual"].map(b =>
-    `<button type="button" data-bill="${b}" aria-pressed="${state.bill === b}">${esc(t().billing[b])}</button>`).join("")}</span>`;
+  // No prices on this site: they vary by country (taxes, withholding, local currency). Point to partner / regional rep.
+  const pricingNote = () => `<p class="hint pricing-note">${esc(t().lic.pricing)}</p>`;
+  // Included cloud storage (sharefile.com/plans): 1 TB per license pooled, 3 TB floor (A/P/E); VDR 1 GB per license.
+  const perLicense = p => int(p.storage) + " " + p.unit;
+  const storageTotal = (p, seats) => int(Math.max(p.storageMin, seats * p.storage)) + " " + p.unit;
   try {
     const qs = new URLSearchParams(location.search);
     state.mx = { q: qs.get("q") || "", g: qs.get("g") || "", i: qs.get("i") || "", diff: qs.get("diff") === "1" };
@@ -117,13 +111,13 @@
     $("#theme").setAttribute("aria-label", u.theme);
     $("#foot").innerHTML = `
       <p>${esc(u.foot.disclaimer)}</p>
-      <p>${esc(u.foot.truth).replace("{links}", [["https://www.sharefile.com/", "sharefile.com"], ["https://docs.sharefile.com/en-us/sharefile/welcome", "docs.sharefile.com"], ["https://trust.sharefile.com/", "trust.sharefile.com"]].map(([h, l]) => ext(h, l)).join(", "))} ${esc(u.foot.prices)}</p>
+      <p>${esc(u.foot.truth).replace("{links}", [["https://www.sharefile.com/", "sharefile.com"], ["https://docs.sharefile.com/en-us/sharefile/welcome", "docs.sharefile.com"], ["https://trust.sharefile.com/", "trust.sharefile.com"]].map(([h, l]) => ext(h, l)).join(", "))} ${esc(u.lic.pricing)}</p>
       <p>${u.by} ${esc(SITE.author)} · ${u.updated} <span class="num">${SITE.updated}</span> · v<span class="num">${SITE.version}</span> ·
         <a href="#changelog">${u.nav.changelog}</a> · <a href="#discrepancies">${u.nav.discrepancies}</a></p>`;
   }
 
   const head = (title, lead, extra = "") => `<div class="page-head"><h1>${esc(title)}</h1>${lead ? `<p class="lead">${esc(lead)}</p>` : ""}${extra}</div>`;
-  const updatedLine = () => `<p class="meta">${t().updated} <span class="num">${SITE.updated}</span> · ${ext(SITE.pricingSource, "sharefile.com/plans")}</p>`;
+  const updatedLine = () => `<p class="meta">${t().updated} <span class="num">${SITE.updated}</span> · ${ext(SITE.plansSource, "sharefile.com/plans")}</p>`;
 
   // ── Home
   function renderHome() {
@@ -145,20 +139,19 @@
         ${row(h.tools, ["recommend", "usecases", "adopt", "compare", "matrix", "calc"].map(k => a("#" + k, u.nav[k])).join(""))}
         ${row(h.resources, ["integrations", "knowledge", "glossary", "changelog", "discrepancies"].map(k => a("#" + k, u.nav[k])).join(""))}
       </div>
-      <div class="toolbar" style="margin-top:28px;margin-bottom:0">${billToggle()}<span class="hint">${esc(t().billing.explain)}</span></div>
-      <div class="price-row" style="margin-top:12px">
+      <div class="price-row">
         ${PLANS.map(p => {
           const n = FEATURES.filter(f => f.plans.includes(p.id)).length;
           return `<a class="price" href="${p.id === "V" ? "#vdr" : "#map-" + p.id.toLowerCase()}" style="text-decoration:none;color:inherit">
             <span class="eyebrow">${esc(p.name)}</span>
-            <span class="amt">${priceHTML(p)}</span>
-            <span class="hint">${esc(t().billing.perUserMonth)} · ${esc(billLabel())}${state.bill === "annual" ? ` · <b class="save">${esc(fmt(t().billing.save, { n: savePct(p) }))}</b>` : ""}</span>
+            <span class="amt">${n} <small>${esc(u.map.count)}</small></span>
             <span class="muted" style="font-size:.85rem">${esc(L(p.tag))}</span>
             <span class="tier-bar" aria-hidden="true"><i style="width:${Math.round(n / FEATURES.length * 100)}%"></i></span>
-            <span class="hint">${n} ${esc(u.map.count)} · ${esc(fmt(u.billing.minUsers, { n: p.min }))}</span>
+            <span class="hint">${esc(fmt(u.lic.minUsers, { n: p.min }))} · ${esc(fmt(u.lic.storage, { s: perLicense(p) }))}</span>
           </a>`;
         }).join("")}
-      </div>`;
+      </div>
+      ${pricingNote()}`;
   }
 
   // ── Plan map
@@ -192,13 +185,12 @@
             `<a href="#${h}" ${(h === "map" && view === "all") || h === "map-" + view.toLowerCase() ? 'aria-current="true"' : ""}>${esc(lbl)}</a>`).join("")}
         </span>
         <label>${esc(m.highlight)} ${industrySelect("hl", state.hl)}</label>
-        ${billToggle()}
       </div>
       <div class="map-frame">
         <div class="map-title"><h2>${esc(title)}</h2><p>${esc(SITE.updated)} · ShareFile Maps</p></div>
-        <ul class="map-prices">${cols.map(tr => `<li><b>${esc(P[tr].name)}</b>: <span class="num">${money(priceOf(P[tr]))}</span> ${esc(u.billing.perUserMonth)} · ${esc(billLabel())} · ${esc(fmt(u.billing.minUsers, { n: P[tr].min }))}</li>`).join("")}</ul>
+        <ul class="map-mins">${cols.map(tr => `<li><b>${esc(P[tr].name)}</b>: ${esc(fmt(u.lic.minUsers, { n: P[tr].min }))}</li>`).join("")}</ul>
         <div class="map" style="--cols:${cols.length}">
-          <div class="map-head"><div></div>${cols.map((tr, i) => `<div class="th t-${tr}">${esc(names[tr])}<small>${esc(hints[tr])} · ${tr === "A" ? `${counts[i]} ${esc(m.count)}` : `+${counts[i]} ${esc(m.count)} (${esc(fmt(m.total, { n: FEATURES.filter(f => f.plans.includes(tr)).length }))})`}</small><small class="th-price"><b class="num">${money(priceOf(P[tr]))}</b> ${esc(u.billing.perUserMonth)} · ${esc(billLabel())} · ${esc(fmt(u.billing.minUsers, { n: P[tr].min }))}</small></div>`).join("")}</div>
+          <div class="map-head"><div></div>${cols.map((tr, i) => `<div class="th t-${tr}">${esc(names[tr])}<small>${esc(hints[tr])} · ${tr === "A" ? `${counts[i]} ${esc(m.count)}` : `+${counts[i]} ${esc(m.count)} (${esc(fmt(m.total, { n: FEATURES.filter(f => f.plans.includes(tr)).length }))})`}</small><small class="th-min">${esc(fmt(u.lic.minUsers, { n: P[tr].min }))}</small></div>`).join("")}</div>
           ${bands}
         </div>
         <div class="map-foot">
@@ -206,7 +198,8 @@
           <span class="k">${esc(m.legend)}</span>
           <span class="k">▶ ${ext(TUTORIALS, esc(t().video.tutorials))}</span>
         </div>
-      </div>`;
+      </div>
+      ${pricingNote()}`;
     $("#hl").addEventListener("change", e => { state.hl = e.target.value; store.set("hl", state.hl); renderMap(view); });
   }
 
@@ -223,7 +216,7 @@
     $("#view").innerHTML = `
       ${head(m.vdrTitle, m.vdrLead, updatedLine())}
       <div class="toolbar"><label>${esc(m.highlight)} ${industrySelect("hl", state.hl)}</label>
-        ${billToggle()}<span class="chip"><b class="num">${money(priceOf(P.V))}</b> ${esc(u.billing.perUserMonth)} · ${esc(billLabel())} · ${esc(fmt(u.billing.minUsers, { n: P.V.min }))}</span>
+<span class="chip">${esc(fmt(u.lic.minUsers, { n: P.V.min }))} · ${esc(fmt(u.lic.storage, { s: perLicense(P.V) }))}</span>
         ${ext(P.V.page, "sharefile.com/plans/sharefile-virtual-data-room")}</div>
       <div class="map-frame">
         <div class="map-title"><h2>Virtual Data Room</h2><p>${inV.length} ${esc(m.count)}</p></div>
@@ -233,7 +226,8 @@
       <div class="vdr-out box">
         <h3>${esc(m.notInVdr)}</h3>
         <div class="cell">${notV.map(f => tileHTML(f)).join("")}</div>
-      </div>`;
+      </div>
+      ${pricingNote()}`;
     $("#hl").addEventListener("change", e => { state.hl = e.target.value; store.set("hl", state.hl); renderVdr(); });
   }
 
@@ -255,7 +249,7 @@
       <dl>
         <dt>${esc(dd.plans)}</dt><dd>${PLANS.filter(p => f.plans.includes(p.id)).map(p => esc(p.name)).join(", ")}</dd>
         ${inds.length ? `<dt>${esc(u.home.industries)}</dt><dd>${inds.map(i => esc(L(i.name))).join(", ")}</dd>` : ""}
-        <dt>${esc(dd.source)}</dt><dd>${f.id === "eidas" ? ext(f.url, "docs.sharefile.com") : ext(SITE.pricingSource, "sharefile.com/plans")}</dd>
+        <dt>${esc(dd.source)}</dt><dd>${f.id === "eidas" ? ext(f.url, "docs.sharefile.com") : ext(SITE.plansSource, "sharefile.com/plans")}</dd>
         ${videosFor("f", f.id).length ? `<dt>${esc(t().video.title)}</dt><dd><ul class="flist">${videoList(videosFor("f", f.id))}</ul></dd>` : ""}
         ${f.also ? `<dt>${esc(dd.also)}</dt><dd>${f.also.map(a => ext(a.url, esc(a.label))).join(" · ")}</dd>` : ""}
       </dl>
@@ -336,7 +330,7 @@
     const entOnly = id => F[id].plans === "E";
     $("#recout").innerHTML = `
       <p class="eyebrow">${esc(fmt(R.resultFor, { who }))}</p>
-      <div class="result-plan"><strong>${esc(p.name)}</strong><span class="num">${priceHTML(p)}</span><span class="muted">${esc(u.billing.perUserMonth)} · ${esc(billLabel())}</span>${billToggle()}</div>
+      <div class="result-plan"><strong>${esc(p.name)}</strong><span class="muted">${esc(fmt(u.lic.minUsers, { n: p.min }))}</span></div>
       <ol class="path">
         <li><span class="step">${esc(R.stepInd)}</span><b>${esc(basePlan.name)}</b><span class="why">${esc(reasons[0])}</span></li>
         ${res.entSigs.length ? `<li><span class="step">${esc(R.stepSig)}</span><b>Enterprise</b><span class="why">${esc(R.entReason)}</span>
@@ -344,11 +338,12 @@
       </ol>
       ${res.ind && !res.entSigs.length ? `<p class="hint">${esc(R.samePlan)}</p>` : ""}
       ${res.ind ? `<div><h3>${esc(fmt(R.needsFor, { ind: L(res.ind.name) }))}</h3>${fl(res.needs)}<p style="margin-top:10px"><a href="#usecases-${res.ind.id}">${esc(fmt(u.uc.seeAll, { ind: L(res.ind.name) }))} →</a></p></div>` : ""}
-      ${res.vdr ? `<div class="note"><b>${esc(R.vdrToo)}.</b> ${esc(R.vdrWhy)} <span class="num">${money(priceOf(P.V))}</span> · <a href="#vdr">${esc(u.nav.vdr)}</a></div>` : ""}
+      ${res.vdr ? `<div class="note"><b>${esc(R.vdrToo)}.</b> ${esc(R.vdrWhy)} <a href="#vdr">${esc(u.nav.vdr)}</a></div>` : ""}
       ${res.ind && INTEGRATIONS.some(x => (x.ind || []).includes(res.ind.id)) ? `<div><h3>${esc(u.int.forIndustry)}</h3><ul class="flist">${INTEGRATIONS.filter(x => (x.ind || []).includes(res.ind.id)).map(x => `<li><span>${ext(x.url, esc(x.name))}</span><span>${esc(L(x.d).slice(0, 60))}…</span></li>`).join("")}</ul></div>` : ""}
       ${warns.length ? `<div><h3>${esc(R.warnings)}</h3><ul>${warns.map(w => `<li>${esc(w)}</li>`).join("")}</ul></div>` : ""}
       ${(res.ind && res.ind.video) || (size && size.video) ? `<div><h3>${esc(u.video.title)}</h3><ul class="flist">${[res.ind && res.ind.video, size && size.video].filter(Boolean).map(v => `<li><span>▶ ${ext("https://www.youtube.com/watch?v=" + v.id, esc(v.t))}</span><span>YouTube · ${esc(u.video.lang)}</span></li>`).join("")}</ul></div>` : ""}
       <p class="hint">${esc(R.sizeNote)}</p>
+      ${pricingNote()}
       <div class="actions">
         ${res.ind ? ext(res.ind.url, esc(R.industryPage) + " ↗", "btn") : ""}
         ${size ? ext(size.url, esc(R.sizePage) + " ↗", "btn") : ""}
@@ -356,9 +351,9 @@
         ${res.plan !== "A" ? `<button class="btn" type="button" id="toCmp">${esc(R.openCompare)}</button>` : ""}
       </div>`;
     const box = $("#recout"); box.classList.remove("updated"); void box.offsetWidth; box.classList.add("updated");
-    $("#toCalc").addEventListener("click", () => { state.calc.plan = res.plan; store.set("calc", state.calc); location.hash = "calc"; });
+    $("#toCalc").addEventListener("click", () => { state.calc.plan = res.plan; store.set("calc2", state.calc); location.hash = "calc"; });
     const tc = $("#toCmp");
-    if (tc) tc.addEventListener("click", () => { Object.assign(state.cmp, { a: prev, b: res.plan, hl: res.ind ? res.ind.id : "" }); store.set("cmp", state.cmp); location.hash = "compare"; });
+    if (tc) tc.addEventListener("click", () => { Object.assign(state.cmp, { a: prev, b: res.plan, hl: res.ind ? res.ind.id : "" }); store.set("cmp3", state.cmp); location.hash = "compare"; });
   }
 
   // ── Users field helpers (calculator and comparator)
@@ -376,24 +371,17 @@
         <div class="cmp-head">
           <label class="hint">${esc(C.planA)}<br>${planSel("ca", c.a)}</label>
           <label class="hint">${esc(C.planB)}<br>${planSel("cb", c.b)}</label>
-          <label class="hint">${esc(C.users)}<br><input id="cu" type="number" min="1" max="100000" value="${c.users}"></label>
-          <div class="hint">${esc(C.billing)}<br>${billToggle()}</div>
           <label class="hint">${esc(C.highlight)}<br>${industrySelect("chl", c.hl)}</label>
         </div>
-        <p class="hint" style="margin:8px 0 0">${esc(u.calc.usersHint)} ${presetsHTML()}</p>
         <div id="cmpout"></div>
-      </div>`;
-    const floor = () => Math.max(P[c.a].min, P[c.b].min);
-    const sync = () => { if (!c.custom) { c.users = floor(); $("#cu").value = c.users; } };
+      </div>
+      ${pricingNote()}`;
     const upd = () => {
       c.a = $("#ca").value; c.b = $("#cb").value; c.hl = $("#chl").value;
-      sync(); store.set("cmp3", c); renderCmpOut();
+      store.set("cmp3", c); renderCmpOut();
     };
     ["#ca", "#cb", "#chl"].forEach(s => $(s).addEventListener("change", upd));
-    $("#cu").addEventListener("input", () => { const v = readUsers($("#cu")); c.custom = v !== null; c.users = v !== null ? v : floor(); store.set("cmp3", c); renderCmpOut(); });
-    $("#cu").addEventListener("change", () => { if (!c.custom) $("#cu").value = c.users; });
-    document.querySelectorAll("[data-preset]").forEach(b => b.addEventListener("click", () => { $("#cu").value = b.dataset.preset; c.custom = true; c.users = +b.dataset.preset; store.set("cmp3", c); renderCmpOut(); }));
-    sync(); renderCmpOut();
+    renderCmpOut();
   }
 
   function renderCmpOut() {
@@ -403,11 +391,6 @@
     const onlyA = FEATURES.filter(f => f.plans.includes(c.a) && !f.plans.includes(c.b));
     const onlyB = FEATURES.filter(f => f.plans.includes(c.b) && !f.plans.includes(c.a));
     const both = FEATURES.filter(f => f.plans.includes(c.a) && f.plans.includes(c.b));
-    const price = priceOf;
-    const seats = p => Math.max(c.users, p.min);
-    const tot = p => price(p) * seats(p);
-    const dU = price(B) - price(A), dM = tot(B) - tot(A);
-    const sign = n => (n > 0 ? "+" : n < 0 ? "−" : "") + money(Math.abs(n));
     // Feature in one plan whose upgraded version is in the other (e.g. Basic -> Enhanced Client Portal)
     const upIn = (f, other) => f.up && F[f.up] && F[f.up].plans.includes(other.id) ? F[f.up] : null;
     const item = (f, other) => { const up = other && upIn(f, other);
@@ -428,7 +411,7 @@
     const featsOf = p => FEATURES.filter(f => f.plans.includes(p.id));
     // X = this column's plan, Y = the other; onlyX = features only in X; lostOther = Y-only features with no upgrade in X
     const col = (X, Y, onlyX, lostOther) => {
-      const headX = `<h3>${esc(X.name)} <span class="muted num">· ${esc(fmt(C.count, { n: featsOf(X).length }))}</span></h3>`;
+      const headX = `<h3>${esc(X.name)} <span class="muted num">· ${esc(fmt(C.count, { n: featsOf(X).length }))}</span></h3><p class="hint cmp-meta">${esc(fmt(u.lic.minShort, { n: X.min }))} · ${esc(fmt(u.lic.storage, { s: perLicense(X) }))}</p>`;
       if (!lostOther.length) { // X contains everything in Y (superset)
         const ups = FEATURES.filter(f => f.plans.includes(Y.id) && !f.plans.includes(X.id) && upIn(f, X));
         return `<div class="cmp-col" data-col="${X.id}">${headX}
@@ -441,13 +424,6 @@
       return `<div class="cmp-col" data-col="${X.id}">${headX}<h4 class="plus">${esc(fmt(C.own, { p: X.name, k: onlyX.length }))}</h4>${grouped(onlyX, Y)}</div>`;
     };
     $("#cmpout").innerHTML = `
-      <div class="kpis" style="margin-top:16px">
-        <div class="kpi"><span>${esc(C.diff)} · ${esc(C.perUser)}</span><b class="delta ${dU > 0 ? "up" : "down"}">${sign(dU)}</b></div>
-        <div class="kpi"><span>${esc(C.diff)} · ${esc(C.perMonth)}</span><b class="delta ${dM > 0 ? "up" : "down"}">${sign(dM)}</b></div>
-        <div class="kpi"><span>${esc(C.diff)} · ${esc(C.perYear)}</span><b class="delta ${dM > 0 ? "up" : "down"}">${sign(dM * 12)}</b></div>
-      </div>
-      <p class="hint" style="margin-top:10px">${esc(fmt(C.seats, { u: int(c.users), list: [A, B].map(p => p.name + " " + int(seats(p)) + (seats(p) > c.users ? "*" : "")).join(" · ") }))}</p>
-      ${[A, B].some(p => seats(p) > c.users) ? `<p class="note">${[A, B].filter(p => seats(p) > c.users).map(p => esc(fmt(C.seatsMin, { p: p.name, n: p.min }))).join("<br>")}</p>` : ""}
       <p class="cmp-sum" id="cmpsum">${esc(summary)}</p>
       ${neither ? `<section class="box cmp-base" id="cmpbase">
         <h3>${esc(fmt(C.base, { n: both.length, a: A.name, b: B.name }))}</h3>
@@ -470,10 +446,10 @@
         <label class="check" style="padding:0"><input id="md" type="checkbox" ${s.diff ? "checked" : ""}><span>${esc(M.onlyDiff)}</span></label>
         <button class="btn" type="button" id="mexp">${esc(M.export)}</button>
         <button class="btn" type="button" id="mcopy">${esc(M.copy)}</button>
-        ${billToggle()}
         <span class="mx-count" id="mcount"></span>
       </div>
-      <div class="tbl-wrap"><table><thead><tr><th>${esc(M.feature)}</th>${PLANS.map(p => `<th class="c">${esc(p.name)}<br><span class="num muted" style="font-weight:500">${money(priceOf(p))}</span><br><span class="muted" style="font-weight:400;font-size:.72rem">${esc(u.billing.perUserMonth)} · ${esc(fmt(u.billing.minUsers, { n: p.min }))}</span></th>`).join("")}</tr></thead><tbody id="mbody"></tbody></table></div>`;
+      <div class="tbl-wrap"><table><thead><tr><th>${esc(M.feature)}</th>${PLANS.map(p => `<th class="c">${esc(p.name)}<br><span class="muted" style="font-weight:400;font-size:.72rem">${esc(fmt(u.lic.minShort, { n: p.min }))}</span></th>`).join("")}</tr></thead><tbody id="mbody"></tbody></table></div>
+      ${pricingNote()}`;
     const upd = () => {
       s.q = $("#mq").value.trim(); s.g = $("#mg").value; s.i = $("#mi").value; s.diff = $("#md").checked;
       try {
@@ -543,10 +519,7 @@
           </div></fieldset>
           <label class="hint">${esc(K.users)}<br><input id="kusers" type="number" min="${P[c.plan].min}" max="100000" value="${c.users}"></label>
           <p class="hint" style="margin:6px 0 0">${esc(K.usersHint)} ${presetsHTML()}</p>
-          <fieldset><legend>${esc(K.billing)}</legend>${billToggle()}</fieldset>
           <p class="hint">${esc(K.maxNote)} ${ext("https://docs.sharefile.com/en-us/sharefile/people_settings/employee_users/add-user-licenses", "docs.sharefile.com")}</p>
-          <p class="hint">${esc(K.storageNote)}</p>
-          <p class="hint">${esc(K.priceNote)}</p>
         </form>
         <section class="box" id="calcout" aria-live="polite"></section>
       </div>`;
@@ -573,31 +546,35 @@
     renderCalcOut();
   }
 
-  const storageFor = (p, seats) => p.id === "V" ? int(seats) + " GB" : int(Math.max(3, seats)) + " TB";
+  const STORAGE_DOCS = [[SITE.plansSource, "sharefile.com/plans"],
+    ["https://docs.sharefile.com/en-us/sharefile/account_settings/storage/storage-usage", "docs.sharefile.com · Storage usage"],
+    ["https://docs.sharefile.com/en-us/sharefile/account_settings/storage/storage-quota", "docs.sharefile.com · Storage quota"]];
 
   function renderCalcOut() {
     const u = t(), K = u.calc, c = state.calc, p = P[c.plan];
     const seatsOf = q => Math.max(c.users, q.min);
     const seats = seatsOf(p);
-    const per = priceOf(p);
     const star = q => seatsOf(q) > c.users ? "*" : "";
     $("#calcout").innerHTML = `
-      <p class="eyebrow">${esc(p.name)} · ${esc(billLabel())}</p>
+      <p class="eyebrow">${esc(p.name)}</p>
       ${calcAdj ? `<p class="note">${esc(fmt(K.adjusted, calcAdj))}</p>` : ""}
       <div class="kpis">
         <div class="kpi"><span>${esc(K.licenses)}</span><b class="num">${int(seats)}${star(p)}</b></div>
-        <div class="kpi"><span>${esc(K.perUser)}</span><b>${money(per)}</b></div>
-        <div class="kpi"><span>${esc(K.monthTotal)}</span><b>${money(per * seats)}</b></div>
-        <div class="kpi"><span>${esc(K.yearTotal)}</span><b>${money(per * seats * 12, 0)}</b></div>
-        <div class="kpi"><span>${esc(K.storage)}</span><b>${storageFor(p, seats)}</b></div>
+        <div class="kpi"><span>${esc(K.perLicense)}</span><b class="num">${perLicense(p)}</b></div>
+        <div class="kpi"><span>${esc(K.total)}</span><b class="num" id="calctotal">${storageTotal(p, seats)}</b></div>
       </div>
+      <p class="hint" id="calcformula">${esc(fmt(K.formula, { n: int(seats), per: perLicense(p), total: storageTotal(p, seats) }))}</p>
       ${seats > c.users ? `<p class="note">${esc(fmt(K.minApplied, { n: p.min }))}</p>` : ""}
-      <h3>${esc(K.allPlans)} <span class="muted num">(${int(c.users)} ${esc(u.home.users)})</span></h3>
-      <div class="tbl-wrap"><table id="calctbl"><thead><tr><th></th><th class="c">${esc(K.licCol)}</th><th class="c">${esc(K.perUser)}</th><th class="c">${esc(K.monthTotal)}</th><th class="c">${esc(K.yearTotal)}</th><th class="c">${esc(K.storage)}</th></tr></thead><tbody>
-        ${PLANS.map(q => { const s = seatsOf(q), pr = priceOf(q);
-          return `<tr data-plan="${q.id}" ${q.id === p.id ? 'style="background:var(--accent-soft)"' : ""}><td><b>${esc(q.name)}</b></td><td class="c num">${int(s)}${star(q)}</td><td class="c num">${money(pr)}</td><td class="c num">${money(pr * s)}</td><td class="c num">${money(pr * s * 12, 0)}</td><td class="c num">${storageFor(q, s)}</td></tr>`; }).join("")}
+      <div class="note pool" id="calcpool"><b>${esc(K.poolTitle)}.</b> ${esc(K.pool)}
+        <ul><li>${esc(K.counts)}</li><li>${esc(K.full)}</li><li>${esc(K.packs)}</li><li>${esc(K.quota)}</li></ul></div>
+      <h3>${esc(K.allPlans)} <span class="muted num">(${int(c.users)})</span></h3>
+      <div class="tbl-wrap"><table id="calctbl"><thead><tr><th></th><th class="c">${esc(K.licCol)}</th><th class="c">${esc(K.perLicense)}</th><th class="c">${esc(K.total)}</th></tr></thead><tbody>
+        ${PLANS.map(q => { const s = seatsOf(q);
+          return `<tr data-plan="${q.id}" ${q.id === p.id ? 'style="background:var(--accent-soft)"' : ""}><td><b>${esc(q.name)}</b></td><td class="c num">${int(s)}${star(q)}</td><td class="c num">${perLicense(q)}</td><td class="c num">${storageTotal(q, s)}</td></tr>`; }).join("")}
       </tbody></table></div>
-      <p class="hint">${esc(fmt(K.minFoot, { list: PLANS.map(q => q.name + " " + q.min).join(" · ") }))}</p>`;
+      <p class="hint">${esc(fmt(K.minFoot, { list: PLANS.map(q => q.name + " " + q.min).join(" · ") }))}</p>
+      <p class="hint">${esc(K.sources)} ${STORAGE_DOCS.map(([h, l]) => ext(h, esc(l))).join(" · ")}</p>
+      ${pricingNote()}`;
   }
 
   // ── Integrations
@@ -896,8 +873,6 @@
 
   // ── Boot
   document.addEventListener("click", e => {
-    const bt = e.target.closest("[data-bill]");
-    if (bt) { state.bill = bt.dataset.bill; store.set("bill", state.bill); const y = window.scrollY; route(); window.scrollTo(0, y); return; }
     const d = e.target.closest("[data-detail]");
     if (d) { e.preventDefault(); openDetail(d.dataset.detail); }
   });

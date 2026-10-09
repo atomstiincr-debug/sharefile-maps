@@ -109,44 +109,48 @@ for (const lang of ["es", "en", "pt"]) {
   sel("#ca", "E"); sel("#cb", "P");
   ok(/Enterprise includes everything in Premium and adds 5/.test(text(env.d.querySelector("#cmpsum"))), "compare reversed order summary");
   sel("#ca", "A"); sel("#cb", "P");
-  sel("#cb", "V"); const cu = env.d.querySelector("#cu"); cu.value = "2"; cu.dispatchEvent(new env.w.Event("input", { bubbles: true }));
-  const co = text(env.d.querySelector("#cmpout"));
-  ok(/Billed licenses for 2 users: Advanced 3\* · Virtual Data Room 5\*/.test(co), "compare shows billed licenses with minimums");
-  ok(/Virtual Data Room: the plan's 5-license minimum is billed/.test(co), "compare explains VDR minimum");
-  cu.value = "10"; cu.dispatchEvent(new env.w.Event("input", { bubbles: true }));
+  sel("#cb", "V");
+  const meta = id => text(env.d.querySelector(`[data-col="${id}"] .cmp-meta`));
+  ok(meta("A") === "min. 3 licenses · 1 TB per license, pooled" && meta("V") === "min. 5 licenses · 1 GB per license, pooled", `compare columns show minimum and storage: ${meta("A")} | ${meta("V")}`);
+  ok(!env.d.querySelector("#cu") && !/\$\d/.test(text(env.d.querySelector("#view"))), "compare has no users field and no prices");
   sel("#ca", "P"); sel("#cb", "P");
   ok(/different/.test(text(env.d.querySelector("#cmpout"))), "compare same plan shows warning");
 }
 
-// 4. Calculator minimums and storage
+// 4. Storage calculator: minimums, pooled storage, verified facts (sharefile.com/plans, docs storage-usage)
 {
   const env = boot("en");
   go(env, "calc");
   const v = env.d.querySelector('input[name="plan"][value="V"]'); v.checked = true; change(env, v);
   const u = env.d.querySelector("#kusers"); u.value = "2"; u.dispatchEvent(new env.w.Event("input", { bubbles: true }));
-  const out = text(env.d.querySelector("#calcout"));
-  ok(/5-license minimum/.test(out), "calc VDR 2 users applies 5 minimum");
-  ok(out.includes("5 GB"), "calc VDR storage 5 GB");
+  const out = () => text(env.d.querySelector("#calcout"));
+  const tot = () => text(env.d.querySelector("#calctotal"));
+  ok(/5-license minimum/.test(out()), "calc VDR 2 users applies 5 minimum");
+  ok(tot() === "5 GB", `calc VDR 5 licenses = 5 GB (got ${tot()})`);
   const lic = id => text(env.d.querySelector(`#calctbl tr[data-plan="${id}"] td:nth-child(2)`));
+  const st = id => text(env.d.querySelector(`#calctbl tr[data-plan="${id}"] td:nth-child(4)`));
   ok(lic("V") === "5*" && lic("A") === "3*", `calc table licenses per plan at 2 users: A=${lic("A")} V=${lic("V")}`);
-  ok(/Minimum licenses required per plan: Advanced 3 · Premium 3 · Enterprise 3 · Virtual Data Room 5/.test(text(env.d.querySelector("#calcout"))), "calc shows minimum footnote");
+  ok(st("A") === "3 TB" && st("P") === "3 TB" && st("E") === "3 TB" && st("V") === "5 GB", "calc table storage at minimums: 3 TB / 5 GB");
+  ok(/Minimum licenses required per plan: Advanced 3 · Premium 3 · Enterprise 3 · Virtual Data Room 5/.test(out()), "calc shows minimum footnote");
   u.dispatchEvent(new env.w.Event("change", { bubbles: true }));
   ok(u.value === "5" && u.min === "5", `calc VDR field raised to 5 on commit (value ${u.value}, min ${u.min})`);
-  ok(/adjusted from 2 to 5/.test(text(env.d.querySelector("#calcout"))), "calc shows adjustment notice");
-  // plan switch to VDR with 3 users raises field to 5 (Adri's report)
+  ok(/adjusted from 2 to 5/.test(out()), "calc shows adjustment notice");
   const a3 = env.d.querySelector('input[name="plan"][value="A"]'); a3.checked = true; change(env, a3);
   u.value = "3"; u.dispatchEvent(new env.w.Event("change", { bubbles: true }));
   ok(u.value === "3" && u.min === "3", "calc Advanced accepts 3");
   v.checked = true; change(env, v);
   ok(u.value === "5", `calc switching to VDR raises 3 -> 5 (got ${u.value})`);
-  ok(text(env.d.querySelector("#calcout .kpi b")) === "5", "calc billed-licenses KPI = 5");
-  ok(text(env.d.querySelector("#calcout")).includes("$385.00") || text(env.d.querySelector("#calcout")).includes("$346.50"), "calc VDR 5 seats monthly total");
-  // 25 users: no asterisks, same licenses everywhere
+  ok(text(env.d.querySelector("#calcout .kpi b")) === "5", "calc licenses KPI = 5");
   u.value = "25"; u.dispatchEvent(new env.w.Event("change", { bubbles: true }));
   ok(["A", "P", "E", "V"].every(id => lic(id) === "25"), "calc 25 users: 25 licenses on every plan, no minimum flag");
+  ok(st("A") === "25 TB" && st("V") === "25 GB", "calc 25 licenses: 25 TB pooled (A/P/E), 25 GB (VDR)");
   const p = env.d.querySelector('input[name="plan"][value="P"]'); p.checked = true; change(env, p);
   u.value = "10"; u.dispatchEvent(new env.w.Event("input", { bubbles: true }));
-  ok(text(env.d.querySelector("#calcout")).includes("$3,120"), "calc Premium 10 users annual = $3,120/yr");
+  ok(tot() === "10 TB" && /10 licenses × 1 TB = 10 TB for the whole account/.test(out()), "calc Premium 10 licenses = 10 TB pooled (docs example: 1 TB x 10 = 10 TB)");
+  ok(/Storage is pooled/.test(out()) && /not a per-user quota/.test(out()), "calc explains storage is pooled, not per user");
+  ok(/Recycle Bin/.test(out()) && /3 TB packs/.test(out()) && /uploads and new documents are blocked/.test(out()), "calc explains what counts, packs and what happens when full");
+  ok(env.d.querySelectorAll('#calcout a[href*="storage-usage"], #calcout a[href*="sharefile.com/plans"]').length === 2, "calc cites official storage sources");
+  ok(!/\$\d|USD|per month|annual/i.test(out()), "calc shows no prices");
 }
 
 // 4b. Users field defaults to the plan minimum and follows the plan until the user types
@@ -168,27 +172,25 @@ for (const lang of ["es", "en", "pt"]) {
   u.dispatchEvent(new env.w.Event("change", { bubbles: true }));
   ok(u.value === "5", "calc empty field refilled with minimum on commit");
   u.value = "0"; u.dispatchEvent(new env.w.Event("input", { bubbles: true }));
-  ok(!/\$0[.,]00|USD 0,00/.test(text(env.d.querySelector("#calcout"))), "calc 0 never shows a zero total");
+  ok(!/(^|\D)0 (TB|GB)/.test(text(env.d.querySelector("#calcout"))), "calc 0 never shows zero storage");
   go(env, "compare");
-  const cu = env.d.querySelector("#cu"), cb = env.d.querySelector("#cb");
   ok(env.d.querySelector("#ca").value === "A" && env.d.querySelector("#cb").value === "P", "compare default Advanced vs Premium");
-  ok(cu.value === "3", `compare fresh default 3 (got ${cu.value})`);
-  cb.value = "V"; change(env, cb); ok(cu.value === "5", `compare follows higher minimum 5 with VDR (got ${cu.value})`);
-  cu.value = "40"; cu.dispatchEvent(new env.w.Event("input", { bubbles: true }));
-  cb.value = "E"; change(env, cb); ok(cu.value === "40", "compare keeps typed users on plan change");
   ok(env.errors.length === 0, "users field no script errors: " + env.errors.join(" | "));
 }
 
-// 5. Billing toggle changes prices everywhere
+// 5. No prices anywhere (prices vary by country): every route, every language
 {
-  const env = boot("en");
-  go(env, "home");
-  const before = text(env.d.querySelector(".price-row"));
-  env.d.querySelector('[data-bill="monthly"]').click();
-  const after = text(env.d.querySelector(".price-row"));
-  ok(before.includes("$16.50") && after.includes("$18.15") && !after.includes("$16.50"), "toggle switches Advanced 16.50 -> 18.15");
-  go(env, "matrix");
-  ok(text(env.d.querySelector("thead")).includes("$42.00"), "matrix header follows monthly toggle");
+  const PRICE = /\$\s?\d|US\$|16[.,]50|18[.,]15|26[.,]00|28[.,]59|35[.,]00|42[.,]00|69[.,]30|77[.,]00|MSRP|per user \/ month|por usuario \/ mes|por usuário \/ mês/;
+  for (const lang of ["es", "en", "pt"]) {
+    const env = boot(lang);
+    // Use cases quote customer savings (not plan prices); the changelog keeps the history of the old price features, without amounts
+    const AMOUNT = /16[.,]50|18[.,]15|26[.,]00|28[.,]59|35[.,]00|42[.,]00|69[.,]30|77[.,]00|MSRP/;
+    for (const r of routes) { go(env, r); const re = r === "usecases" || r === "changelog" ? AMOUNT : PRICE; ok(!re.test(text(env.d.querySelector("#view"))), `[${lang}] #${r} shows no prices`); }
+    ok(!env.d.querySelector("[data-bill]"), `[${lang}] no billing toggle`);
+    ok(/(no publica precios|does not publish prices|não publica preços)/.test(text(env.d.querySelector("#foot"))), `[${lang}] footer sends pricing to partner / regional rep`);
+    go(env, "home"); ok(!!env.d.querySelector(".pricing-note"), `[${lang}] home shows pricing note`);
+  }
+  ok(ctx.P.every(p => p.annual === undefined && p.monthly === undefined && p.storage === 1 && ["TB", "GB"].includes(p.unit)), "data: PLANS carry no prices, only verified storage");
 }
 
 // 6. Matrix filters

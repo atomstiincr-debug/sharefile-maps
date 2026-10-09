@@ -227,9 +227,6 @@ footer .wrap { padding-block: 22px calc(22px + env(safe-area-inset-bottom, 0px))
 .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 8px 14px; border-radius: var(--r); font-size: .86rem; z-index: 60; }
 
 /* Billing toggle */
-.seg.bill button { min-height: 34px; }
-.was { color: var(--muted); font-size: .62em; font-weight: 500; text-decoration-thickness: 1.5px; margin-right: 4px; }
-.save { color: var(--accent); font-weight: 700; }
 .price .amt { display: flex; align-items: baseline; gap: 2px; flex-wrap: wrap; }
 .result-plan .seg { margin-left: auto; }
 
@@ -311,9 +308,9 @@ ol.path ul.sigs { margin: 6px 0 0; padding-left: 18px; font-size: .9rem; }
 .ucust p { font-size: .88rem; }
 .ucard .hint { margin-top: auto; word-break: break-word; }
 .th small { display: block; }
-.th .th-price { margin-top: 2px; opacity: .9; }
-.map-prices { display: none; list-style: none; margin: 0 0 10px; padding: 0; font-size: .85rem; }
-@media (max-width: 760px) { .map-prices { display: grid; gap: 4px; } }
+.th .th-min { margin-top: 2px; opacity: .9; }
+.map-mins { display: none; list-style: none; margin: 0 0 10px; padding: 0; font-size: .85rem; }
+@media (max-width: 760px) { .map-mins { display: grid; gap: 4px; } }
 /* Chips with long text (e.g. VDR price) wrap instead of pushing the page sideways */
 .toolbar .chip { white-space: normal; max-width: 100%; }
 /* Get more from your plan */
@@ -347,3 +344,8 @@ ol.path ul.sigs { margin: 6px 0 0; padding-left: 18px; font-size: .9rem; }
 @media (max-width: 720px) { .comp-cols { grid-template-columns: minmax(0, 1fr); } .comp-norm header { flex-direction: column; } }
 .warn-note { background: var(--warn-soft, #FFF4E0); }
 .comp-nnote { margin: 0 0 6px; font-style: italic; }
+/* Storage calculator and pricing note */
+.pricing-note { margin-top: 16px; }
+.note.pool ul { margin: 8px 0 0; padding-left: 18px; }
+.note.pool li { margin: 3px 0; }
+.cmp-meta { margin: -4px 0 10px; }

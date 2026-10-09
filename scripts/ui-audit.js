@@ -62,7 +62,7 @@ const ok = (c, m) => { if (c) pass++; else { fail++; fails.push(m); console.erro
     const { page, context, errors } = await newPage("es");
     await go(page, "calc");
     await page.selectOption("#lang", "en"); await page.waitForTimeout(50);
-    ok(/Calculator/.test(await viewText(page)), "lang switch re-renders current page in EN");
+    ok(/Storage calculator/.test(await viewText(page)), "lang switch re-renders current page in EN");
     ok(await page.evaluate(() => location.hash) === "#calc", "lang switch keeps the current page");
     await page.reload(); await page.waitForTimeout(50);
     ok(await page.$eval("#lang", s => s.value) === "en", "language persists after reload");
@@ -88,25 +88,21 @@ const ok = (c, m) => { if (c) pass++; else { fail++; fails.push(m); console.erro
     await context.close();
   }
 
-  // 3. Billing toggle: every page that has one, values match official data, state shared across pages
+  // 3. No prices anywhere (they vary by country): every route, 3 languages; pricing note sends to partner / regional rep
   {
-    const { page, context } = await newPage("en");
-    const money = n => "$" + n.toFixed(2);
-    for (const r of ROUTES) {
-      await go(page, r);
-      if (!(await page.$('[data-bill="monthly"]'))) continue;
-      await page.click('[data-bill="monthly"]');
-      let t = await viewText(page);
-      const want = r === "vdr" ? [ctx.P[3]] : ["matrix", "home"].includes(r) ? ctx.P : r === "map" ? ctx.P.slice(0, 3) : [];
-      for (const p of want) ok(t.includes(money(p.monthly)), `#${r} monthly shows ${p.name} ${money(p.monthly)}`);
-      ok(await page.$eval('[data-bill="monthly"]', b => b.getAttribute("aria-pressed")) === "true", `#${r} monthly pressed state`);
-      await page.click('[data-bill="annual"]');
-      t = await viewText(page);
-      for (const p of want) ok(t.includes(money(p.annual)), `#${r} annual shows ${p.name} ${money(p.annual)}`);
+    const PRICE = /\$\s?\d|US\$|16[.,]50|18[.,]15|26[.,]00|28[.,]59|35[.,]00|42[.,]00|69[.,]30|77[.,]00|MSRP|per user \/ month|por usuario \/ mes|por usuário \/ mês/;
+    const AMOUNT = /16[.,]50|18[.,]15|26[.,]00|28[.,]59|35[.,]00|42[.,]00|69[.,]30|77[.,]00|MSRP/; // use cases quote customer savings; changelog keeps history without amounts
+    for (const lang of ["es", "en", "pt"]) {
+      const { page, context } = await newPage(lang);
+      for (const r of ROUTES) {
+        await go(page, r);
+        ok(!(r === "usecases" || r === "changelog" ? AMOUNT : PRICE).test(await viewText(page)), `[${lang}] #${r} shows no prices`);
+        ok(!(await page.$("[data-bill]")), `[${lang}] #${r} no billing toggle`);
+      }
+      for (const r of ["home", "map", "vdr", "compare", "matrix", "calc"]) { await go(page, r); ok(!!(await page.$(".pricing-note")), `[${lang}] #${r} pricing note (partner / regional rep)`); }
+      ok(/no publica precios|does not publish prices|não publica preços/.test(await page.$eval("#foot", e => e.innerText)), `[${lang}] footer pricing note`);
+      await context.close();
     }
-    await go(page, "home"); await page.click('[data-bill="monthly"]'); await go(page, "matrix");
-    ok(await page.$eval('[data-bill="monthly"]', b => b.getAttribute("aria-pressed")) === "true", "billing choice carries across pages");
-    await context.close();
   }
 
   // 4. Map: tiles per plan view, every detail panel, close by Esc and scrim
@@ -119,17 +115,17 @@ const ok = (c, m) => { if (c) pass++; else { fail++; fails.push(m); console.erro
       const want = ctx.F.filter(f => f.plans.includes(id) && (!prev || !f.plans.includes(prev))).length;
       ok(n === want, `#${r} shows ${want} features (got ${n})`);
     }
-    // Every plan header states price per user / month and the plan minimum
+    // Every plan header states the plan minimum (official wording)
     for (const [r, id] of [["map-a", "A"], ["map-p", "P"], ["map-e", "E"]]) {
       await go(page, r);
       const th = await page.$eval(".map-head .th", e => e.innerText);
-      ok(/per user \/ month/.test(th) && th.includes(`Minimum of ${ctx.P.find(p => p.id === id).min} users`), `#${r} header shows per-user price and minimum`);
+      ok(th.includes(`Minimum of ${ctx.P.find(p => p.id === id).min} users`), `#${r} header shows plan minimum`);
       if (id !== "A") ok(new RegExp(`\\(${ctx.F.filter(f => f.plans.includes(id)).length} in total\\)`).test(th), `#${r} header shows total features`);
     }
     await go(page, "vdr");
-    ok(/per user \/ month/.test(await viewText(page)) && /Minimum of 5 users/.test(await viewText(page)), "#vdr shows per-user price and 5-user minimum");
+    ok(/Minimum of 5 users · 1 GB per license, pooled/.test(await viewText(page)), "#vdr shows 5-user minimum and 1 GB per license");
     await go(page, "matrix");
-    ok((await page.$eval("thead", e => e.innerText)).match(/per user \/ month/g).length === 4, "matrix headers state per user / month for 4 plans");
+    ok((await page.$eval("thead", e => e.innerText)).match(/min\. \d licenses/g).length === 4, "matrix headers state the minimum for 4 plans");
     await go(page, "map");
     const ids = await page.$$eval("[data-detail]", els => [...new Set(els.map(e => e.dataset.detail))]);
     ok(ids.length >= ctx.F.filter(f => f.plans !== "V").length - 1, `#map has a tile for every feature (${ids.length})`);
@@ -186,9 +182,9 @@ const ok = (c, m) => { if (c) pass++; else { fail++; fails.push(m); console.erro
       const nA = ctx.F.filter(f => f.plans.includes(a.id)).length, nB = ctx.F.filter(f => f.plans.includes(b.id)).length;
       ok(t.includes(`${nA} features`) && t.includes(`${nB} features`), `compare ${a.id}/${b.id}: both totals shown`);
       const onlyB = ctx.F.filter(f => f.plans.includes(b.id) && !f.plans.includes(a.id)).length;
-      ok(t.includes(String(onlyB)), `compare ${a.id}/${b.id}: additions count ${onlyB}`);
-      const dU = (b.annual - a.annual);
-      ok(t.includes((dU >= 0 ? "+" : "−") + "$" + Math.abs(dU).toFixed(2)), `compare ${a.id}/${b.id}: per-user delta ${dU.toFixed(2)}`);
+      ok(onlyB === 0 ? /includes everything in/.test(t) : t.includes(String(onlyB)), `compare ${a.id}/${b.id}: additions count ${onlyB}`);
+      const meta = p => `min. ${p.min} licenses · 1 ${p.unit} per license, pooled`;
+      ok(t.includes(meta(a)) && t.includes(meta(b)), `compare ${a.id}/${b.id}: minimum and storage per column`);
       const links = await page.$$eval("#cmpout a[href^='http']", as => as.length);
       ok(links > 0, `compare ${a.id}/${b.id}: features link to docs`);
     }
@@ -225,23 +221,21 @@ const ok = (c, m) => { if (c) pass++; else { fail++; fails.push(m); console.erro
     await context.close();
   }
 
-  // 8. Calculator math: every plan x preset x billing
+  // 8. Storage calculator: every plan x preset (sharefile.com/plans: 1 TB per license pooled, 3 TB min; VDR 1 GB per license, 5 min)
   {
     const { page, context, errors } = await newPage("en");
     await go(page, "calc");
     const presets = await page.$$eval("[data-preset]", b => b.map(x => +x.dataset.preset));
-    for (const bill of ["annual", "monthly"]) {
-      await page.click(`[data-bill="${bill}"]`);
-      for (const p of ctx.P) for (const n of presets) {
-        await page.click(`label.choice:has(input[value="${p.id}"])`);
-        await page.click(`[data-preset="${n}"]`);
-        const seats = Math.max(n, p.min), per = bill === "annual" ? p.annual : p.monthly;
-        const t = await page.$eval("#calcout", e => e.innerText);
-        const m = "$" + (per * seats).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        ok(t.includes(m), `calc ${bill} ${p.id} x${n}: monthly total ${m}`);
-        ok(await page.$eval("#kusers", i => +i.value) === seats, `calc ${p.id} x${n}: field shows ${seats}`);
-      }
+    for (const p of ctx.P) for (const n of presets) {
+      await page.click(`label.choice:has(input[value="${p.id}"])`);
+      await page.click(`[data-preset="${n}"]`);
+      const seats = Math.max(n, p.min), total = Math.max(p.storageMin, seats) + " " + p.unit;
+      const shown = (await page.$eval("#calctotal", e => e.innerText)).replace(/,/g, "");
+      ok(shown === total, `calc ${p.id} x${n}: pooled storage ${total} (got ${shown})`);
+      ok(await page.$eval("#kusers", i => +i.value) === seats, `calc ${p.id} x${n}: field shows ${seats}`);
     }
+    const t = await page.$eval("#calcout", e => e.innerText);
+    ok(/Storage is pooled/.test(t) && /not a per-user quota/.test(t), "calc explains pooled storage");
     ok(errors.length === 0, "calc no JS errors: " + errors.slice(0, 3).join(" | "));
     await context.close();
   }
