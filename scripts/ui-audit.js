@@ -317,5 +317,6 @@ const ok = (c, m) => { if (c) pass++; else { fail++; fails.push(m); console.erro
 
   await browser.close();
   console.log(`\n${pass} passed, ${fail} failed`);
+  if (process.env.GITHUB_ACTIONS) console.log("::notice title=UI audit::" + [`${pass} passed, ${fail} failed`, ...fails.slice(0, 40)].map(x => x.replace(/%/g, "%25").replace(/\n/g, " ")).join("%0A"));
   process.exit(fail ? 1 : 0);
 })();
