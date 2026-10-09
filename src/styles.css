@@ -331,3 +331,17 @@ ol.path ul.sigs { margin: 6px 0 0; padding-left: 18px; font-size: .9rem; }
 @media (max-width: 600px) { .arow { flex-direction: column; align-items: stretch; } .arow .seg.ans { align-self: flex-start; } }
 @media (min-width: 901px) { nav.main { flex-wrap: wrap; overflow-x: visible; row-gap: 2px; } }
 .ucard.focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+/* Compliance */
+.comp-principle { margin-top: 6px; }
+.comp-res { margin-top: 10px; border-left: 4px solid var(--accent); }
+.comp-res h3, .comp-norm h3 { margin: 0 0 6px; font-size: 1.02rem; }
+.comp-norm { margin-top: 14px; }
+.comp-norm header { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.comp-norm header .pill { white-space: nowrap; }
+.comp-pt { border-top: 1px dotted var(--line); padding-top: 12px; margin-top: 12px; }
+.comp-pt h4 { margin: 0 0 6px; font-size: .95rem; }
+.comp-pt blockquote { margin: 0 0 10px; padding: 8px 12px; border-left: 3px solid var(--line); background: var(--sunk, transparent); font-style: italic; font-size: .9rem; }
+.comp-cols { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 14px; }
+.comp-cols p { margin: 4px 0; font-size: .92rem; }
+.comp-you { background: var(--accent-soft); border-radius: 6px; padding: 8px 10px; }
+@media (max-width: 720px) { .comp-cols { grid-template-columns: minmax(0, 1fr); } .comp-norm header { flex-direction: column; } }

@@ -90,3 +90,29 @@ console.log("✓ data OK");
   console.log("use cases", c4.USECASES.length);
   if (e4) process.exit(1);
 }
+
+// Compliance (law links must be official government sources; ShareFile links only official ShareFile domains)
+{
+  const c5 = {}; vm.createContext(c5);
+  vm.runInContext(fs.readFileSync(path.join(__dirname, "..", "src", "data.js"), "utf8") + "\nthis.COMPLIANCE=COMPLIANCE;this.FEATURES=FEATURES;", c5);
+  const fids = new Set(c5.FEATURES.map(f => f.id)); let e5 = 0; const bad = m => { e5++; console.error("✗ compliance " + m); };
+  const GOV = /^https:\/\/([a-z0-9-]+\.)*(go\.cr|fi\.cr)\//;
+  const SF = /^https:\/\/((www|docs|trust|status)\.sharefile\.com)\//;
+  for (const c of c5.COMPLIANCE) {
+    for (const l of ["es", "en", "pt"]) { if (!c.name[l]) bad(c.id + " name " + l); if (!c.residency[l]) bad(c.id + " residency " + l); }
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(c.verified)) bad(c.id + " verified date");
+    for (const n of c.norms) {
+      if (!GOV.test(n.url)) bad(n.id + " law link must be an official government source: " + n.url);
+      for (const l of ["es", "en", "pt"]) { if (!n.title[l]) bad(n.id + " title " + l); if (!n.applies[l]) bad(n.id + " applies " + l); }
+      for (const p of n.points) {
+        if (!p.cite || !p.quote) bad(n.id + " point without citation/quote");
+        for (const k of ["topic", "sf", "you"]) for (const l of ["es", "en", "pt"]) if (!p[k][l]) bad(n.id + " " + k + " " + l);
+        for (const f of p.f) if (!fids.has(f)) bad(n.id + " unknown feature " + f);
+        for (const [h] of p.links) if (!SF.test(h) && !GOV.test(h)) bad(n.id + " link not official: " + h);
+        for (const l of ["es", "en", "pt"]) if (/\b(cumple con|complies with|cumpre a)\b/i.test(p.sf[l])) bad(n.id + " says ShareFile complies (" + l + ")");
+      }
+    }
+  }
+  console.log("compliance countries", c5.COMPLIANCE.length, "norms", c5.COMPLIANCE.reduce((a, c) => a + c.norms.length, 0));
+  if (e5) process.exit(1);
+}

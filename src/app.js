@@ -84,9 +84,9 @@
   const routes = {
     home: renderHome, map: () => renderMap("all"), "map-a": () => renderMap("A"), "map-p": () => renderMap("P"), "map-e": () => renderMap("E"),
     vdr: renderVdr, recommend: renderRec, compare: renderCompare, matrix: renderMatrix, calc: renderCalc,
-    integrations: renderIntegrations, usecases: renderUseCases, adopt: renderAdopt, knowledge: renderKnowledge, glossary: renderGlossary, changelog: renderChangelog, discrepancies: renderDisc
+    integrations: renderIntegrations, usecases: renderUseCases, adopt: renderAdopt, compliance: renderCompliance, knowledge: renderKnowledge, glossary: renderGlossary, changelog: renderChangelog, discrepancies: renderDisc
   };
-  const navKeys = ["home", "map", "vdr", "recommend", "usecases", "adopt", "compare", "matrix", "calc", "integrations", "knowledge", "glossary"];
+  const navKeys = ["home", "map", "vdr", "recommend", "usecases", "adopt", "compare", "matrix", "calc", "integrations", "compliance", "knowledge", "glossary"];
 
   function route() {
     let h = (location.hash || "#home").slice(1) || "home";
@@ -780,6 +780,36 @@
       b.parentElement.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", String(x === b))); drawOut(); });
     $("#areset").addEventListener("click", () => { s.ans = {}; save(); drawList(); drawOut(); });
     drawList(); drawOut();
+  }
+
+  // ── Regulatory fit by country (customer stays responsible; law quotes are official extracts in Spanish)
+  function renderCompliance() {
+    const u = t(), C = u.comp;
+    const c = COMPLIANCE.find(x => x.id === state.cc) || COMPLIANCE[0];
+    const planOf = id => P[tierOf(F[id]) || "V"].name;
+    $("#view").innerHTML = `
+      ${head(u.nav.compliance, C.lead)}
+      <section class="note comp-principle"><b>${esc(C.principleTitle)}</b> ${esc(C.principle)} ${esc(C.notLegal)}</section>
+      <nav class="chips" aria-label="${esc(C.country)}" style="margin-top:14px">${COMPLIANCE.map(x => `<button type="button" class="chipbtn" data-cc="${x.id}" aria-pressed="${x.id === c.id}">${esc(L(x.name))}</button>`).join("")}<span class="hint">${esc(C.more)}</span></nav>
+      <h2 style="margin-top:18px">${esc(L(c.name))} <span class="muted num" style="font-size:.8rem">${esc(C.verified)} ${c.verified}</span></h2>
+      <div class="box comp-res"><h3>${esc(C.residency)}</h3><p>${esc(L(c.residency))}</p></div>
+      ${c.norms.map(n => `<article class="box comp-norm" id="${n.id}">
+        <header><div><h3>${esc(n.name)} <span class="muted">· ${esc(L(n.title))}</span></h3>
+          <p class="hint">${esc(C.authority)}: ${esc(n.authority)} · ${esc(C.applies)}: ${esc(L(n.applies))}</p></div>
+          <span class="pill ${n.check ? "warn" : "ok"}">${esc(n.check ? C.check : C.ok)}</span></header>
+        <p class="hint">${ext(n.url, esc(C.official))}</p>
+        ${n.points.map(p => `<div class="comp-pt">
+          <h4><span class="num">${esc(p.cite)}</span> · ${esc(L(p.topic))}</h4>
+          <blockquote lang="es">${esc(p.quote)}<span class="hint"> — ${esc(C.extract)}</span></blockquote>
+          <div class="comp-cols">
+            <div><span class="eyebrow">${esc(C.sf)}</span><p>${esc(L(p.sf))}</p>
+              ${p.f.length ? `<p class="ufeat">${p.f.map(id => `<button type="button" class="fchip" data-detail="${id}"><i class="dot g-${F[id].g}"></i>${esc(F[id].name)} <span class="muted">· ${esc(planOf(id))}${tierOf(F[id]) === "E" ? "" : "+"}</span></button>`).join("")}</p>` : ""}
+              ${p.links.length ? `<p class="hint">${p.links.map(([h, l]) => ext(h, esc(l))).join(" · ")}</p>` : ""}</div>
+            <div class="comp-you"><span class="eyebrow">${esc(C.you)}</span><p>${esc(L(p.you))}</p></div>
+          </div></div>`).join("")}
+      </article>`).join("")}
+      <p class="hint" style="margin-top:16px">${esc(C.foot)} ${ext("https://trust.sharefile.com/", "trust.sharefile.com")}</p>`;
+    document.querySelectorAll("[data-cc]").forEach(b => b.addEventListener("click", () => { state.cc = b.dataset.cc; renderCompliance(); }));
   }
 
   // ── Knowledge, glossary, logs

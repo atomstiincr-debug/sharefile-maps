@@ -8,8 +8,8 @@ const { chromium } = require("playwright");
 const FILE = "file://" + path.join(__dirname, "..", "index.html");
 const ctx = {}; vm.createContext(ctx);
 vm.runInContext(fs.readFileSync(path.join(__dirname, "..", "src", "data.js"), "utf8") +
-  ";this.F=FEATURES;this.P=PLANS;this.IND=INDUSTRIES;this.S=SIGNALS;this.I=INTEGRATIONS;this.IG=INT_GROUPS;this.G=GROUPS;this.SZ=SIZES;this.U=USECASES;", ctx);
-const ROUTES = ["home", "map", "map-a", "map-p", "map-e", "vdr", "recommend", "compare", "matrix", "calc", "integrations", "usecases", "adopt", "knowledge", "glossary", "changelog", "discrepancies"];
+  ";this.F=FEATURES;this.P=PLANS;this.IND=INDUSTRIES;this.S=SIGNALS;this.I=INTEGRATIONS;this.IG=INT_GROUPS;this.G=GROUPS;this.SZ=SIZES;this.U=USECASES;this.C=COMPLIANCE;", ctx);
+const ROUTES = ["home", "map", "map-a", "map-p", "map-e", "vdr", "recommend", "compare", "matrix", "calc", "integrations", "usecases", "adopt", "compliance", "knowledge", "glossary", "changelog", "discrepancies"];
 const LANGS = ["es", "en", "pt"];
 let pass = 0, fail = 0; const fails = [];
 const ok = (c, m) => { if (c) pass++; else { fail++; fails.push(m); console.error("✗ " + m); } };
@@ -331,6 +331,23 @@ const ok = (c, m) => { if (c) pass++; else { fail++; fails.push(m); console.erro
     await context.close();
   }
 
+  // 9d. Compliance
+  for (const lang of LANGS) {
+    const { page, context, errors } = await newPage(lang);
+    await go(page, "compliance");
+    const c = ctx.C[0];
+    ok(await page.$$eval(".comp-norm", n => n.length) === c.norms.length, `[${lang}] compliance shows ${c.norms.length} norms`);
+    const pts = c.norms.reduce((a, n) => a + n.points.length, 0);
+    ok(await page.$$eval(".comp-pt", n => n.length) === pts && await page.$$eval(".comp-pt blockquote", n => n.length) === pts && await page.$$eval(".comp-you", n => n.length) === pts, `[${lang}] every requirement has official extract, fit and customer responsibility`);
+    ok(!!(await page.$(".comp-principle")) && (await page.$eval(".comp-principle", e => e.innerText)).length > 80, `[${lang}] responsibility principle shown`);
+    const links = await page.$$eval(".comp-norm a[href^='http']", as => as.map(a => a.href));
+    ok(links.every(h => /\.(go|fi)\.cr\/|sharefile\.com\//.test(h)), `[${lang}] compliance links only to government or ShareFile sites`);
+    ok(!/cumple con|complies with|cumpre a/i.test(await page.$$eval(".comp-pt .comp-cols > div:first-child", d => d.map(x => x.innerText).join(" "))), `[${lang}] never claims ShareFile complies`);
+    if (lang === "en") { await page.click(".comp-norm .fchip"); ok(!!(await page.$(".panel")), "compliance feature chip opens panel"); await page.keyboard.press("Escape"); }
+    ok(errors.length === 0, `[${lang}] compliance no JS errors: ` + errors.slice(0, 3).join(" | "));
+    await context.close();
+  }
+
   // 10. Link hygiene on every route and language: internal routes resolve, externals safe and official
   {
     const { page, context } = await newPage("es");
@@ -349,7 +366,7 @@ const ok = (c, m) => { if (c) pass++; else { fail++; fails.push(m); console.erro
     }
     ok(bad.size === 0, "all links valid: " + [...bad].slice(0, 5).join(" | "));
     ok(unsafe.size === 0, "all external links open in new tab with noopener: " + [...unsafe].slice(0, 5).join(" | "));
-    const allowed = /(^|\.)sharefile\.com$|(^|\.)youtube\.com$|(^|\.)github\.com$|(^|\.)progress\.com$|appsource\.microsoft\.com$|workspace\.google\.com$|^sharefile\.ideas\.aha\.io$/; // aha: ShareFile ideas portal (redirects to ShareFile sign-in)
+    const allowed = /(^|\.)sharefile\.com$|(^|\.)youtube\.com$|(^|\.)github\.com$|(^|\.)progress\.com$|appsource\.microsoft\.com$|workspace\.google\.com$|^sharefile\.ideas\.aha\.io$|\.(go|fi)\.cr$/; // .go.cr/.fi.cr: Costa Rica government sources (compliance); aha: ShareFile ideas portal (redirects to ShareFile sign-in)
     const off = [...domains].filter(d => !allowed.test(d));
     ok(off.length === 0, "external links only go to official domains: " + off.join(", "));
     console.log("external domains:", [...domains].join(", "));

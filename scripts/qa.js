@@ -26,7 +26,7 @@ const tierIdx = id => ["A", "P", "E"].findIndex(t => ctx.F.find(f => f.id === id
 const expectedBase = ind => ["Advanced", "Premium", "Enterprise"][Math.max(...ind.f.map(tierIdx))];
 
 // 1. Every route renders in every language without errors
-const routes = ["home", "map", "map-a", "map-p", "map-e", "vdr", "recommend", "compare", "matrix", "calc", "integrations", "usecases", "adopt", "knowledge", "glossary", "changelog", "discrepancies"];
+const routes = ["home", "map", "map-a", "map-p", "map-e", "vdr", "recommend", "compare", "matrix", "calc", "integrations", "usecases", "adopt", "compliance", "knowledge", "glossary", "changelog", "discrepancies"];
 for (const lang of ["es", "en", "pt"]) {
   const env = boot(lang);
   for (const r of routes) {
