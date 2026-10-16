@@ -73,14 +73,15 @@ const ok = (c, m) => { if (c) pass++; else { fail++; fails.push(m); console.erro
     for (let i = 0; i < 3; i++) { await page.click("#theme"); seen.add(await page.evaluate(() => document.documentElement.getAttribute("data-theme") || "system")); }
     ok(seen.size === 3, `theme button cycles 3 states (${[...seen].join(",")})`);
     const navHrefs = await page.$$eval("#nav a", as => as.map(a => a.getAttribute("href").slice(1)));
-    ok(await page.$eval("#nav", n => n.scrollWidth <= n.clientWidth + 1), "desktop: every nav item visible without sideways scrolling");
+    { const [sw, cw] = await page.$eval("#nav", n => [n.scrollWidth, n.clientWidth]); ok(sw <= cw + 1, `desktop: every nav item visible without sideways scrolling (${sw}/${cw}px)`); }
     // Phones and laptops (2026-10-15): compact header, active section always visible in the menu, one-row menu on 1280+ laptops
     for (const l of ["es", "en", "pt"]) {
       for (const w of [1280, 1366]) {
         const lp = await browser.newPage({ viewport: { width: w, height: 768 } });
         await lp.addInitScript(x => localStorage.setItem("sfm.lang", JSON.stringify(x)), l);
         await lp.goto(FILE + "#home"); await lp.waitForTimeout(80);
-        ok(await lp.$eval("#nav", n => n.scrollWidth <= n.clientWidth + 1), `[${l}] laptop ${w}px: menu fits in one row`);
+        const [sw, cw] = await lp.$eval("#nav", n => [n.scrollWidth, n.clientWidth]);
+        ok(sw <= cw + 1, `[${l}] laptop ${w}px: menu fits in one row (${sw}/${cw}px)`);
         await lp.close();
       }
       const mp = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
