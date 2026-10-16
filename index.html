@@ -134,7 +134,7 @@ main { padding-block: 28px 56px; min-height: 60vh; }
 .map-head .th { border-radius: var(--r); padding: 8px 10px; text-align: center; font: 700 .86rem/1.2 var(--f-display); color: #FFFFFF; background: var(--charcoal); box-shadow: inset 0 -3px 0 var(--brand); }
 .map-head .th small { display: block; font: 500 .7rem var(--f-body); opacity: .8; margin-top: 2px; }
 .map-head .th.t-P { background: #3A3D41; } .map-head .th.t-E { background: #2A2C2F; }
-.band-label { display: flex; align-items: center; font: 700 .8rem/1.2 var(--f-display); color: var(--surface); border-radius: var(--r); padding: 8px 10px; }
+.band-label { display: flex; align-items: center; align-self: start; font: 700 .8rem/1.2 var(--f-display); color: var(--surface); border-radius: var(--r); padding: 8px 10px; }
 .cell { border: 1.5px dashed var(--line); border-radius: var(--r); padding: 8px; display: flex; flex-wrap: wrap; gap: 6px; align-content: flex-start; min-height: 56px; min-width: 0; background: var(--sunk); }
 .cell .cell-tier { display: none; }
 .cell:empty::after { content: "—"; color: var(--muted); font-size: .8rem; margin: auto; }
@@ -327,7 +327,7 @@ ol.path ul.sigs { margin: 6px 0 0; padding-left: 18px; font-size: .9rem; }
 .th small { display: block; }
 .th .th-min { margin-top: 2px; opacity: .9; }
 .map-mins { display: none; list-style: none; margin: 0 0 10px; padding: 0; font-size: .85rem; }
-@media (max-width: 760px) { .map-mins { display: grid; gap: 4px; } }
+@media (max-width: 760px) { .map-mins { display: grid; gap: 4px; padding: 0 14px; } }
 /* Chips with long text (e.g. VDR price) wrap instead of pushing the page sideways */
 .toolbar .chip { white-space: normal; max-width: 100%; }
 /* Get more from your plan */
@@ -343,7 +343,31 @@ ol.path ul.sigs { margin: 6px 0 0; padding-left: 18px; font-size: .9rem; }
 .seg.ans button[aria-pressed="true"][data-v="u"] { background: var(--sunk, var(--line)); color: var(--ink); }
 .apick { padding-left: 20px; display: grid; gap: 10px; margin: 8px 0 14px; }
 @media (max-width: 600px) { .arow { flex-direction: column; align-items: stretch; } .arow .seg.ans { align-self: flex-start; } }
-@media (min-width: 901px) { nav.main { flex-wrap: wrap; overflow-x: visible; row-gap: 2px; } }
+/* Navigation: one row everywhere. Laptop: compact spacing so all sections fit. If it still does not fit
+   (small laptops, phones), it scrolls sideways with a fade on the side that has more. */
+nav.main { flex-wrap: nowrap; scrollbar-width: none; -webkit-overflow-scrolling: touch; scroll-behavior: smooth; }
+nav.main::-webkit-scrollbar { display: none; }
+nav.main.more-r { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 48px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 48px), transparent); }
+nav.main.more-l { -webkit-mask-image: linear-gradient(to left, #000 calc(100% - 48px), transparent); mask-image: linear-gradient(to left, #000 calc(100% - 48px), transparent); }
+nav.main.more-l.more-r { -webkit-mask-image: linear-gradient(to right, transparent, #000 48px, #000 calc(100% - 48px), transparent); mask-image: linear-gradient(to right, transparent, #000 48px, #000 calc(100% - 48px), transparent); }
+@media (min-width: 901px) { nav.main { gap: 0; } nav.main a { font-size: .84rem; padding: 6px 6px; } }
+#theme .lbl { white-space: nowrap; }
+/* Phones: header in one row (brand + unofficial badge + language + theme icon) */
+@media (max-width: 760px) {
+  .top-row { flex-wrap: nowrap; gap: 8px; padding-block: 8px 6px; }
+  .brand { gap: 8px; min-width: 0; }
+  .brand svg { width: 26px; height: 26px; }
+  .brand b { font-size: 1rem; white-space: nowrap; }
+  .brand small { display: none; }
+  #unofficial { font-size: .62rem; padding: 2px 6px; }
+  .top-tools { gap: 6px; }
+  #lang { min-height: 34px; padding: 4px 6px; }
+  #theme { min-height: 34px; min-width: 38px; padding: 4px 8px; }
+  #theme .lbl { display: none; }
+  nav.main { padding-bottom: 4px; }
+  nav.main a { font-size: .86rem; padding: 6px 9px; }
+}
+@media (max-width: 360px) { #unofficial { display: none; } }
 .ucard.focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
 /* Compliance */
 .comp-principle { margin-top: 6px; }
@@ -366,6 +390,16 @@ ol.path ul.sigs { margin: 6px 0 0; padding-left: 18px; font-size: .9rem; }
 .note.pool ul { margin: 8px 0 0; padding-left: 18px; }
 .note.pool li { margin: 3px 0; }
 .cmp-meta { margin: -4px 0 10px; }
+/* Matrix on phones: short plan names so the feature column keeps its width */
+.pn-short { display: none; text-decoration: none; }
+.pn-min { display: block; font-weight: 400; font-size: .72rem; }
+@media (max-width: 600px) {
+  .pn-full, .pn-min { display: none; }
+  .pn-short { display: inline; }
+  .tbl-wrap th, .tbl-wrap td { padding: 7px 6px; }
+  .tbl-wrap td.c, .tbl-wrap th.c { width: 46px; text-align: center; }
+}
+#theme svg { width: 16px; height: 16px; vertical-align: -3px; }
 
 </style>
 </head>
@@ -417,8 +451,8 @@ const OVERVIEW_VIDEO = { id: "yQkpfDLkCk0", t: "Progress ShareFile - Built For T
 const TUTORIALS = "https://www.youtube.com/playlist?list=PLSKW9Jc-tCY9W-cB3G2OTYx00GXZrrzZB";
 
 const SITE = {
-  version: "1.11.1",
-  updated: "2026-10-09",
+  version: "1.12.0",
+  updated: "2026-10-15",
   author: "Adrián Bonilla",
   plansSource: W + "plans",
   analyticsId: "" // GA4 measurement ID (G-XXXXXXX). Empty = no analytics, no cookie banner.
@@ -1457,6 +1491,7 @@ const DISCREPANCIES = [
 
 
 const CHANGELOG = [
+  { v: "1.12.0", date: "2026-10-15", d: { es: "Mejor lectura en celular y laptop. Celular: encabezado en una sola fila (logo, idioma y tema), el menú se desliza con una sombra que indica que hay más secciones y siempre muestra la sección actual; la Matriz usa nombres cortos de plan (Adv., Pre., Ent., VDR) para que la columna de funciones se lea completa. Laptop: el menú cabe en una sola fila. Mapa: el nombre de cada grupo queda arriba de su franja.", en: "Better reading on phones and laptops. Phones: one-row header (logo, language and theme), the menu scrolls with a fade that shows there are more sections and always shows the current one; the Matrix uses short plan names (Adv., Pre., Ent., VDR) so the feature column reads in full. Laptops: the menu fits in one row. Map: each group name sits at the top of its band.", pt: "Melhor leitura no celular e no laptop. Celular: cabeçalho em uma linha (logo, idioma e tema), o menu desliza com uma sombra que indica mais seções e sempre mostra a seção atual; a Matriz usa nomes curtos de plano (Adv., Pre., Ent., VDR) para que a coluna de recursos fique legível. Laptop: o menu cabe em uma linha. Mapa: o nome de cada grupo fica no topo da sua faixa." } },
   { v: "1.11.1", date: "2026-10-09", d: { es: "Calculadora: al pasar a Virtual Data Room (mínimo 5) y volver a Advanced, Premium o Enterprise, las licencias vuelven al número que elegiste (por ejemplo 3) en lugar de quedarse en 5. Un solo aviso explica cuándo se aplica el mínimo del plan.", en: "Calculator: switching to Virtual Data Room (minimum 5) and back to Advanced, Premium or Enterprise now returns the licenses to the number you chose (e.g. 3) instead of staying at 5. A single notice explains when the plan minimum applies.", pt: "Calculadora: ao passar para o Virtual Data Room (mínimo 5) e voltar para Advanced, Premium ou Enterprise, as licenças voltam ao número que você escolheu (por exemplo 3) em vez de ficar em 5. Um único aviso explica quando o mínimo do plano se aplica." } },
   { v: "1.11.0", date: "2026-10-09", d: { es: "El sitio deja de mostrar precios: varían por país (impuestos, retenciones y moneda local). Donde estaban, se invita a contactar al partner o al representante de ShareFile de la región. La Calculadora pasa a ser de almacenamiento: cuánto almacenamiento incluye la cuenta según el plan y las licencias, y por qué es compartido por toda la cuenta y no una cuota por usuario (verificado en sharefile.com/plans y docs.sharefile.com).", en: "The site no longer shows prices: they vary by country (taxes, withholding and local currency). Where they were, readers are invited to contact their partner or regional ShareFile representative. The Calculator becomes a storage calculator: how much storage the account includes by plan and licenses, and why it is pooled across the account rather than a per-user quota (verified on sharefile.com/plans and docs.sharefile.com).", pt: "O site deixa de mostrar preços: variam por país (impostos, retenções e moeda local). Onde estavam, convida-se a contatar o parceiro ou o representante do ShareFile da região. A Calculadora passa a ser de armazenamento: quanto armazenamento a conta inclui por plano e licenças, e por que ele é compartilhado por toda a conta e não uma cota por usuário (verificado em sharefile.com/plans e docs.sharefile.com)." } },
   { v: "1.10.1", date: "2026-10-09", d: { es: "Costa Rica: CONASSIF 5-24 arts. 39 y 40 verificados en el texto oficial (reporte de incidentes moderados o altos a la Superintendencia y comunicación de medidas a los clientes en 5 días hábiles tras el cierre).", en: "Costa Rica: CONASSIF 5-24 arts. 39 and 40 verified in the official text (reporting moderate or high incidents to the Superintendency and telling clients the remediation measures within 5 business days after closing).", pt: "Costa Rica: CONASSIF 5-24 arts. 39 e 40 verificados no texto oficial (reporte de incidentes moderados ou altos à Superintendência e comunicação das medidas aos clientes em 5 dias úteis após o encerramento)." } },
@@ -1949,19 +1984,44 @@ const UI = {
   function renderChrome(active) {
     const u = t();
     $("#nav").innerHTML = navKeys.map(k => `<a href="#${k}" ${k === active ? 'aria-current="page"' : ""}>${u.nav[k]}</a>`).join("");
+    navHint();
     $("#brand-tag").textContent = u.siteTag;
     $("#unofficial").textContent = u.unofficial;
     $("#skip").textContent = u.skip;
     $("#lang").value = lang;
     $("#lang").setAttribute("aria-label", u.lang);
     const th = store.get("theme", "system");
-    $("#theme").textContent = th === "dark" ? "◐ " + u.dark : th === "light" ? "◑ " + u.light : "◒ " + u.system;
-    $("#theme").setAttribute("aria-label", u.theme);
+    // Theme icon: moon (dark), sun (light), half circle (follow the system)
+    const ICON = {
+      dark: '<svg viewBox="0 0 16 16"><path fill="currentColor" d="M10.5 1.5a6.5 6.5 0 1 0 4 11.6A7 7 0 0 1 10.5 1.5z"/></svg>',
+      light: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="8" cy="8" r="3"/><path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3 3l1 1M12 12l1 1M3 13l1-1M12 4l1-1"/></svg>',
+      system: '<svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path fill="currentColor" d="M8 1.5a6.5 6.5 0 0 1 0 13z"/></svg>'
+    };
+    const [ic, lb] = th === "dark" ? [ICON.dark, u.dark] : th === "light" ? [ICON.light, u.light] : [ICON.system, u.system];
+    $("#theme").innerHTML = `<span aria-hidden="true">${ic}</span><span class="lbl"> ${esc(lb)}</span>`;
+    $("#theme").setAttribute("aria-label", u.theme + ": " + lb);
     $("#foot").innerHTML = `
       <p>${esc(u.foot.disclaimer)}</p>
       <p>${esc(u.foot.truth).replace("{links}", [["https://www.sharefile.com/", "sharefile.com"], ["https://docs.sharefile.com/en-us/sharefile/welcome", "docs.sharefile.com"], ["https://trust.sharefile.com/", "trust.sharefile.com"]].map(([h, l]) => ext(h, l)).join(", "))} ${esc(u.lic.pricing)}</p>
       <p>${u.by} ${esc(SITE.author)} · ${u.updated} <span class="num">${SITE.updated}</span> · v<span class="num">${SITE.version}</span> ·
         <a href="#changelog">${u.nav.changelog}</a> · <a href="#discrepancies">${u.nav.discrepancies}</a></p>`;
+  }
+
+  // Navigation that does not fit scrolls sideways: show a fade on the side with more items and keep the active item visible.
+  function navHint() {
+    const n = $("#nav"); if (!n) return;
+    const cur = $('#nav [aria-current="page"]');
+    if (cur && n.scrollWidth > n.clientWidth) {
+      const nr = n.getBoundingClientRect(), cr = cur.getBoundingClientRect();
+      const left = n.scrollLeft + (cr.left - nr.left) - (nr.width - cr.width) / 2;
+      n.scrollTo({ left: Math.max(0, left), behavior: "instant" });
+    }
+    const upd = () => {
+      n.classList.toggle("more-r", n.scrollLeft + n.clientWidth < n.scrollWidth - 2);
+      n.classList.toggle("more-l", n.scrollLeft > 2);
+    };
+    upd();
+    if (!n.dataset.hint) { n.dataset.hint = 1; n.addEventListener("scroll", upd, { passive: true }); window.addEventListener("resize", upd); }
   }
 
   const head = (title, lead, extra = "") => `<div class="page-head"><h1>${esc(title)}</h1>${lead ? `<p class="lead">${esc(lead)}</p>` : ""}${extra}</div>`;
@@ -2296,7 +2356,7 @@ const UI = {
         <button class="btn" type="button" id="mcopy">${esc(M.copy)}</button>
         <span class="mx-count" id="mcount"></span>
       </div>
-      <div class="tbl-wrap"><table><thead><tr><th>${esc(M.feature)}</th>${PLANS.map(p => `<th class="c">${esc(p.name)}<br><span class="muted" style="font-weight:400;font-size:.72rem">${esc(fmt(u.lic.minShort, { n: p.min }))}</span></th>`).join("")}</tr></thead><tbody id="mbody"></tbody></table></div>
+      <div class="tbl-wrap"><table><thead><tr><th>${esc(M.feature)}</th>${PLANS.map(p => `<th class="c"><span class="pn-full">${esc(p.name)}</span><abbr class="pn-short" title="${esc(p.name)}">${p.id === "V" ? "VDR" : esc(p.name.slice(0, 3)) + "."}</abbr><span class="muted pn-min">${esc(fmt(u.lic.minShort, { n: p.min }))}</span></th>`).join("")}</tr></thead><tbody id="mbody"></tbody></table></div>
       ${pricingNote()}`;
     const upd = () => {
       s.q = $("#mq").value.trim(); s.g = $("#mg").value; s.i = $("#mi").value; s.diff = $("#md").checked;

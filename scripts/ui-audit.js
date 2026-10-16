@@ -74,6 +74,27 @@ const ok = (c, m) => { if (c) pass++; else { fail++; fails.push(m); console.erro
     ok(seen.size === 3, `theme button cycles 3 states (${[...seen].join(",")})`);
     const navHrefs = await page.$$eval("#nav a", as => as.map(a => a.getAttribute("href").slice(1)));
     ok(await page.$eval("#nav", n => n.scrollWidth <= n.clientWidth + 1), "desktop: every nav item visible without sideways scrolling");
+    // Phones and laptops (2026-10-15): compact header, active section always visible in the menu, one-row menu on 1280+ laptops
+    for (const l of ["es", "en", "pt"]) {
+      for (const w of [1280, 1366]) {
+        const lp = await browser.newPage({ viewport: { width: w, height: 768 } });
+        await lp.addInitScript(x => localStorage.setItem("sfm.lang", JSON.stringify(x)), l);
+        await lp.goto(FILE + "#home"); await lp.waitForTimeout(80);
+        ok(await lp.$eval("#nav", n => n.scrollWidth <= n.clientWidth + 1), `[${l}] laptop ${w}px: menu fits in one row`);
+        await lp.close();
+      }
+      const mp = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+      await mp.addInitScript(x => localStorage.setItem("sfm.lang", JSON.stringify(x)), l);
+      for (const r of ["home", "compliance", "glossary"]) {
+        await mp.goto(FILE + "#" + r); await mp.waitForTimeout(80);
+        const hh = await mp.$eval("header.top", e => e.getBoundingClientRect().height);
+        ok(hh <= 130, `[${l}] phone #${r}: header ${Math.round(hh)}px (<= 130)`);
+        const vis = await mp.$eval('#nav [aria-current="page"]', a => { const n = a.parentElement.getBoundingClientRect(), r = a.getBoundingClientRect(); return r.left >= n.left - 1 && r.right <= n.right + 1; });
+        ok(vis, `[${l}] phone #${r}: active section visible in the menu`);
+        ok(await mp.$eval(".top-row", e => e.getBoundingClientRect().height) < 60, `[${l}] phone #${r}: brand, language and theme in one row`);
+      }
+      await mp.close();
+    }
     for (const h of navHrefs) {
       await page.click(`#nav a[href="#${h}"]`);
       const on = await page.waitForFunction(x => { const a = document.querySelector(`#nav a[href="#${x}"]`); return a && a.getAttribute("aria-current") === "page"; }, h, { timeout: 1500 }).then(() => true, () => false);

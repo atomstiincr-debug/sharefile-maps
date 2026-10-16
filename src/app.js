@@ -101,19 +101,44 @@
   function renderChrome(active) {
     const u = t();
     $("#nav").innerHTML = navKeys.map(k => `<a href="#${k}" ${k === active ? 'aria-current="page"' : ""}>${u.nav[k]}</a>`).join("");
+    navHint();
     $("#brand-tag").textContent = u.siteTag;
     $("#unofficial").textContent = u.unofficial;
     $("#skip").textContent = u.skip;
     $("#lang").value = lang;
     $("#lang").setAttribute("aria-label", u.lang);
     const th = store.get("theme", "system");
-    $("#theme").textContent = th === "dark" ? "◐ " + u.dark : th === "light" ? "◑ " + u.light : "◒ " + u.system;
-    $("#theme").setAttribute("aria-label", u.theme);
+    // Theme icon: moon (dark), sun (light), half circle (follow the system)
+    const ICON = {
+      dark: '<svg viewBox="0 0 16 16"><path fill="currentColor" d="M10.5 1.5a6.5 6.5 0 1 0 4 11.6A7 7 0 0 1 10.5 1.5z"/></svg>',
+      light: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="8" cy="8" r="3"/><path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3 3l1 1M12 12l1 1M3 13l1-1M12 4l1-1"/></svg>',
+      system: '<svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path fill="currentColor" d="M8 1.5a6.5 6.5 0 0 1 0 13z"/></svg>'
+    };
+    const [ic, lb] = th === "dark" ? [ICON.dark, u.dark] : th === "light" ? [ICON.light, u.light] : [ICON.system, u.system];
+    $("#theme").innerHTML = `<span aria-hidden="true">${ic}</span><span class="lbl"> ${esc(lb)}</span>`;
+    $("#theme").setAttribute("aria-label", u.theme + ": " + lb);
     $("#foot").innerHTML = `
       <p>${esc(u.foot.disclaimer)}</p>
       <p>${esc(u.foot.truth).replace("{links}", [["https://www.sharefile.com/", "sharefile.com"], ["https://docs.sharefile.com/en-us/sharefile/welcome", "docs.sharefile.com"], ["https://trust.sharefile.com/", "trust.sharefile.com"]].map(([h, l]) => ext(h, l)).join(", "))} ${esc(u.lic.pricing)}</p>
       <p>${u.by} ${esc(SITE.author)} · ${u.updated} <span class="num">${SITE.updated}</span> · v<span class="num">${SITE.version}</span> ·
         <a href="#changelog">${u.nav.changelog}</a> · <a href="#discrepancies">${u.nav.discrepancies}</a></p>`;
+  }
+
+  // Navigation that does not fit scrolls sideways: show a fade on the side with more items and keep the active item visible.
+  function navHint() {
+    const n = $("#nav"); if (!n) return;
+    const cur = $('#nav [aria-current="page"]');
+    if (cur && n.scrollWidth > n.clientWidth) {
+      const nr = n.getBoundingClientRect(), cr = cur.getBoundingClientRect();
+      const left = n.scrollLeft + (cr.left - nr.left) - (nr.width - cr.width) / 2;
+      n.scrollTo({ left: Math.max(0, left), behavior: "instant" });
+    }
+    const upd = () => {
+      n.classList.toggle("more-r", n.scrollLeft + n.clientWidth < n.scrollWidth - 2);
+      n.classList.toggle("more-l", n.scrollLeft > 2);
+    };
+    upd();
+    if (!n.dataset.hint) { n.dataset.hint = 1; n.addEventListener("scroll", upd, { passive: true }); window.addEventListener("resize", upd); }
   }
 
   const head = (title, lead, extra = "") => `<div class="page-head"><h1>${esc(title)}</h1>${lead ? `<p class="lead">${esc(lead)}</p>` : ""}${extra}</div>`;
@@ -448,7 +473,7 @@
         <button class="btn" type="button" id="mcopy">${esc(M.copy)}</button>
         <span class="mx-count" id="mcount"></span>
       </div>
-      <div class="tbl-wrap"><table><thead><tr><th>${esc(M.feature)}</th>${PLANS.map(p => `<th class="c">${esc(p.name)}<br><span class="muted" style="font-weight:400;font-size:.72rem">${esc(fmt(u.lic.minShort, { n: p.min }))}</span></th>`).join("")}</tr></thead><tbody id="mbody"></tbody></table></div>
+      <div class="tbl-wrap"><table><thead><tr><th>${esc(M.feature)}</th>${PLANS.map(p => `<th class="c"><span class="pn-full">${esc(p.name)}</span><abbr class="pn-short" title="${esc(p.name)}">${p.id === "V" ? "VDR" : esc(p.name.slice(0, 3)) + "."}</abbr><span class="muted pn-min">${esc(fmt(u.lic.minShort, { n: p.min }))}</span></th>`).join("")}</tr></thead><tbody id="mbody"></tbody></table></div>
       ${pricingNote()}`;
     const upd = () => {
       s.q = $("#mq").value.trim(); s.g = $("#mg").value; s.i = $("#mi").value; s.diff = $("#md").checked;

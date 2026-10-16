@@ -117,7 +117,7 @@ main { padding-block: 28px 56px; min-height: 60vh; }
 .map-head .th { border-radius: var(--r); padding: 8px 10px; text-align: center; font: 700 .86rem/1.2 var(--f-display); color: #FFFFFF; background: var(--charcoal); box-shadow: inset 0 -3px 0 var(--brand); }
 .map-head .th small { display: block; font: 500 .7rem var(--f-body); opacity: .8; margin-top: 2px; }
 .map-head .th.t-P { background: #3A3D41; } .map-head .th.t-E { background: #2A2C2F; }
-.band-label { display: flex; align-items: center; font: 700 .8rem/1.2 var(--f-display); color: var(--surface); border-radius: var(--r); padding: 8px 10px; }
+.band-label { display: flex; align-items: center; align-self: start; font: 700 .8rem/1.2 var(--f-display); color: var(--surface); border-radius: var(--r); padding: 8px 10px; }
 .cell { border: 1.5px dashed var(--line); border-radius: var(--r); padding: 8px; display: flex; flex-wrap: wrap; gap: 6px; align-content: flex-start; min-height: 56px; min-width: 0; background: var(--sunk); }
 .cell .cell-tier { display: none; }
 .cell:empty::after { content: "—"; color: var(--muted); font-size: .8rem; margin: auto; }
@@ -310,7 +310,7 @@ ol.path ul.sigs { margin: 6px 0 0; padding-left: 18px; font-size: .9rem; }
 .th small { display: block; }
 .th .th-min { margin-top: 2px; opacity: .9; }
 .map-mins { display: none; list-style: none; margin: 0 0 10px; padding: 0; font-size: .85rem; }
-@media (max-width: 760px) { .map-mins { display: grid; gap: 4px; } }
+@media (max-width: 760px) { .map-mins { display: grid; gap: 4px; padding: 0 14px; } }
 /* Chips with long text (e.g. VDR price) wrap instead of pushing the page sideways */
 .toolbar .chip { white-space: normal; max-width: 100%; }
 /* Get more from your plan */
@@ -326,7 +326,31 @@ ol.path ul.sigs { margin: 6px 0 0; padding-left: 18px; font-size: .9rem; }
 .seg.ans button[aria-pressed="true"][data-v="u"] { background: var(--sunk, var(--line)); color: var(--ink); }
 .apick { padding-left: 20px; display: grid; gap: 10px; margin: 8px 0 14px; }
 @media (max-width: 600px) { .arow { flex-direction: column; align-items: stretch; } .arow .seg.ans { align-self: flex-start; } }
-@media (min-width: 901px) { nav.main { flex-wrap: wrap; overflow-x: visible; row-gap: 2px; } }
+/* Navigation: one row everywhere. Laptop: compact spacing so all sections fit. If it still does not fit
+   (small laptops, phones), it scrolls sideways with a fade on the side that has more. */
+nav.main { flex-wrap: nowrap; scrollbar-width: none; -webkit-overflow-scrolling: touch; scroll-behavior: smooth; }
+nav.main::-webkit-scrollbar { display: none; }
+nav.main.more-r { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 48px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 48px), transparent); }
+nav.main.more-l { -webkit-mask-image: linear-gradient(to left, #000 calc(100% - 48px), transparent); mask-image: linear-gradient(to left, #000 calc(100% - 48px), transparent); }
+nav.main.more-l.more-r { -webkit-mask-image: linear-gradient(to right, transparent, #000 48px, #000 calc(100% - 48px), transparent); mask-image: linear-gradient(to right, transparent, #000 48px, #000 calc(100% - 48px), transparent); }
+@media (min-width: 901px) { nav.main { gap: 0; } nav.main a { font-size: .84rem; padding: 6px 6px; } }
+#theme .lbl { white-space: nowrap; }
+/* Phones: header in one row (brand + unofficial badge + language + theme icon) */
+@media (max-width: 760px) {
+  .top-row { flex-wrap: nowrap; gap: 8px; padding-block: 8px 6px; }
+  .brand { gap: 8px; min-width: 0; }
+  .brand svg { width: 26px; height: 26px; }
+  .brand b { font-size: 1rem; white-space: nowrap; }
+  .brand small { display: none; }
+  #unofficial { font-size: .62rem; padding: 2px 6px; }
+  .top-tools { gap: 6px; }
+  #lang { min-height: 34px; padding: 4px 6px; }
+  #theme { min-height: 34px; min-width: 38px; padding: 4px 8px; }
+  #theme .lbl { display: none; }
+  nav.main { padding-bottom: 4px; }
+  nav.main a { font-size: .86rem; padding: 6px 9px; }
+}
+@media (max-width: 360px) { #unofficial { display: none; } }
 .ucard.focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
 /* Compliance */
 .comp-principle { margin-top: 6px; }
@@ -349,3 +373,13 @@ ol.path ul.sigs { margin: 6px 0 0; padding-left: 18px; font-size: .9rem; }
 .note.pool ul { margin: 8px 0 0; padding-left: 18px; }
 .note.pool li { margin: 3px 0; }
 .cmp-meta { margin: -4px 0 10px; }
+/* Matrix on phones: short plan names so the feature column keeps its width */
+.pn-short { display: none; text-decoration: none; }
+.pn-min { display: block; font-weight: 400; font-size: .72rem; }
+@media (max-width: 600px) {
+  .pn-full, .pn-min { display: none; }
+  .pn-short { display: inline; }
+  .tbl-wrap th, .tbl-wrap td { padding: 7px 6px; }
+  .tbl-wrap td.c, .tbl-wrap th.c { width: 46px; text-align: center; }
+}
+#theme svg { width: 16px; height: 16px; vertical-align: -3px; }
