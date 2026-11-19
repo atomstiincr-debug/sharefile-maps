@@ -789,7 +789,7 @@
   function renderCompliance() {
     const u = t(), C = u.comp;
     // North to south; Brazil last (territory backup)
-    const ORDER = ["mx", "gt", "sv", "hn", "cr", "pa", "co", "pe", "cl", "ar", "br"];
+    const ORDER = ["mx", "gt", "sv", "hn", "cr", "pa", "co", "ec", "pe", "cl", "ar", "br"];
     const list = COMPLIANCE.slice().sort((a, b) => ORDER.indexOf(a.id) - ORDER.indexOf(b.id));
     const c = COMPLIANCE.find(x => x.id === state.cc) || list[0];
     const res = typeof c.residency === "string" ? fmt(C["res_" + c.residency], { c: L(c.name) }) : L(c.residency);
