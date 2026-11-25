@@ -7,7 +7,7 @@ redirects to a home page / 404 page ("soft 404"), or when the page title says "n
 Redirects to a different real page are reported as warnings so they can be reviewed.
 Run: python3 scripts/check_links.py
 """
-import re, sys, urllib.request, urllib.parse
+import re, sys, time, urllib.request, urllib.parse
 from pathlib import Path
 
 root = Path(__file__).parent.parent / "src"
@@ -40,7 +40,7 @@ HOMES = {"", "/en-us", "/en-us/sharefile", "/en-us/sharefile/welcome"}
 MANUAL = {"appsource.microsoft.com", "partnercommunity.sharefile.com", "sharefile.ideas.aha.io", "www.congreso.gob.pe", "portal.ingemmet.gob.pe"}
 manual = []
 bad, warn, ok = [], [], 0
-for u in sorted(urls | oembed):
+def fetch(u):
     req = urllib.request.Request(u, headers={"User-Agent": "Mozilla/5.0 (sharefile-maps link check)"})
     status, final, title = None, u, ""
     try:
@@ -53,6 +53,15 @@ for u in sorted(urls | oembed):
         status = e.code
     except Exception as e:
         status = type(e).__name__
+    return status, final, title
+
+for u in sorted(urls | oembed):
+    status, final, title = fetch(u)
+    # Connection errors (no HTTP answer: DNS, timeout, reset) are often momentary on government servers:
+    # retry twice before reporting. A real HTTP error (404, 410, 500...) is reported at once.
+    for wait in (5, 20):
+        if isinstance(status, int): break
+        time.sleep(wait); status, final, title = fetch(u)
     o, f = urllib.parse.urlparse(u), urllib.parse.urlparse(final)
     if o.netloc in MANUAL:
         manual.append(f"{status} {u}")
