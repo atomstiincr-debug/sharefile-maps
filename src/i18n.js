@@ -65,7 +65,7 @@ const UI = {
       quota: "En Enterprise, el administrador puede fijar cuotas por usuario (Storage Quota) si quiere limitar cuánto usa cada uno.",
       sources: "Fuentes oficiales:"
     },
-    kn: { title: "Conocimiento", lead: "Enlaces oficiales de ShareFile y Progress, agrupados por tema." },
+    kn: { title: "Conocimiento", lead: "Enlaces oficiales de ShareFile y Progress, agrupados por tema, y preguntas frecuentes.", faqTitle: "Preguntas frecuentes", faqLead: "Seleccionadas de las FAQ oficiales de ShareFile y adaptadas a la región. Cada respuesta enlaza a su fuente oficial.", faqSrc: "Fuente", faqHome: "Preguntas frecuentes", linksTitle: "Enlaces oficiales" },
     gl: { title: "Glosario", lead: "Términos que aparecen en planes y conversaciones de venta.", search: "Buscar término" },
     ch: { title: "Registro de cambios", lead: "Qué cambió en este sitio y cuándo." },
     ds: { title: "Discrepancias en la fuente oficial", lead: "Inconsistencias encontradas en sharefile.com o en la documentación, y cómo se tratan aquí.", where: "Dónde" },
@@ -145,7 +145,7 @@ const UI = {
       quota: "On Enterprise, admins can set per-user quotas (Storage Quota) to limit how much each user consumes.",
       sources: "Official sources:"
     },
-    kn: { title: "Knowledge", lead: "Official ShareFile and Progress links, grouped by topic." },
+    kn: { title: "Knowledge", lead: "Official ShareFile and Progress links, grouped by topic, plus frequently asked questions.", faqTitle: "Frequently asked questions", faqLead: "Selected from ShareFile's official FAQs and adapted to the region. Every answer links to its official source.", faqSrc: "Source", faqHome: "FAQ", linksTitle: "Official links" },
     gl: { title: "Glossary", lead: "Terms that come up in plans and sales conversations.", search: "Search terms" },
     ch: { title: "Change log", lead: "What changed on this site and when." },
     ds: { title: "Discrepancies in the official source", lead: "Inconsistencies found on sharefile.com or in the documentation, and how this site handles them.", where: "Where" },
@@ -225,7 +225,7 @@ const UI = {
       quota: "No Enterprise, o administrador pode definir cotas por usuário (Storage Quota) para limitar quanto cada um consome.",
       sources: "Fontes oficiais:"
     },
-    kn: { title: "Conhecimento", lead: "Links oficiais do ShareFile e da Progress, agrupados por tema." },
+    kn: { title: "Conhecimento", lead: "Links oficiais do ShareFile e da Progress, agrupados por tema, e perguntas frequentes.", faqTitle: "Perguntas frequentes", faqLead: "Selecionadas das FAQs oficiais do ShareFile e adaptadas à região. Cada resposta leva à sua fonte oficial.", faqSrc: "Fonte", faqHome: "Perguntas frequentes", linksTitle: "Links oficiais" },
     gl: { title: "Glossário", lead: "Termos que aparecem em planos e conversas de venda.", search: "Buscar termo" },
     ch: { title: "Registro de mudanças", lead: "O que mudou neste site e quando." },
     ds: { title: "Discrepâncias na fonte oficial", lead: "Inconsistências encontradas no sharefile.com ou na documentação, e como são tratadas aqui.", where: "Onde" },

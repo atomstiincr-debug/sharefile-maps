@@ -87,6 +87,7 @@
     if (h.startsWith("recommend-size-")) { state.rec.size = h.slice(15); h = "recommend"; }
     else if (h.startsWith("compliance-")) { const id = h.slice(11); state.cc = COMPLIANCE.some(x => x.id === id) ? id : state.cc; h = "compliance"; }
     else if (h.startsWith("usecases-")) { const [id, cid] = h.slice(9).split("~"); state.uc = IND[id] ? id : ""; state.ucFocus = cid || ""; h = "usecases"; }
+    else if (h.startsWith("knowledge-")) { state.knFocus = h.slice(10); h = "knowledge"; }
     else if (h.startsWith("recommend-")) { const id = h.slice(10); if (IND[id] || id === "other") { state.rec.ind = id; state.rec.sub = ""; } h = "recommend"; }
     const fn = routes[h] || renderHome;
     const navKey = h.startsWith("map") ? "map" : (routes[h] ? h : "home");
@@ -95,6 +96,7 @@
     fn();
     document.title = (navKey === "home" ? "" : t().nav[navKey] + " · ") + "ShareFile Maps";
     window.scrollTo(0, 0);
+    if (h === "knowledge" && state.knFocus) { const el = document.getElementById(state.knFocus === "faq" ? "faq" : "faq-" + state.knFocus); if (el) { if (el.tagName === "DETAILS") el.open = true; el.scrollIntoView({ block: "start" }); } state.knFocus = ""; }
   }
 
   // ── Chrome
@@ -155,7 +157,7 @@
         <h1>ShareFile Maps</h1>
         <p class="meta">${u.by} ${esc(SITE.author)} — <b>${new Date(SITE.updated + "T12:00:00").toLocaleDateString(lang === "en" ? "en-US" : lang === "pt" ? "pt-BR" : "es-CR", { month: "long", year: "numeric" })}</b></p>
         <p class="lead">${esc(h.lead)}</p>
-        <p class="actions">${ext("https://www.youtube.com/watch?v=" + OVERVIEW_VIDEO.id, "▶ " + esc(t().video.overview), "btn primary")}${ext(TUTORIALS, "▶ " + esc(t().video.tutorials), "btn")}</p>
+        <p class="actions">${ext("https://www.youtube.com/watch?v=" + OVERVIEW_VIDEO.id, "▶ " + esc(t().video.overview), "btn primary")}${ext(TUTORIALS, "▶ " + esc(t().video.tutorials), "btn")}<a class="btn" href="#knowledge-faq">? ${esc(t().kn.faqHome)}</a></p>
       </div>
       <div class="index">
         ${row(h.plans, [a("#map", h.allPlans), a("#map-a", "Advanced"), a("#map-p", "Premium " + h.stepup), a("#map-e", "Enterprise " + h.stepup), a("#vdr", "Virtual Data Room")].join(""))}
@@ -830,7 +832,16 @@
   // ── Knowledge, glossary, logs
   function renderKnowledge() {
     const u = t();
+    // Internal links (#route) stay in the site; official sources open in a new tab
+    const src = ([h, l]) => h.startsWith("#") ? `<a href="${h}">${esc(l.split(" · ")[lang === "en" ? 1 : lang === "pt" ? 2 : 0] || l)}</a>` : ext(h, esc(l));
     $("#view").innerHTML = `${head(u.kn.title, u.kn.lead)}
+      <section id="faq" class="faq">
+        <h2>${esc(u.kn.faqTitle)}</h2>
+        <p class="hint">${esc(u.kn.faqLead)}</p>
+        <div class="faq-list">${FAQ.map(f => `<details class="faq-item" id="faq-${f.id}"><summary>${esc(L(f.q))}</summary>
+          <div class="faq-a"><p>${esc(L(f.a))}</p>${f.src.length ? `<p class="hint">${esc(u.kn.faqSrc)}: ${f.src.map(src).join(" · ")}</p>` : ""}</div></details>`).join("")}</div>
+      </section>
+      <h2>${esc(u.kn.linksTitle)}</h2>
       <div class="cols">${KNOWLEDGE.map(k => `<section class="box"><h3>${esc(L(k.g))}</h3><ul class="links">${k.links.map(l => `<li>${l.v ? "▶ " : ""}${ext(l.u, esc(l.t))}${l.long ? ` <span class="hint">· ${esc(t().video.long)}</span>` : ""}</li>`).join("")}</ul></section>`).join("")}</div>`;
   }
 

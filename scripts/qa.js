@@ -21,7 +21,7 @@ const text = el => (el ? el.textContent.replace(/\s+/g, " ").trim() : "");
 
 // Load data independently to compute expectations
 const vm = require("vm"); const ctx = {}; vm.createContext(ctx);
-vm.runInContext(fs.readFileSync(path.join(__dirname, "..", "src", "data.js"), "utf8") + ";this.F=FEATURES;this.P=PLANS;this.IND=INDUSTRIES;this.S=SIGNALS;this.I=INTEGRATIONS;this.IG=INT_GROUPS;this.G=GROUPS;", ctx);
+vm.runInContext(fs.readFileSync(path.join(__dirname, "..", "src", "data.js"), "utf8") + ";this.F=FEATURES;this.P=PLANS;this.IND=INDUSTRIES;this.S=SIGNALS;this.I=INTEGRATIONS;this.IG=INT_GROUPS;this.G=GROUPS;this.FAQ=FAQ;", ctx);
 const tierIdx = id => ["A", "P", "E"].findIndex(t => ctx.F.find(f => f.id === id).plans.includes(t));
 const expectedBase = ind => ["Advanced", "Premium", "Enterprise"][Math.max(...ind.f.map(tierIdx))];
 
@@ -185,6 +185,23 @@ for (const lang of ["es", "en", "pt"]) {
   ok(env.errors.length === 0, "users field no script errors: " + env.errors.join(" | "));
 }
 
+// 4c. FAQ in Knowledge (2026-11-25): every question answered in 3 languages, every answer sourced, deep link opens it
+{
+  for (const lang of ["es", "en", "pt"]) {
+    const env = boot(lang);
+    go(env, "knowledge");
+    const items = [...env.d.querySelectorAll("#faq details.faq-item")];
+    ok(items.length === ctx.FAQ.length && items.length >= 15, `[${lang}] knowledge shows ${items.length} FAQ items`);
+    ok(items.every(d => d.querySelector("summary").textContent.trim().endsWith("?")), `[${lang}] every FAQ summary is a question`);
+    ok(items.filter(d => d.id !== "faq-price").every(d => d.querySelector(".faq-a a")), `[${lang}] every FAQ answer (except pricing) links a source`);
+    const internal = [...env.d.querySelectorAll('#faq a[href^="#"]')].map(a => a.getAttribute("href").slice(1));
+    ok(internal.every(r => ["calc", "compliance", "integrations"].includes(r)), `[${lang}] FAQ internal links go to real pages: ${[...new Set(internal)].join(",")}`);
+    ok(!/·/.test([...env.d.querySelectorAll('#faq a[href^="#"]')].map(a => a.textContent).join("")), `[${lang}] FAQ internal link labels are in one language`);
+    go(env, "home"); ok(!!env.d.querySelector('a[href="#knowledge-faq"]'), `[${lang}] home links to the FAQ`);
+  }
+  for (const f of ctx.FAQ) ok(["es", "en", "pt"].every(l => f.q[l] && f.a[l]), `FAQ ${f.id} has ES/EN/PT question and answer`);
+}
+
 // 5. No prices anywhere (prices vary by country): every route, every language
 {
   const PRICE = /\$\s?\d|US\$|16[.,]50|18[.,]15|26[.,]00|28[.,]59|35[.,]00|42[.,]00|69[.,]30|77[.,]00|MSRP|per user \/ month|por usuario \/ mes|por usuário \/ mês/;
@@ -263,7 +280,7 @@ for (const lang of ["es", "en", "pt"]) {
     go(env, r);
     env.d.querySelectorAll('a[href^="#"]').forEach(a => {
       const h = a.getAttribute("href").slice(1);
-      const okRoute = routes.includes(h) || (/^recommend-(size-)?[a-z]+$/.test(h) || /^usecases-[a-z]+(~[a-z-]+)?$/.test(h)) || h === "view";
+      const okRoute = routes.includes(h) || (/^recommend-(size-)?[a-z]+$/.test(h) || /^usecases-[a-z]+(~[a-z-]+)?$/.test(h)) || h === "view" || /^knowledge-(faq|[a-z]+)$/.test(h);
       if (!okRoute) bad.add(h);
     });
   }

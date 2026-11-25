@@ -5,7 +5,12 @@
 const fs = require("fs"), path = require("path"), vm = require("vm");
 const { chromium } = require("playwright");
 
-const FILE = "file://" + path.join(__dirname, "..", "index.html");
+// Serve the built page over http on localhost, as visitors get it from GitHub Pages: Chromium does not
+// guarantee localStorage for file:// pages across reloads, which made the persistence checks flaky.
+const http = require("http");
+const PAGE = fs.readFileSync(path.join(__dirname, "..", "index.html"));
+const server = http.createServer((req, res) => { res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" }); res.end(PAGE); });
+let FILE = "";
 const ctx = {}; vm.createContext(ctx);
 vm.runInContext(fs.readFileSync(path.join(__dirname, "..", "src", "data.js"), "utf8") +
   ";this.F=FEATURES;this.P=PLANS;this.IND=INDUSTRIES;this.S=SIGNALS;this.I=INTEGRATIONS;this.IG=INT_GROUPS;this.G=GROUPS;this.SZ=SIZES;this.U=USECASES;this.C=COMPLIANCE;", ctx);
@@ -15,21 +20,24 @@ let pass = 0, fail = 0; const fails = [];
 const ok = (c, m) => { if (c) pass++; else { fail++; fails.push(m); console.error("✗ " + m); } };
 
 (async () => {
+  await new Promise(r => server.listen(0, "127.0.0.1", r));
+  FILE = `http://127.0.0.1:${server.address().port}/`;
   const browser = await chromium.launch({ executablePath: process.env.CHROME });
   const newPage = async (lang, opts = {}) => {
     const context = await browser.newContext({ viewport: opts.viewport || { width: 1300, height: 900 }, colorScheme: opts.scheme || "light", acceptDownloads: true });
-    await context.route(/^https?:\/\//, r => r.abort()); // offline: only the page itself
+    await context.route(/^https?:\/\/(?!127\.0\.0\.1:)/, r => r.abort()); // offline: only the page itself
     const page = await context.newPage();
     const errors = [];
     page.on("pageerror", e => errors.push("pageerror: " + e.message));
     page.on("console", m => { if (m.type() === "error" && !/ERR_FAILED|net::/.test(m.text())) errors.push("console: " + m.text()); });
-    await page.addInitScript(([l, th]) => { try { if (!sessionStorage.getItem("init")) { localStorage.clear(); localStorage.setItem("sfm.lang", JSON.stringify(l)); if (th) localStorage.setItem("sfm.theme", JSON.stringify(th)); sessionStorage.setItem("init", 1); } } catch (e) {} }, [lang, opts.theme || null]);
+    // Each page has its own fresh context, so defaults are written once (marker kept in localStorage).
+    await page.addInitScript(([l, th]) => { try { if (!localStorage.getItem("audit.init")) { localStorage.setItem("sfm.lang", JSON.stringify(l)); if (th) localStorage.setItem("sfm.theme", JSON.stringify(th)); localStorage.setItem("audit.init", "1"); } } catch (e) {} }, [lang, opts.theme || null]);
     await page.goto(FILE + "#home");
     return { page, context, errors };
   };
   // Chromium commits localStorage to the browser process in batches; reloading milliseconds after a write can read
   // stale data (a test artifact: people don't reload that fast). Wait for the commit before a persistence check.
-  const reload = async page => { await page.waitForTimeout(1200); await page.reload(); await page.waitForLoadState("load"); };
+  const reload = async page => { await page.waitForTimeout(2500); await page.reload(); await page.waitForLoadState("load"); };
   const go = async (page, r) => { await page.evaluate(h => { location.hash = h; }, r); await page.waitForTimeout(40); };
   const viewText = page => page.$eval("#view", v => v.innerText);
 
@@ -74,6 +82,22 @@ const ok = (c, m) => { if (c) pass++; else { fail++; fails.push(m); console.erro
     ok(seen.size === 3, `theme button cycles 3 states (${[...seen].join(",")})`);
     const navHrefs = await page.$$eval("#nav a", as => as.map(a => a.getAttribute("href").slice(1)));
     { const [sw, cw] = await page.$eval("#nav", n => [n.scrollWidth, n.clientWidth]); ok(sw <= cw + 1, `desktop: every nav item visible without sideways scrolling (${sw}/${cw}px)`); }
+    // FAQ (2026-11-25): Home shortcut lands on the FAQ, a deep link opens one answer, items toggle
+    for (const l of ["es", "en", "pt"]) {
+      const fp = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+      await fp.addInitScript(x => localStorage.setItem("sfm.lang", JSON.stringify(x)), l);
+      await fp.goto(FILE + "#home"); await fp.waitForTimeout(80);
+      await fp.click('a[href="#knowledge-faq"]'); await fp.waitForTimeout(150);
+      const top = await fp.$eval("#faq", e => e.getBoundingClientRect().top);
+      ok(top >= 0 && top < 300, `[${l}] home FAQ shortcut lands on the FAQ (top ${Math.round(top)}px)`);
+      ok(await fp.$eval('#nav [aria-current="page"]', a => a.getAttribute("href")) === "#knowledge", `[${l}] FAQ shortcut highlights Knowledge in the menu`);
+      await fp.goto(FILE + "#knowledge-storage"); await fp.waitForTimeout(150);
+      ok(await fp.$eval("#faq-storage", d => d.open), `[${l}] #knowledge-storage opens that answer`);
+      await fp.click("#faq-users summary"); ok(await fp.$eval("#faq-users", d => d.open), `[${l}] FAQ item opens on tap`);
+      await fp.click("#faq-users summary"); ok(!(await fp.$eval("#faq-users", d => d.open)), `[${l}] FAQ item closes on tap`);
+      ok(await fp.$eval("html", e => e.scrollWidth <= window.innerWidth + 1), `[${l}] FAQ: no sideways scrolling on phone`);
+      await fp.close();
+    }
     // Phones and laptops (2026-10-15): compact header, active section always visible in the menu, one-row menu on 1280+ laptops
     for (const l of ["es", "en", "pt"]) {
       for (const w of [1280, 1366]) {
@@ -396,7 +420,7 @@ const ok = (c, m) => { if (c) pass++; else { fail++; fails.push(m); console.erro
         const links = await page.$$eval("a[href]", as => as.map(a => ({ h: a.getAttribute("href"), t: a.target, rel: a.rel, txt: (a.textContent || a.getAttribute("aria-label") || "").trim() })));
         for (const l of links) {
           if (!l.h || l.h === "#" || /^javascript:/i.test(l.h)) bad.add(`${r}: empty href "${l.txt}"`);
-          else if (l.h.startsWith("#")) { const h = l.h.slice(1); if (!(ROUTES.includes(h) || h === "view" || (/^recommend-(size-)?[a-z]+$/.test(h) || /^usecases-[a-z]+(~[a-z-]+)?$/.test(h)))) bad.add(`${r}: ${l.h}`); }
+          else if (l.h.startsWith("#")) { const h = l.h.slice(1); if (!(ROUTES.includes(h) || h === "view" || /^knowledge-[a-z]+$/.test(h) || (/^recommend-(size-)?[a-z]+$/.test(h) || /^usecases-[a-z]+(~[a-z-]+)?$/.test(h)))) bad.add(`${r}: ${l.h}`); }
           else if (/^https?:/.test(l.h)) { domains.add(new URL(l.h).hostname); if (l.t !== "_blank" || !/noopener/.test(l.rel)) unsafe.add(`${r}: ${l.h}`); if (!l.txt && !(await page.$(`a[href="${l.h}"][aria-label]`))) bad.add(`${r}: link without text ${l.h}`); }
         }
       }
@@ -411,6 +435,7 @@ const ok = (c, m) => { if (c) pass++; else { fail++; fails.push(m); console.erro
   }
 
   await browser.close();
+  server.close();
   console.log(`\n${pass} passed, ${fail} failed`);
   if (process.env.GITHUB_ACTIONS) console.log("::notice title=UI audit::" + [`${pass} passed, ${fail} failed`, ...fails.slice(0, 40)].map(x => x.replace(/%/g, "%25").replace(/\n/g, " ")).join("%0A"));
   process.exit(fail ? 1 : 0);
