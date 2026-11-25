@@ -37,7 +37,9 @@ HOMES = {"", "/en-us", "/en-us/sharefile", "/en-us/sharefile/welcome"}
 #  - sharefile.ideas.aha.io redirects to ShareFile sign-in (auth2.sharefile.io) via Progress identity: official, login required.
 #  - www.congreso.gob.pe and portal.ingemmet.gob.pe (Peru, official mirrors of Ley 29733, D.S. 016-2024-JUS and D.S. 052-2008-PCM)
 #    answer 404 to automated servers but open in a browser (verified by hand 2026-10-09).
-MANUAL = {"appsource.microsoft.com", "partnercommunity.sharefile.com", "sharefile.ideas.aha.io", "www.congreso.gob.pe", "portal.ingemmet.gob.pe"}
+#  - www.in.gov.br (Diário Oficial da União, Brazil) answers 403 to automated servers; the URL of Resolução CD/ANPD 19/2024
+#    is the one printed in the DOU's own page header (2026-11-25). Confirm it opens in a browser.
+MANUAL = {"appsource.microsoft.com", "partnercommunity.sharefile.com", "sharefile.ideas.aha.io", "www.congreso.gob.pe", "portal.ingemmet.gob.pe", "www.in.gov.br"}
 manual = []
 bad, warn, ok = [], [], 0
 def fetch(u):
